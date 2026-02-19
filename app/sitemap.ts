@@ -1,4 +1,4 @@
-const baseUrl = "https://yourdomain.com";
+const baseUrl = "https://cel-shop-alpha.vercel.app";
 
 import { products } from "../lib/products";
 
