@@ -15,6 +15,11 @@ export default async function CollectionPage({
   return (
     <main>
       <h1>{slug} Collection</h1>
+      <p>
+      Shop outfits inspired by {slug} from popular movies. Find jackets, gloves, masks and more
+      with budget and premium alternatives to match iconic looks.
+      </p>
+
 
       {filtered.map((product, i) => (
         <div key={i}>
