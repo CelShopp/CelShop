@@ -101,4 +101,85 @@ export const products = [
     }
   ]
 },
+{
+  slug: "batman-pants",
+  name: "Batman durable lower suit",
+  price: "₹3,499",
+  image: "/batman.jpg",
+  buyLink: "#",
+  collection: "batman",
+  alternatives: [
+    {
+      name: "Budget Version",
+      price: "₹999",
+      link: "#"
+    },
+    {
+      name: "Premium Version",
+      price: "₹8,499",
+      link: "#"
+    }
+  ]
+},
+{
+  slug: "spiderman-hoodie",
+  name: "Spiderman Hoodie",
+  price: "₹2,999",
+  image: "/batman.jpg",
+  buyLink: "#",
+  collection: "spiderman",
+  alternatives: [
+    { name: "Budget Version", price: "₹999", link: "#" },
+    { name: "Premium Version", price: "₹4,999", link: "#" }
+  ]
+},
+{
+  slug: "spiderman-mask",
+  name: "Spiderman Mask",
+  price: "₹1,499",
+  image: "/batman.jpg",
+  buyLink: "#",
+  collection: "spiderman",
+  alternatives: [
+    { name: "Budget Version", price: "₹499", link: "#" },
+    { name: "Premium Version", price: "₹2,499", link: "#" }
+  ]
+},
+{
+  slug: "spiderman-shoes",
+  name: "Spiderman Shoes",
+  price: "₹3,499",
+  image: "/batman.jpg",
+  buyLink: "#",
+  collection: "spiderman",
+  alternatives: [
+    { name: "Budget Version", price: "₹1,499", link: "#" },
+    { name: "Premium Version", price: "₹5,999", link: "#" }
+  ]
+},
+{
+  slug: "spiderman-gloves",
+  name: "Spiderman Gloves",
+  price: "₹1,999",
+  image: "/batman.jpg",
+  buyLink: "#",
+  collection: "spiderman",
+  alternatives: [
+    { name: "Budget Version", price: "₹799", link: "#" },
+    { name: "Premium Version", price: "₹3,499", link: "#" }
+  ]
+},
+{
+  slug: "spiderman-jacket",
+  name: "Spiderman Jacket",
+  price: "₹4,499",
+  image: "/batman.jpg",
+  buyLink: "#",
+  collection: "spiderman",
+  alternatives: [
+    { name: "Budget Version", price: "₹1,999", link: "#" },
+    { name: "Premium Version", price: "₹6,999", link: "#" }
+  ]
+},
+
 ];
