@@ -19,5 +19,86 @@ export const products = [
         link: "#"
       }
     ]
-  }
+  },
+
+{
+  slug: "batman-boots",
+  name: "Batman Boots",
+  price: "₹3,499",
+  image: "/batman.jpg",
+  buyLink: "#",
+  collection: "batman",
+  alternatives: [
+    {
+      name: "Budget Version",
+      price: "₹1,499",
+      link: "#"
+    },
+    {
+      name: "Premium Version",
+      price: "₹5,999",
+      link: "#"
+    }
+  ]
+},
+{
+  slug: "batman-mask",
+  name: "Batman Mask",
+  price: "₹2,999",
+  image: "/batman.jpg",
+  buyLink: "#",
+  collection: "batman",
+  alternatives: [
+    {
+      name: "Budget Version",
+      price: "₹999",
+      link: "#"
+    },
+    {
+      name: "Premium Version",
+      price: "₹4,999",
+      link: "#"
+    }
+  ]
+},
+{
+  slug: "batman-gloves",
+  name: "Batman Gloves",
+  price: "₹1,999",
+  image: "/batman.jpg",
+  buyLink: "#",
+  collection: "batman",
+  alternatives: [
+    {
+      name: "Budget Version",
+      price: "₹799",
+      link: "#"
+    },
+    {
+      name: "Premium Version",
+      price: "₹3,499",
+      link: "#"
+    }
+  ]
+},
+{
+  slug: "batman-belt",
+  name: "Batman Utility Belt",
+  price: "₹2,499",
+  image: "/batman.jpg",
+  buyLink: "#",
+  collection: "batman",
+  alternatives: [
+    {
+      name: "Budget Version",
+      price: "₹899",
+      link: "#"
+    },
+    {
+      name: "Premium Version",
+      price: "₹4,499",
+      link: "#"
+    }
+  ]
+},
 ];
