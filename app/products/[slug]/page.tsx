@@ -45,6 +45,7 @@ export default async function ProductPage({
 
 
       <h1>{product.name}</h1>
+      <p>{product.description}</p>
       <script
   type="application/ld+json"
   dangerouslySetInnerHTML={{
