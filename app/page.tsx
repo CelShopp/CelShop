@@ -11,6 +11,8 @@ export default function Home() {
         <Link href="/collections/batman">
           Batman Outfits
         </Link>
+        <Link href="/collections/spiderman">Spiderman Outfits</Link>
+
 
       </div>
     </main>
