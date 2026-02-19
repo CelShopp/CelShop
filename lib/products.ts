@@ -6,6 +6,7 @@ export const products = [
     image: "/batman.jpg",
     buyLink: "https://example.com",
     collection: "batman",
+    description: "Inspired by the iconic Batman suit, this jacket replicates the look seen in the Dark Knight trilogy. Perfect for cosplay, themed events or everyday streetwear inspired by movie outfits.",
 
     alternatives: [
       {
@@ -28,7 +29,7 @@ export const products = [
   image: "/batman.jpg",
   buyLink: "#",
   collection: "batman",
-  alternatives: [
+  description: "Inspired by the iconic Batman suit, this boots replicates the look seen in the Dark Knight trilogy. Perfect for cosplay, themed events or everyday streetwear inspired by movie outfits.",  alternatives: [
     {
       name: "Budget Version",
       price: "₹1,499",
@@ -48,7 +49,7 @@ export const products = [
   image: "/batman.jpg",
   buyLink: "#",
   collection: "batman",
-  alternatives: [
+  description: "Inspired by the iconic Batman suit, this mask replicates the look seen in the Dark Knight trilogy. Perfect for cosplay, themed events or everyday streetwear inspired by movie outfits.",  alternatives: [
     {
       name: "Budget Version",
       price: "₹999",
@@ -68,7 +69,7 @@ export const products = [
   image: "/batman.jpg",
   buyLink: "#",
   collection: "batman",
-  alternatives: [
+  description: "Inspired by the iconic Batman suit, this gloves replicates the look seen in the Dark Knight trilogy. Perfect for cosplay, themed events or everyday streetwear inspired by movie outfits.",  alternatives: [
     {
       name: "Budget Version",
       price: "₹799",
@@ -88,7 +89,7 @@ export const products = [
   image: "/batman.jpg",
   buyLink: "#",
   collection: "batman",
-  alternatives: [
+  description: "Inspired by the iconic Batman suit, this utility belt replicates the look seen in the Dark Knight trilogy. Perfect for cosplay, themed events or everyday streetwear inspired by movie outfits.",  alternatives: [
     {
       name: "Budget Version",
       price: "₹899",
@@ -108,7 +109,7 @@ export const products = [
   image: "/batman.jpg",
   buyLink: "#",
   collection: "batman",
-  alternatives: [
+  description: "Inspired by the iconic Batman suit, this pants replicates the look seen in the Dark Knight trilogy. Perfect for cosplay, themed events or everyday streetwear inspired by movie outfits.",  alternatives: [
     {
       name: "Budget Version",
       price: "₹999",
@@ -127,7 +128,9 @@ export const products = [
   price: "₹2,999",
   image: "/batman.jpg",
   buyLink: "#",
-  collection: "spiderman",
+  collection: "spiderman",  
+  description: "Inspired by the iconic Spider-Man suit from movies, ideal for cosplay, themed events or streetwear.",
+
   alternatives: [
     { name: "Budget Version", price: "₹999", link: "#" },
     { name: "Premium Version", price: "₹4,999", link: "#" }
@@ -140,6 +143,8 @@ export const products = [
   image: "/batman.jpg",
   buyLink: "#",
   collection: "spiderman",
+  description: "Inspired by the iconic Spider-Man suit from movies, ideal for cosplay, themed events or streetwear.",
+
   alternatives: [
     { name: "Budget Version", price: "₹499", link: "#" },
     { name: "Premium Version", price: "₹2,499", link: "#" }
@@ -152,6 +157,8 @@ export const products = [
   image: "/batman.jpg",
   buyLink: "#",
   collection: "spiderman",
+  description: "Inspired by the iconic Spider-Man suit from movies, ideal for cosplay, themed events or streetwear.",
+
   alternatives: [
     { name: "Budget Version", price: "₹1,499", link: "#" },
     { name: "Premium Version", price: "₹5,999", link: "#" }
@@ -164,6 +171,8 @@ export const products = [
   image: "/batman.jpg",
   buyLink: "#",
   collection: "spiderman",
+  description: "Inspired by the iconic Spider-Man suit from movies, ideal for cosplay, themed events or streetwear.",
+
   alternatives: [
     { name: "Budget Version", price: "₹799", link: "#" },
     { name: "Premium Version", price: "₹3,499", link: "#" }
@@ -176,6 +185,8 @@ export const products = [
   image: "/batman.jpg",
   buyLink: "#",
   collection: "spiderman",
+  description: "Inspired by the iconic Spider-Man suit from movies, ideal for cosplay, themed events or streetwear.",
+
   alternatives: [
     { name: "Budget Version", price: "₹1,999", link: "#" },
     { name: "Premium Version", price: "₹6,999", link: "#" }
