@@ -36,6 +36,18 @@ export default async function CollectionPage({
       Shop outfits inspired by {slug} from popular movies. Find jackets, gloves, masks and more
       with budget and premium alternatives to match iconic looks.
       </p>
+      <h2>Outfit Guides</h2>
+
+      <Link href={`/blog/${slug}-outfit-guide`}>
+      View {slug} Outfit Guide
+      </Link>
+
+      <br />
+
+      <Link href={`/blog/${slug}-costume-guide`}>
+      View {slug} Costume Guide
+      </Link>
+
 
 
       {filtered.map((product, i) => (
