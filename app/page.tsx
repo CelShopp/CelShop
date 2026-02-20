@@ -51,6 +51,32 @@ export default function Home() {
        Best Spider-Man Costume Pieces
        </Link>
 
+       <br />
+
+       <Link href="/blog/best-batman-jacket-vs-budget">
+       Best Batman Jacket: Budget vs Premium
+       </Link>
+
+       <br />
+
+       <Link href="/blog/best-batman-jacket-vs-budget">
+       Best Batman Jacket: Budget vs Premium
+       </Link>
+
+       <br />
+
+       <Link href="/blog/best-batman-mask-vs-budget">
+       Best Batman Mask: Budget vs Premium
+       </Link>
+
+       <br />
+
+       <Link href="/blog/best-spiderman-hoodie-vs-budget">
+       Best Spider-Man Hoodie: Budget vs Premium
+       </Link>
+
+
+
 
       </div>
     </main>

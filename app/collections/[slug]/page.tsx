@@ -47,6 +47,12 @@ export default async function CollectionPage({
       <Link href={`/blog/${slug}-costume-guide`}>
       View {slug} Costume Guide
       </Link>
+      <br />
+
+      <Link href={`/blog/best-${slug}-jacket-vs-budget`}>
+      Best {slug} Jacket Comparison
+      </Link>
+
 
 
 
