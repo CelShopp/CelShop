@@ -45,6 +45,13 @@ export default function Home() {
         How to Dress Like Spider-Man
        </Link>
 
+       <br />
+
+       <Link href="/blog/spiderman-costume-guide">
+       Best Spider-Man Costume Pieces
+       </Link>
+
+
       </div>
     </main>
   );
