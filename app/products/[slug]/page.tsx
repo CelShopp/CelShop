@@ -38,7 +38,7 @@ export default async function ProductPage({
   if (!product) return <div>Not found</div>;
 
   return (
-    <main style={{ paddingBottom: "120px" }}>
+    <main style={{ paddingBottom: "calc(120px + env(safe-area-inset-bottom))" }}>
       <Link href={`/collections/${product.collection}`}>
         Back to {product.collection} Collection
       </Link>
@@ -167,7 +167,7 @@ export default async function ProductPage({
 </div>
 <div
   style={{
-    position: "fixed",
+    position: "relative",
     bottom: "0",
     left: "0",
     width: "100%",
