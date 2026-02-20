@@ -32,6 +32,12 @@ export default function Home() {
        <Link href="/blog/batman-outfit-guide">
          How to Dress Like Batman
        </Link>
+       <br />
+
+       <Link href="/blog/spiderman-outfit-guide">
+        How to Dress Like Spider-Man
+       </Link>
+
       </div>
     </main>
   );
