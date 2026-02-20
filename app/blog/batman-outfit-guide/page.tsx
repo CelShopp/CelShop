@@ -16,6 +16,15 @@ export default function Page() {
         Dressing like Batman requires the right jacket, gloves, mask and utility
         belt. Below we break down each essential item.
       </p>
+      
+      <p>
+      Explore all Batman inspired outfits in our full collection.
+      </p>
+
+      <Link href="/collections/batman">
+      View Batman Collection
+      </Link>
+
 
       <h2>Batman Jacket</h2>
       <Link href="/products/batman-jacket">

@@ -16,6 +16,14 @@ export default function Page() {
         Dressing like Spider-Man requires the right hoodie, gloves, shoes and
         mask. Below we break down each essential item.
       </p>
+      <p>
+     You can explore all Spider-Man inspired outfits in our full collection.
+     </p>
+
+     <Link href="/collections/spiderman">
+     View Spider-Man Collection
+     </Link>
+
 
       <h2>Spider-Man Hoodie</h2>
       <Link href="/products/spiderman-hoodie">
