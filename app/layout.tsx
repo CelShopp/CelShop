@@ -1,3 +1,4 @@
+import Header from "./components/header";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -22,21 +23,40 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body
+  className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+  style={{
+    background: "#fbfaf0",
+    color: "#000000",
+    margin: 0
+  }}
+>
+<Header />
 
-  <nav style={{ padding: "10px", borderBottom: "1px solid white" }}>
-    <a href="/">Home</a>
-  </nav>
-
+<div
+  style={{
+    maxWidth: "1100px",
+    margin: "0 auto",
+    padding: "20px"
+  }}
+>
+  <div
+  style={{
+    maxWidth: "1100px",
+    margin: "0 auto",
+    padding: "20px"
+  }}
+>
   {children}
-
-</body>
-
+</div>
+</div>
+      </body>
     </html>
   );
 }
+

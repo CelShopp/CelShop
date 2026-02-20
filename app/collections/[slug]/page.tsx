@@ -36,36 +36,90 @@ export default async function CollectionPage({
       Shop outfits inspired by {slug} from popular movies. Find jackets, gloves, masks and more
       with budget and premium alternatives to match iconic looks.
       </p>
-      <h2>Outfit Guides</h2>
+<h2>Guides</h2>
 
-      <Link href={`/blog/${slug}-outfit-guide`}>
-      View {slug} Outfit Guide
-      </Link>
+<div
+  style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+    gap: "15px",
+    marginTop: "10px"
+  }}
+>
+  <Link
+    href={`/blog/${slug}-outfit-guide`}
+    style={{
+      border: "1px solid #ddd",
+      padding: "15px",
+      borderRadius: "10px",
+      textAlign: "center"
+    }}
+  >
+    Outfit Guide
+  </Link>
 
-      <br />
+  <Link
+    href={`/blog/${slug}-costume-guide`}
+    style={{
+      border: "1px solid #ddd",
+      padding: "15px",
+      borderRadius: "10px",
+      textAlign: "center"
+    }}
+  >
+    Costume Guide
+  </Link>
 
-      <Link href={`/blog/${slug}-costume-guide`}>
-      View {slug} Costume Guide
-      </Link>
-      <br />
+  <Link
+    href={`/blog/best-${slug}-jacket-vs-budget`}
+    style={{
+      border: "1px solid #ddd",
+      padding: "15px",
+      borderRadius: "10px",
+      textAlign: "center"
+    }}
+  >
+    Jacket Comparison
+  </Link>
+</div>
 
-      <Link href={`/blog/best-${slug}-jacket-vs-budget`}>
-      Best {slug} Jacket Comparison
-      </Link>
 
 
+<div
+  style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+    gap: "16px",
+    marginTop: "20px"
+  }}
+>
+  {filtered.map((product, i) => (
+<div key={i} className="card">
+<img
+  src={product.image}
+  alt={product.name}
+  style={{
+    width: "100%",
+    height: "180px",
+    objectFit: "cover",
+    borderRadius: "10px"
+  }}
+/>
 
+      <h2>{product.name}</h2>
+      <p>{product.price}</p>
+      
+<Link
+  href={`/products/${product.slug}`}
+  className="button"
+>
+  View Product
+</Link>
+    </div>
+  ))}
+</div>
 
-      {filtered.map((product, i) => (
-        <div key={i}>
-          <h2>{product.name}</h2>
-          <p>{product.price}</p>
-
-          <Link href={`/products/${product.slug}`}>
-            View Product
-          </Link>
-        </div>
-      ))}
+      
     </main>
   );
 }
