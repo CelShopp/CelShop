@@ -19,9 +19,19 @@ export default function Home() {
         <Link href="/collections/batman">
           Batman Outfits
         </Link>
+
+         <br />
+
         <Link href="/collections/spiderman">Spiderman Outfits</Link>
 
 
+      </div>
+      <div>
+       <h2>Guides</h2>
+
+       <Link href="/blog/batman-outfit-guide">
+         How to Dress Like Batman
+       </Link>
       </div>
     </main>
   );
