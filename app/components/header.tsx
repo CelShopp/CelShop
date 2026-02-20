@@ -5,18 +5,21 @@ import Link from "next/link";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
-  useEffect(() => {
+  const [animate, setAnimate] = useState(false);
+  const [mounted, setMounted] = useState(false);
+useEffect(() => {
   if (open) {
-    document.body.style.overflow = "hidden";
+    setMounted(true);
+
+    requestAnimationFrame(() => {
+      setAnimate(true);
+    });
+
   } else {
-    document.body.style.overflow = "auto";
+    setAnimate(false);
+    setTimeout(() => setMounted(false), 180);
   }
-
-  return () => {
-    document.body.style.overflow = "auto";
-  };
 }, [open]);
-
   return (
     <header className="glass-header">
       <nav
@@ -71,52 +74,79 @@ export default function Header() {
 
         {/* Mobile Menu */}
         {open && (
-          <>
-            {/* BACKDROP */}
-            <div
-              onClick={() => setOpen(false)}
-              style={{
-                position: "fixed",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100vh",
-                background: "rgba(0,0,0,0.2)",
-                zIndex: 9998
-              }}
-            />
-
-            {/* DRAWER */}
-            <div
-              style={{
-                position: "fixed",
-                top: 0,
-                right: 0,
-                width: "260px",
-                height: "100vh",
-                background: "#fbfaf0",
-                zIndex: 9999,
-                padding: "25px",
-                display: "flex",
-                flexDirection: "column",
-                gap: "20px",
-                boxShadow: "-5px 0 15px rgba(0,0,0,0.1)"
-              }}
-            >
-              <Link href="/collections/batman" onClick={() => setOpen(false)}>
-                Batman Outfits
-              </Link>
-        
-              <Link href="/collections/spiderman" onClick={() => setOpen(false)}>
-                Spider-Man Outfits
-              </Link>
-        
-              <Link href="/blog/batman-outfit-guide" onClick={() => setOpen(false)}>
-                Outfit Guides
-              </Link>
-            </div>
-          </>
+          <div
+            onClick={() => setOpen(false)}
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 9998
+            }}
+          />
         )}
+{mounted && (
+  <div
+    style={{
+      position: "fixed",
+      top: "70px",
+      right: "20px",
+      width: "220px",
+      background: "rgba(255,255,255,0.65)",
+      backdropFilter: "blur(16px)",
+      WebkitBackdropFilter: "blur(16px)",
+      borderRadius: "20px",
+      border: "1px solid rgba(255,255,255,0.4)",
+      boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
+      padding: "10px",
+      zIndex: 9999,
+      display: "flex",
+      flexDirection: "column",
+      gap: "8px",
+
+      opacity: animate ? 1 : 0,
+      transform: animate ? "scale(1)" : "scale(0.95)",
+      pointerEvents: open ? "auto" : "none",
+      transition: "all 0.48s ease"
+    }}
+  
+  >
+    <Link
+      href="/collections/batman"
+      onClick={() => setOpen(false)}
+      style={{
+        padding: "10px 12px",
+        borderRadius: "10px",
+        textDecoration: "none",
+        color: "#000",
+        fontWeight: 500,
+        background: "rgba(0,0,0,0.03)"
+      }}
+    >
+      Batman Outfits
+    </Link>
+
+    <Link href="/collections/spiderman" onClick={() => setOpen(false)} style={{
+        padding: "10px 12px",
+        borderRadius: "10px",
+        textDecoration: "none",
+        color: "#000",
+        fontWeight: 500,
+        background: "rgba(0,0,0,0.03)"
+      }}>
+      Spider-Man Outfits
+    </Link>
+
+    <Link href="/blog/batman-outfit-guide" onClick={() => setOpen(false)} style={{
+        padding: "10px 12px",
+        borderRadius: "10px",
+        textDecoration: "none",
+        color: "#000",
+        fontWeight: 500,
+        background: "rgba(0,0,0,0.03)"
+      }}>
+      Outfit Guides
+    </Link>
+  </div>
+)}
       </nav>
     </header>
   );
