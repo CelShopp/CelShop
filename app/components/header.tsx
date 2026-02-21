@@ -3,12 +3,13 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { products } from "../../lib/products";
+import { Search, X, Menu } from "lucide-react";
+
 export default function Header() {
   const [open, setOpen] = useState(false);
   const [animate, setAnimate] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
 
@@ -19,14 +20,14 @@ export default function Header() {
       requestAnimationFrame(() => setAnimate(true));
     } else {
       setAnimate(false);
-      setTimeout(() => setMounted(false), 180);
+      setTimeout(() => setMounted(false), 200);
     }
   }, [open]);
 
   /* Scroll effect */
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 30);
+      setScrolled(window.scrollY > 20);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -38,119 +39,121 @@ export default function Header() {
     p.name.toLowerCase().includes(query.toLowerCase())
   );
 
-  const results = filtered.length > 0 ? filtered : products;
+  const results = query.length > 0 ? filtered : products;
 
   return (
-    <header
-      className="glass-header"
-      style={{
-        transition: "all 0.3s ease",
-        backdropFilter: scrolled ? "blur(24px)" : "blur(16px)",
-        boxShadow: scrolled
-          ? "0 12px 40px rgba(0,0,0,0.12)"
-          : "0 8px 30px rgba(0,0,0,0.08)",
-        transform: scrolled ? "scale(0.98)" : "scale(1)",
-      }}
-    >
-      <nav
-        className="glass-nav"
-        role="navigation"
-        itemScope
-        itemType="https://schema.org/SiteNavigationElement"
-        aria-label="Main Navigation"
+    <>
+      <header
+        className="glass-header"
+        style={{
+          backdropFilter: scrolled ? "blur(24px)" : "blur(20px)",
+          boxShadow: scrolled
+            ? "0 12px 48px rgba(0,0,0,0.1)"
+            : "0 8px 32px rgba(0,0,0,0.06)",
+          transform: scrolled ? "scale(0.98)" : "scale(1)",
+        }}
       >
-        {/* Logo */}
-        <Link href="/" className="logo-text">
-          CelebStore
-        </Link>
+        <nav
+          className="glass-nav"
+          role="navigation"
+          itemScope
+          itemType="https://schema.org/SiteNavigationElement"
+          aria-label="Main Navigation"
+        >
+          {/* Logo */}
+          <Link href="/" className="logo-text">
+            CelebStore
+          </Link>
 
-        {/* Desktop Menu */}
-        <ul className="desktop-nav">
-          <li>
-            <Link href="/collections/batman" className="nav-link">
-              Batman Outfits
-            </Link>
-          </li>
-          <li>
-            <Link href="/collections/spiderman" className="nav-link">
-              Spider-Man Outfits
-            </Link>
-          </li>
-          <li>
-            <Link href="/blog/batman-outfit-guide" className="nav-link">
-              Outfit Guides
-            </Link>
-          </li>
-        </ul>
+          {/* Desktop Menu */}
+          <ul className="desktop-nav">
+            <li>
+              <Link href="/collections/batman" className="nav-link">
+                Batman
+              </Link>
+            </li>
+            <li>
+              <Link href="/collections/spiderman" className="nav-link">
+                Spider-Man
+              </Link>
+            </li>
+            <li>
+              <Link href="/blog/batman-outfit-guide" className="nav-link">
+                Guides
+              </Link>
+            </li>
+          </ul>
 
-        {/* Right Controls */}
-        <div style={{ display: "flex", gap: "15px", alignItems: "center" }}>
-          {/* Search Button */}
-          <button
-            onClick={() => setSearchOpen(!searchOpen)}
-            aria-label="Search"
-            style={{
-              background: "none",
-              border: "none",
-              fontSize: "18px",
-              cursor: "pointer",
-            }}
-          >
-            🔍︎
-          </button>
+          {/* Right Controls */}
+          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+            {/* Search Button */}
+            <button
+              onClick={() => setSearchOpen(!searchOpen)}
+              className="header-icon-btn"
+              aria-label="Search"
+            >
+              {searchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
+            </button>
 
-          {/* Hamburger */}
-          <button
-            onClick={() => setOpen(!open)}
-            className="mobile-menu-btn"
-            aria-expanded={open}
-            aria-label="Toggle Navigation Menu"
-          >
-            ☰
-          </button>
-        </div>
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setOpen(!open)}
+              className="mobile-menu-btn header-icon-btn"
+              aria-expanded={open}
+              aria-label="Toggle Navigation Menu"
+            >
+              {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
+        </nav>
+      </header>
 
-        {/* Backdrop for mobile menu */}
-        {open && (
-          <div
-            onClick={() => setOpen(false)}
-            style={{
-              position: "fixed",
-              inset: 0,
-              zIndex: 9998,
-            }}
-          />
-        )}
-      </nav>
+      {/* Backdrop */}
+      {(open || searchOpen) && (
+        <div
+          onClick={() => {
+            setOpen(false);
+            setSearchOpen(false);
+          }}
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 98,
+            background: "rgba(0,0,0,0.3)",
+            backdropFilter: "blur(4px)",
+          }}
+        />
+      )}
 
       {/* Floating Mobile Menu */}
       {mounted && (
         <div
           style={{
             position: "fixed",
-            top: "70px",
+            top: "90px",
             right: "20px",
-            width: "220px",
-            background: "rgba(255,255,255,0.65)",
-            backdropFilter: "blur(16px)",
-            borderRadius: "20px",
-            border: "1px solid rgba(255,255,255,0.4)",
-            boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
-            padding: "10px",
-            zIndex: 9999,
+            width: "260px",
+            background: "rgba(255,255,255,0.9)",
+            backdropFilter: "blur(24px)",
+            borderRadius: "24px",
+            border: "1px solid rgba(255,255,255,0.8)",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.15)",
+            padding: "16px",
+            zIndex: 99,
             display: "flex",
             flexDirection: "column",
-            gap: "8px",
+            gap: "4px",
             opacity: animate ? 1 : 0,
-            transform: animate ? "scale(1)" : "scale(0.95)",
+            transform: animate ? "translateY(0)" : "translateY(-10px)",
             pointerEvents: open ? "auto" : "none",
-            transition: "all 0.18s ease",
+            transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
           }}
         >
           <Link
             href="/collections/batman"
             onClick={() => setOpen(false)}
             className="nav-link"
+            style={{ fontSize: "14px", padding: "12px 16px" }}
           >
             Batman Outfits
           </Link>
@@ -159,6 +162,7 @@ export default function Header() {
             href="/collections/spiderman"
             onClick={() => setOpen(false)}
             className="nav-link"
+            style={{ fontSize: "14px", padding: "12px 16px" }}
           >
             Spider-Man Outfits
           </Link>
@@ -167,6 +171,7 @@ export default function Header() {
             href="/blog/batman-outfit-guide"
             onClick={() => setOpen(false)}
             className="nav-link"
+            style={{ fontSize: "14px", padding: "12px 16px" }}
           >
             Outfit Guides
           </Link>
@@ -178,49 +183,53 @@ export default function Header() {
         <div
           style={{
             position: "fixed",
-            top: "80px",
+            top: "90px",
             right: "20px",
-            width: "300px",
-            background: "#fff",
-            borderRadius: "16px",
-            boxShadow: "0 10px 40px rgba(0,0,0,0.1)",
+            width: "340px",
+            background: "rgba(255,255,255,0.95)",
+            backdropFilter: "blur(24px)",
+            borderRadius: "24px",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.15)",
             padding: "20px",
-            zIndex: 10000,
+            zIndex: 99,
+            border: "1px solid rgba(255,255,255,0.8)",
           }}
         >
-          <input
-            type="text"
-            placeholder="Search outfits..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "10px",
-              borderRadius: "8px",
-              border: "1px solid #ddd",
-              marginBottom: "15px",
-            }}
-          />
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400" />
+            <input
+              type="text"
+              placeholder="Search outfits..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 bg-stone-100 rounded-xl border-0 focus:ring-2 focus:ring-stone-900 focus:outline-none text-stone-900 placeholder-stone-400"
+              autoFocus
+            />
+          </div>
 
-          <div style={{ maxHeight: "250px", overflowY: "auto" }}>
-            {results.slice(0, 5).map((p, i) => (
+          <div style={{ maxHeight: "300px", overflowY: "auto", marginTop: "16px" }}>
+            {results.slice(0, 6).map((p, i) => (
               <Link
                 key={i}
                 href={`/products/${p.slug}`}
                 onClick={() => setSearchOpen(false)}
-                style={{
-                  display: "block",
-                  padding: "8px 0",
-                  textDecoration: "none",
-                  color: "#000",
-                }}
+                className="flex items-center gap-4 p-3 rounded-xl hover:bg-stone-100 transition-colors"
+                style={{ textDecoration: "none", color: "inherit" }}
               >
-                {p.name}
+                <img
+                  src={p.image}
+                  alt={p.name}
+                  className="w-12 h-12 rounded-lg object-cover"
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-stone-900 truncate">{p.name}</p>
+                  <p className="text-sm text-stone-500">{p.price}</p>
+                </div>
               </Link>
             ))}
           </div>
         </div>
       )}
-    </header>
+    </>
   );
 }
