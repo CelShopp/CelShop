@@ -10,97 +10,30 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <main>
-      <h1>Shop Movie Inspired Outfits</h1>
-
-      <div>
-        <h2>Collections</h2>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-            gap: "20px",
-          }}
+      <section
+        style={{
+          padding: "60px 20px",
+          textAlign: "center",
+          maxWidth: "900px",
+          margin: "0 auto"
+        }}
+      >
+        <h1 style={{ fontSize: "36px", marginBottom: "20px" }}>
+          Dress Like Your Favorite Movie Characters
+        </h1>
+      
+        <p style={{ fontSize: "18px", opacity: 0.7, marginBottom: "30px" }}>
+          We break down iconic outfits and show you the best budget and premium alternatives.
+        </p>
+      
+        <Link
+          href="/collections/batman"
+          className="button"
+          style={{ maxWidth: "250px", margin: "0 auto" }}
         >
-          <Link
-            href="/collections/batman"
-            style={{
-              border: "1px solid #ddd",
-              padding: "20px",
-              borderRadius: "10px",
-            }}
-          >
-            Batman Outfits
-          </Link>
-
-          <Link
-            href="/collections/spiderman"
-            style={{
-              border: "1px solid #ddd",
-              padding: "20px",
-              borderRadius: "10px",
-            }}
-          >
-            Spider-Man Outfits
-          </Link>
-        </div>
-      </div>
-
-      <div>
-        <h2>Guides</h2>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-            gap: "20px",
-          }}
-        >
-          <Link
-            href="/blog/batman-outfit-guide"
-            style={{
-              border: "1px solid #ddd",
-              padding: "20px",
-              borderRadius: "10px",
-            }}
-          >
-            How to Dress Like Batman
-          </Link>
-
-          <Link
-            href="/blog/spiderman-outfit-guide"
-            style={{
-              border: "1px solid #ddd",
-              padding: "20px",
-              borderRadius: "10px",
-            }}
-          >
-            How to Dress Like Spider-Man
-          </Link>
-
-          <Link
-            href="/blog/batman-costume-guide"
-            style={{
-              border: "1px solid #ddd",
-              padding: "20px",
-              borderRadius: "10px",
-            }}
-          >
-            Best Batman Costume Pieces
-          </Link>
-
-          <Link
-            href="/blog/spiderman-costume-guide"
-            style={{
-              border: "1px solid #ddd",
-              padding: "20px",
-              borderRadius: "10px",
-            }}
-          >
-            Best Spider-Man Costume Pieces
-          </Link>
-        </div>
-      </div>
+          Explore Collections
+        </Link>
+      </section>
     </main>
   );
 }
