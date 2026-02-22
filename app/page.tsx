@@ -1,636 +1,214 @@
-import { Metadata } from "next";
+'use client';
 import Link from "next/link";
+import { products } from "../lib/products";
+import { Button } from "./components/button";
+import { Card, CardContent } from "./components/card";
+import { Badge } from "./components/badge";
+import { ArrowRight, Star, TrendingUp, ShoppingBag } from "lucide-react";
 
-/**
- * SEO Metadata Configuration
- * These meta tags help search engines understand and index the page content
- * - title: Appears in browser tabs and search results (keep under 60 chars)
- * - description: Shown in search result snippets (keep under 160 chars)
- * - keywords: Helps with search engine ranking (optional but useful)
- * - openGraph: Social media sharing previews
- * - robots: Controls search engine crawling behavior
- */
-export const metadata: Metadata = {
-  title: "Celebrity Clothes Store | Shop Movie Outfits & Celebrity Inspired Clothing",
-  description:
-    "Find authentic celebrity outfits and movie-inspired clothing. Shop budget-friendly and premium alternatives to iconic looks from Batman, Spider-Man, and your favorite celebrities. Free shipping on orders over $50.",
-  keywords: [
-    "celebrity clothes",
-    "movie outfits",
-    "celebrity inspired clothing",
-    "batman outfits",
-    "spiderman outfits",
-    "celebrity fashion",
-    "movie costume replicas",
-    "celebrity style",
-  ],
-  openGraph: {
-    title: "Celebrity Clothes Store | Shop Movie Outfits & Celebrity Inspired Clothing",
-    description: "Find authentic celebrity outfits and movie-inspired clothing. Shop budget-friendly and premium alternatives.",
-    type: "website",
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
+export default function HomePage() {
+  // Select a hero product (e.g., the first one)
+  const heroProduct = products[0];
+  const trendingProducts = products.slice(1, 6);
 
-/**
- * Home Page Component
- * Main landing page for the celebrity clothes affiliate website
- * Modern design with visual hierarchy, gradients, and engaging layouts
- */
-export default function Home() {
   return (
-    <main style={{ minHeight: "100vh" }}>
-      {/* 
-        Hero Section - Modern gradient background with engaging layout
-        - Uses h1 for main heading (critical for SEO)
-        - Left-aligned text for modern feel (not everything centered)
-        - Gradient background for visual interest
-        - Prominent call-to-action button
-        - Responsive padding and typography using clamp() for fluid scaling
-      */}
-      <section
-        className="w-full relative overflow-hidden"
-        style={{
-          padding: "80px 20px",
-          background: "linear-gradient(135deg, #fbfaf0 0%, #f5f3e8 50%, #f0ede0 100%)",
-          marginBottom: "60px",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: "1200px",
-            margin: "0 auto",
-            display: "grid",
-            gridTemplateColumns: "1fr",
-            gap: "40px",
-            alignItems: "center",
-          }}
-        >
-          {/* Hero Content - Left aligned for modern look */}
-          <div style={{ maxWidth: "700px" }}>
-            <h1
-              className="font-bold mb-6"
-              style={{
-                fontSize: "clamp(32px, 7vw, 64px)",
-                lineHeight: "1.1",
-                color: "#111",
-                fontWeight: "800",
-                letterSpacing: "-0.02em",
-                marginBottom: "24px",
-              }}
-            >
-              Dress Like Your Favorite{" "}
-              <span
-                style={{
-                  background: "linear-gradient(135deg, #111 0%, #444 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                }}
-              >
-                Celebrities & Movie Characters
-              </span>
-            </h1>
+    <main className="min-h-screen bg-stone-50">
+      {/* Hero Section - Editorial Split Layout */}
+      <section className="relative bg-white overflow-hidden border-b border-stone-100">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 min-h-[85vh]">
+            {/* Text Content */}
+            <div className="flex flex-col justify-center px-6 sm:px-12 lg:px-16 py-20 lg:py-0 order-2 lg:order-1">
+              <Badge className="w-fit mb-6 bg-stone-100 text-stone-700 border-stone-200 hover:bg-stone-200 transition-colors">
+                <TrendingUp className="w-3 h-3 mr-1" /> This Month's Top Pick
+              </Badge>
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-stone-900 mb-6 leading-[1.1]">
+                Screen Accurate <br />
+                <span className="text-stone-500 italic font-serif">Style.</span>
+              </h1>
+              <p className="text-xl text-stone-600 mb-8 max-w-lg leading-relaxed">
+                Discover the exact jackets, suits, and accessories worn by your favorite characters. 
+                Curated from the best budget and premium sources.
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <Button size="lg" className="h-14 px-8 text-base rounded-full bg-stone-900 hover:bg-stone-800 shadow-lg hover:shadow-xl transition-all" asChild>
+                  <Link href={`/products/${heroProduct.slug}`}>
+                    Shop {heroProduct.name.split(' ').slice(0, 2).join(' ')}
+                    <ArrowRight className="ml-2 w-5 h-5" />
+                  </Link>
+                </Button>
+                <Button size="lg" variant="outline" className="h-14 px-8 text-base rounded-full border-stone-300 hover:bg-stone-50" asChild>
+                  <Link href="/collections">View All Collections</Link>
+                </Button>
+              </div>
+              
+              {/* Social Proof */}
+              <div className="mt-12 flex items-center gap-4 text-sm text-stone-500">
+                <div className="flex -space-x-2">
+                   {[1,2,3].map(i => (
+                     <div key={i} className="w-8 h-8 rounded-full bg-stone-200 border-2 border-white"></div>
+                   ))}
+                </div>
+                <p>Trusted by 1,000+ movie fans</p>
+              </div>
+            </div>
 
-            <p
-              className="mb-8"
-              style={{
-                fontSize: "clamp(18px, 4vw, 22px)",
-                opacity: 0.8,
-                lineHeight: "1.7",
-                color: "#333",
-                marginBottom: "32px",
-                maxWidth: "600px",
-              }}
-            >
-              We break down iconic celebrity outfits and movie looks piece by piece,
-              showing you the best budget-friendly and premium alternatives to recreate
-              your favorite styles.
-            </p>
-
-            <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
-              <Link
-                href="/collections/batman"
-                className="button"
-                style={{
-                  padding: "16px 32px",
-                  fontSize: "17px",
-                  fontWeight: "600",
-                }}
-                aria-label="Explore our celebrity outfit collections"
-              >
-                Explore Collections
-              </Link>
-              <Link
-                href="/blog/batman-outfit-guide"
-                className="button-outline"
-                style={{
-                  padding: "16px 32px",
-                  fontSize: "17px",
-                  fontWeight: "600",
-                }}
-                aria-label="View outfit guides"
-              >
-                View Guides
-              </Link>
+            {/* Hero Image */}
+            <div className="relative order-1 lg:order-2 bg-stone-100">
+              <div className="absolute inset-0 bg-stone-200/50">
+                <img 
+                  src={heroProduct.image} 
+                  alt={heroProduct.name}
+                  className="w-full h-full object-cover object-top mix-blend-multiply opacity-90"
+                />
+              </div>
+              {/* Floating Price Tag */}
+              <div className="absolute bottom-8 left-8 bg-white/90 backdrop-blur-sm p-4 rounded-xl shadow-lg border border-stone-100 animate-bounce" style={{ animationDuration: '3s' }}>
+                 <p className="text-xs text-stone-500 uppercase tracking-wider font-semibold">Starting at</p>
+                 <p className="text-2xl font-bold text-stone-900">{heroProduct.price}</p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 
-        Trust & Value Proposition Section
-        Builds credibility and explains what makes the site unique
-        - Uses h2 for section heading (SEO hierarchy: h1 > h2 > h3)
-        - Highlights key benefits with modern card design
-        - Responsive grid layout for features
-        - Left-aligned heading for modern feel
-      */}
-      <section
-        className="w-full px-4 sm:px-6 md:px-8 py-16 md:py-24"
-        style={{
-          maxWidth: "1200px",
-          margin: "0 auto",
-        }}
-      >
-        <div style={{ marginBottom: "60px" }}>
-          <h2
-            className="mb-4"
-            style={{
-              fontSize: "clamp(28px, 5vw, 42px)",
-              fontWeight: "700",
-              color: "#111",
-              marginBottom: "16px",
-              maxWidth: "600px",
-            }}
-          >
-            Trusted Celebrity Outfit Breakdowns
-          </h2>
-
-          <p
-            style={{
-              fontSize: "clamp(16px, 3vw, 19px)",
-              opacity: 0.7,
-              maxWidth: "700px",
-              lineHeight: "1.7",
-              color: "#333",
-            }}
-          >
-            We analyze iconic celebrity outfits and movie looks piece by piece,
-            comparing real-world options from budget alternatives to premium replicas.
-            Every item is carefully researched and verified.
+      {/* Editorial Intro - "The Edit" */}
+      <section className="py-20 px-6 bg-stone-50 border-y border-stone-200">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl font-serif text-stone-900 mb-6">The Celebrity Edit</h2>
+          <p className="text-lg text-stone-600 leading-relaxed">
+            We bridge the gap between the screen and your wardrobe. Our team of fashion enthusiasts 
+            tracks down the exact items from blockbuster movies and TV shows, offering you direct 
+            links to buy the look—whether you're looking for a high-end replica or a smart budget alternative.
           </p>
         </div>
+      </section>
 
-        {/* 
-          Feature Grid - Highlights key benefits with modern card design
-          - Responsive grid: 1 column on mobile, 2 on tablet, 3 on desktop
-          - Each feature card uses semantic HTML
-          - Modern card styling with hover effects
-        */}
-        <div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-          style={{
-            marginTop: "40px",
-          }}
-        >
-          <div
-            className="card"
-            style={{
-              padding: "32px 24px",
-              border: "1px solid rgba(0,0,0,0.08)",
-              background: "#fff",
-            }}
-          >
-            <div
-              style={{
-                width: "48px",
-                height: "48px",
-                borderRadius: "12px",
-                background: "linear-gradient(135deg, #111 0%, #333 100%)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: "20px",
-                fontSize: "24px",
-              }}
-            >
-              📋
+      {/* Trending Grid - Asymmetrical Layout */}
+      <section className="py-20 px-6 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex justify-between items-end mb-12">
+            <div>
+              <h2 className="text-3xl font-bold text-stone-900 mb-2">Trending Now</h2>
+              <p className="text-stone-500">The most sought-after looks this week.</p>
             </div>
-            <h3
-              style={{
-                fontSize: "22px",
-                fontWeight: "600",
-                color: "#111",
-                marginBottom: "12px",
-              }}
-            >
-              Detailed Breakdowns
-            </h3>
-            <p
-              style={{
-                fontSize: "16px",
-                opacity: 0.7,
-                lineHeight: "1.6",
-                color: "#333",
-              }}
-            >
-              Every outfit is analyzed piece by piece with detailed descriptions
-              and styling tips.
-            </p>
+            <Button variant="ghost" className="hidden sm:flex text-stone-600 hover:text-stone-900" asChild>
+              <Link href="/collections">View All <ArrowRight className="ml-2 w-4 h-4" /></Link>
+            </Button>
           </div>
 
-          <div
-            className="card"
-            style={{
-              padding: "32px 24px",
-              border: "1px solid rgba(0,0,0,0.08)",
-              background: "#fff",
-            }}
-          >
-            <div
-              style={{
-                width: "48px",
-                height: "48px",
-                borderRadius: "12px",
-                background: "linear-gradient(135deg, #111 0%, #333 100%)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: "20px",
-                fontSize: "24px",
-              }}
-            >
-              💰
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Large Featured Card */}
+            <div className="md:col-span-2 lg:row-span-2 group">
+              <Card className="h-full border-0 shadow-sm overflow-hidden relative bg-stone-100 rounded-2xl">
+                <div className="absolute inset-0">
+                  <img 
+                    src={trendingProducts[0]?.image || heroProduct.image} 
+                    alt="Featured" 
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                </div>
+                <CardContent className="absolute bottom-0 left-0 right-0 p-8 text-white">
+                  <Badge className="mb-3 bg-white text-black hover:bg-white/90 border-0">Editor's Choice</Badge>
+                  <h3 className="text-3xl font-bold mb-2">{trendingProducts[0]?.name || "Featured Look"}</h3>
+                  <p className="text-white/80 mb-6 line-clamp-2 max-w-md">
+                    {trendingProducts[0]?.description || "The iconic jacket that defined the movie."}
+                  </p>
+                  <Button size="lg" className="bg-white text-black hover:bg-stone-100 rounded-full shadow-lg" asChild>
+                    <Link href={`/products/${trendingProducts[0]?.slug || heroProduct.slug}`}>
+                      Shop Now
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
             </div>
-            <h3
-              style={{
-                fontSize: "22px",
-                fontWeight: "600",
-                color: "#111",
-                marginBottom: "12px",
-              }}
-            >
-              Budget & Premium Options
-            </h3>
-            <p
-              style={{
-                fontSize: "16px",
-                opacity: 0.7,
-                lineHeight: "1.6",
-                color: "#333",
-              }}
-            >
-              Find options for every budget, from affordable alternatives to
-              high-end replicas.
-            </p>
-          </div>
 
-          <div
-            className="card"
-            style={{
-              padding: "32px 24px",
-              border: "1px solid rgba(0,0,0,0.08)",
-              background: "#fff",
-            }}
-          >
-            <div
-              style={{
-                width: "48px",
-                height: "48px",
-                borderRadius: "12px",
-                background: "linear-gradient(135deg, #111 0%, #333 100%)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: "20px",
-                fontSize: "24px",
-              }}
-            >
-              ✓
-            </div>
-            <h3
-              style={{
-                fontSize: "22px",
-                fontWeight: "600",
-                color: "#111",
-                marginBottom: "12px",
-              }}
-            >
-              Verified Products
-            </h3>
-            <p
-              style={{
-                fontSize: "16px",
-                opacity: 0.7,
-                lineHeight: "1.6",
-                color: "#333",
-              }}
-            >
-              All products are carefully researched and verified for quality and
-              authenticity.
-            </p>
+            {/* Standard Cards */}
+            {trendingProducts.slice(1).map((product) => (
+              <Link key={product.slug} href={`/products/${product.slug}`} className="group">
+                <Card className="h-full border-stone-100 hover:shadow-xl transition-all duration-300 overflow-hidden rounded-2xl bg-white">
+                  <div className="relative aspect-[3/4] overflow-hidden bg-stone-50">
+                    <img 
+                      src={product.image} 
+                      alt={product.name} 
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold shadow-sm border border-stone-100">
+                      {product.price}
+                    </div>
+                  </div>
+                  <CardContent className="p-5">
+                    <h3 className="font-semibold text-stone-900 mb-1 group-hover:text-stone-600 transition-colors line-clamp-1">
+                      {product.name}
+                    </h3>
+                    <div className="flex items-center text-xs text-stone-500">
+                      <Star className="w-3 h-3 fill-amber-400 text-amber-400 mr-1" />
+                      <span>4.9</span>
+                      <span className="mx-2">•</span>
+                      <span className="capitalize">{product.collection}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* 
-        Featured Collections Section
-        Showcases main product categories with modern card design
-        - Uses h2 for section heading
-        - Responsive grid layout
-        - Each collection card is a clickable link (good for SEO)
-        - Cards use semantic article tags for better structure
-        - Modern card design with hover effects
-      */}
-      <section
-        className="w-full px-4 sm:px-6 md:px-8 py-16 md:py-24"
-        style={{
-          maxWidth: "1200px",
-          margin: "0 auto",
-          background: "linear-gradient(180deg, #fbfaf0 0%, #ffffff 100%)",
-          borderRadius: "24px",
-          padding: "60px 24px",
-        }}
-      >
-        <div style={{ marginBottom: "50px" }}>
-          <h2
-            style={{
-              fontSize: "clamp(28px, 5vw, 42px)",
-              fontWeight: "700",
-              color: "#111",
-              marginBottom: "16px",
-              maxWidth: "600px",
-            }}
-          >
-            Featured Celebrity Collections
-          </h2>
-          <p
-            style={{
-              fontSize: "clamp(16px, 3vw, 19px)",
-              opacity: 0.7,
-              maxWidth: "600px",
-              lineHeight: "1.7",
-              color: "#333",
-            }}
-          >
-            Explore our curated collections of iconic celebrity and movie-inspired outfits.
+      {/* Collections Row - Dark Contrast */}
+      <section className="py-20 px-6 bg-stone-900 text-white">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-3xl font-bold mb-10 text-center tracking-tight">Shop By Character</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {['batman', 'spiderman', 'joker'].map((col) => (
+              <Link 
+                key={col} 
+                href={`/collections/${col}`}
+                className="group relative aspect-[4/3] overflow-hidden rounded-2xl border border-stone-800"
+              >
+                <div className="absolute inset-0 bg-stone-800">
+                   {/* Gradient placeholder for collection image */}
+                   <div className="w-full h-full bg-gradient-to-br from-stone-700 to-stone-900 group-hover:scale-105 transition-transform duration-500"></div>
+                </div>
+                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
+                <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
+                  <h3 className="text-2xl font-bold mb-2 capitalize tracking-wide">{col}</h3>
+                  <p className="text-stone-300 text-sm mb-4 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                    Explore Collection
+                  </p>
+                  <div className="w-10 h-10 rounded-full bg-white text-stone-900 flex items-center justify-center opacity-0 group-hover:opacity-100 transform scale-0 group-hover:scale-100 transition-all duration-300 delay-75">
+                    <ArrowRight className="w-5 h-5" />
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter / CTA */}
+      <section className="py-24 px-6 bg-stone-50">
+        <div className="max-w-2xl mx-auto text-center">
+          <div className="w-16 h-16 bg-stone-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <ShoppingBag className="w-8 h-8 text-stone-600" />
+          </div>
+          <h2 className="text-3xl font-bold text-stone-900 mb-4">Join the Inner Circle</h2>
+          <p className="text-stone-600 mb-8">
+            Get notified when we find new movie outfits. No spam, just style.
           </p>
+          <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onSubmit={(e) => e.preventDefault()}>
+            <input 
+              type="email" 
+              placeholder="Enter your email" 
+              className="flex-1 px-4 py-3 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-stone-900 bg-white text-stone-900 placeholder:text-stone-400"
+            />
+            <Button className="bg-stone-900 hover:bg-stone-800 rounded-xl h-12 px-6">
+              Subscribe
+            </Button>
+          </form>
         </div>
-
-        {/* 
-          Collections Grid
-          - Responsive: 1 column on mobile (<640px)
-          - 2 columns on tablet (640px-1024px)
-          - 3 columns on desktop (>1024px)
-          - Gap spacing adjusts for different screen sizes
-          - Modern card design with better visual hierarchy
-        */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Batman Collection Card */}
-          <Link
-            href="/collections/batman"
-            className="card block"
-            style={{
-              textDecoration: "none",
-              color: "inherit",
-              background: "#fff",
-              border: "1px solid rgba(0,0,0,0.08)",
-              padding: "0",
-              overflow: "hidden",
-            }}
-            aria-label="View Batman outfit collection"
-          >
-            <div
-              style={{
-                height: "200px",
-                background: "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "64px",
-              }}
-            >
-              🦇
-            </div>
-            <article style={{ padding: "24px" }}>
-              <h3
-                style={{
-                  fontSize: "24px",
-                  fontWeight: "600",
-                  color: "#111",
-                  marginBottom: "12px",
-                }}
-              >
-                Batman Outfits
-              </h3>
-              <p
-                style={{
-                  fontSize: "16px",
-                  opacity: 0.7,
-                  lineHeight: "1.6",
-                  marginBottom: "16px",
-                  color: "#333",
-                }}
-              >
-                Jackets, gloves, boots, and utility belts inspired by the Dark
-                Knight. Recreate iconic looks from all Batman movies.
-              </p>
-              <span
-                style={{
-                  fontSize: "15px",
-                  fontWeight: "600",
-                  color: "#111",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "6px",
-                }}
-              >
-                Shop Now →
-              </span>
-            </article>
-          </Link>
-
-          {/* Spider-Man Collection Card */}
-          <Link
-            href="/collections/spiderman"
-            className="card block"
-            style={{
-              textDecoration: "none",
-              color: "inherit",
-              background: "#fff",
-              border: "1px solid rgba(0,0,0,0.08)",
-              padding: "0",
-              overflow: "hidden",
-            }}
-            aria-label="View Spider-Man outfit collection"
-          >
-            <div
-              style={{
-                height: "200px",
-                background: "linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "64px",
-              }}
-            >
-              🕷️
-            </div>
-            <article style={{ padding: "24px" }}>
-              <h3
-                style={{
-                  fontSize: "24px",
-                  fontWeight: "600",
-                  color: "#111",
-                  marginBottom: "12px",
-                }}
-              >
-                Spider-Man Outfits
-              </h3>
-              <p
-                style={{
-                  fontSize: "16px",
-                  opacity: 0.7,
-                  lineHeight: "1.6",
-                  marginBottom: "16px",
-                  color: "#333",
-                }}
-              >
-                Hoodies, masks, shoes, and accessories inspired by Spider-Man
-                movies. Perfect for cosplay or casual wear.
-              </p>
-              <span
-                style={{
-                  fontSize: "15px",
-                  fontWeight: "600",
-                  color: "#111",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "6px",
-                }}
-              >
-                Shop Now →
-              </span>
-            </article>
-          </Link>
-
-          {/* More Collections Coming Soon Card */}
-          <div
-            className="card"
-            style={{
-              background: "#fff",
-              border: "2px dashed rgba(0,0,0,0.15)",
-              padding: "24px",
-              opacity: 0.9,
-            }}
-          >
-            <div
-              style={{
-                height: "200px",
-                background: "linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%)",
-                borderRadius: "12px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "48px",
-                marginBottom: "24px",
-              }}
-            >
-              ✨
-            </div>
-            <article>
-              <h3
-                style={{
-                  fontSize: "24px",
-                  fontWeight: "600",
-                  color: "#111",
-                  marginBottom: "12px",
-                }}
-              >
-                More Collections Coming Soon
-              </h3>
-              <p
-                style={{
-                  fontSize: "16px",
-                  opacity: 0.7,
-                  lineHeight: "1.6",
-                  color: "#333",
-                }}
-              >
-                We're constantly adding new celebrity and movie-inspired
-                collections. Check back soon for more iconic looks!
-              </p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      {/* 
-        Call-to-Action Section
-        Final push to convert visitors into customers
-        - Modern gradient background
-        - Clear, action-oriented heading
-        - Reinforces value proposition
-        - Prominent CTA button
-        - Optimized for conversion
-      */}
-      <section
-        className="w-full px-4 sm:px-6 md:px-8 py-20 md:py-28"
-        style={{
-          maxWidth: "1200px",
-          margin: "0 auto",
-          background: "linear-gradient(135deg, #111 0%, #2d2d2d 100%)",
-          borderRadius: "24px",
-          textAlign: "center",
-          color: "#fff",
-        }}
-      >
-        <h2
-          style={{
-            fontSize: "clamp(28px, 5vw, 42px)",
-            fontWeight: "700",
-            color: "#fff",
-            marginBottom: "20px",
-          }}
-        >
-          Start Building Your Iconic Look Today
-        </h2>
-
-        <p
-          style={{
-            fontSize: "clamp(16px, 3vw, 20px)",
-            opacity: 0.9,
-            lineHeight: "1.7",
-            maxWidth: "600px",
-            margin: "0 auto 32px",
-            color: "#fff",
-          }}
-        >
-          Browse our collections and discover the best budget and premium
-          alternatives to your favorite celebrity and movie outfits. Free
-          shipping on orders over $50.
-        </p>
-
-        <Link
-          href="/collections/batman"
-          className="button button-white"
-          style={{
-            padding: "16px 40px",
-            fontSize: "17px",
-            fontWeight: "600",
-            display: "inline-block",
-            maxWidth: "300px",
-            width: "100%",
-          }}
-          aria-label="View all celebrity outfit collections"
-        >
-          View All Collections
-        </Link>
       </section>
     </main>
   );
-}
+};
