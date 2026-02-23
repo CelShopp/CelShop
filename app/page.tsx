@@ -1,7 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation"; // or 'next/router' if older version
 import HeroSection from "./components/herosection";
-import CollectionsGrid from "./components/collectionsgrid";
 import LookbookSection from "./components/lookbooksection";
 import CtaSection from "./components/ctasection";
 

@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { products } from "../../../lib/products";
+import { prisma } from "../../../lib/prisma";
 import { Button } from "../../components/button";
 import {
   Card,
@@ -31,7 +31,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function CollectionPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const filtered = products.filter((product) => product.collection === slug);
+  const filtered = await prisma.product.findMany({
+    where: {
+      collection: slug,
+    },
+  });
   const collectionName = slug
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))

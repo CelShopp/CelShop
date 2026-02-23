@@ -1,14 +1,16 @@
 import Link from "next/link";
-import { products } from "../../../lib/products";
+import { prisma } from "../../../lib/prisma";
 import { Metadata } from "next";
 import { ArrowLeft, ArrowRight, Star, ShoppingCart, Check, Award } from "lucide-react";
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }): Promise<Metadata> {
-  const { slug } = await params;
-  const product = products.find((p) => p.slug === slug);
+  const { slug } = params;
+  const product = await prisma.product.findUnique({
+    where: { slug },
+  });
 
   if (!product) {
     return {
@@ -28,10 +30,12 @@ export async function generateMetadata({
 export default async function ProductPage({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
 }) {
-  const { slug } = await params;
-  const product = products.find((p) => p.slug === slug);
+  const { slug } = params;
+  const product = await prisma.product.findUnique({
+    where: { slug },
+  });
 
   if (!product) return <div>Not found</div>;
 
@@ -64,7 +68,7 @@ export default async function ProductPage({
             offers: {
               "@type": "Offer",
               priceCurrency: "INR",
-              price: product.price.replace("₹", "").trim(),
+              price: product.price.toLocaleString(),
               availability: "https://schema.org/InStock",
               url: product.buyLink,
             },
@@ -117,7 +121,7 @@ export default async function ProductPage({
                   {product.price}
                 </span>
                 <span className="text-lg text-stone-400 line-through">
-                  ₹{parseInt(product.price.replace("₹", "").replace(",", "")) * 1.3}
+                  ₹{Math.round(product.price * 1.3)}
                 </span>
                 <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-semibold">
                   Save 30%
@@ -170,64 +174,6 @@ export default async function ProductPage({
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Alternatives Section */}
-      <section className="py-16 bg-stone-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-stone-900 mb-4">
-              Budget & Premium Alternatives
-            </h2>
-            <p className="text-lg text-stone-600 max-w-2xl mx-auto">
-              Compare options and find the perfect fit for your budget
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {product.alternatives.map((alt, i) => (
-              <div
-                key={i}
-                className={`relative bg-white rounded-3xl p-8 shadow-lg shadow-stone-200/50 hover:shadow-xl hover:shadow-stone-200 transition-all duration-300 hover:-translate-y-1 ${
-                  i === 0 ? "ring-2 ring-emerald-500 ring-offset-4" : ""
-                }`}
-              >
-                {/* Badge */}
-                <div
-                  className={`absolute -top-3 left-8 px-4 py-1 rounded-full text-sm font-semibold ${
-                    i === 0
-                      ? "bg-emerald-500 text-white"
-                      : "bg-amber-500 text-white"
-                  }`}
-                >
-                  {i === 0 ? "⚡ Best Budget Pick" : "✨ Premium Choice"}
-                </div>
-
-                <div className="pt-4">
-                  <h3 className="text-xl font-bold text-stone-900 mb-2">
-                    {alt.name}
-                  </h3>
-                  <p className="text-3xl font-bold text-stone-900 mb-6">
-                    {alt.price}
-                  </p>
-                  <a
-                    href={alt.link}
-                    target="_blank"
-                    rel="nofollow sponsored"
-                    className={`inline-flex items-center justify-center w-full px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                      i === 0
-                        ? "bg-emerald-500 text-white hover:bg-emerald-600"
-                        : "bg-amber-500 text-white hover:bg-amber-600"
-                    }`}
-                  >
-                    {i === 0 ? "View Budget Option" : "View Premium Option"}
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </a>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
