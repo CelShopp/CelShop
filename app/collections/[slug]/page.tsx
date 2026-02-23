@@ -12,6 +12,7 @@ import {
 } from "../../components/card";
 import { Badge } from "../../components/badge";
 import { ArrowRight } from "lucide-react";
+import { products } from "@/prisma/products";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -85,7 +86,7 @@ export default async function CollectionPage({ params }: { params: Promise<{ slu
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {filtered.map((product) => (
+              {products.map((product: any) => (
                 <Link key={product.slug} href={`/products/${product.slug}`} className="group block rounded-lg overflow-hidden border border-gray-200 hover:shadow-xl hover:scale-105 transition duration-300">
                   {/* Image */}
                   <div className="relative aspect-[4/5] bg-gray-100 overflow-hidden">
