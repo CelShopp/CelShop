@@ -17,7 +17,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${product.name} | CelebStore`,
+    title: `${product.name} | FilmyFits`,
     description: `Buy ${product.name} online at best price. Find budget and premium alternatives.`,
     alternates: {
       canonical: `https://cel-shop-alpha.vercel.app/products/${slug}`,

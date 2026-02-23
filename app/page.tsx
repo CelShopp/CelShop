@@ -1,25 +1,23 @@
 "use client";
-import { useRef } from "react";
+import { useRouter } from "next/navigation"; // or 'next/router' if older version
 import HeroSection from "./components/herosection";
 import CollectionsGrid from "./components/collectionsgrid";
 import LookbookSection from "./components/lookbooksection";
 import CtaSection from "./components/ctasection";
 
 function App() {
-  const collectionsRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
-  const scrollToCollections = () => {
-    collectionsRef.current?.scrollIntoView({ behavior: "smooth" });
+  const goToCollectionsPage = () => {
+    router.push('/collections'); // replace with your actual collections page route
   };
 
   return (
     <div className="min-h-screen bg-white">
-      <HeroSection onExploreClick={scrollToCollections} />
-      <div ref={collectionsRef}>
-        <CollectionsGrid />
-      </div>
+      <HeroSection onExploreClick={goToCollectionsPage} />
+      {/* other sections */}
       <LookbookSection />
-      <CtaSection onExploreClick={scrollToCollections} />
+      <CtaSection onExploreClick={goToCollectionsPage} />
       <footer className="bg-gray-900 text-gray-400 text-center py-6 text-sm">
         <p>© 2025 Screen Accurate Style. All rights reserved.</p>
       </footer>

@@ -62,7 +62,7 @@ export default function Header() {
         >
           {/* Logo */}
           <Link href="/" className="logo-text">
-            CelebStore
+            FilmyFits
           </Link>
 
           {/* Desktop Menu */}
