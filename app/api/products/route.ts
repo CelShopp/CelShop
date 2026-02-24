@@ -50,3 +50,26 @@ export async function GET() {
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }
+export async function DELETE(req: Request) {
+    if (process.env.NODE_ENV !== "development" && process.env.ALLOW_PRODUCTION_ADMIN !== "true") {
+        return NextResponse.json({ error: "Access Denied" }, { status: 403 });
+    }
+
+    try {
+        const { searchParams } = new URL(req.url);
+        const id = searchParams.get('id');
+
+        if (!id) {
+            return NextResponse.json({ error: "Product ID is required" }, { status: 400 });
+        }
+
+        await prisma.product.delete({
+            where: { id }
+        });
+
+        return NextResponse.json({ message: "Product deleted successfully" });
+    } catch (error: any) {
+        console.error("Delete Error:", error);
+        return NextResponse.json({ error: "Failed to delete product" }, { status: 500 });
+    }
+}

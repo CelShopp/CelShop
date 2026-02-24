@@ -30,17 +30,10 @@ export default function LookbookSection() {
             <div className="max-w-7xl mx-auto">
                 <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-6">
                     <div className="text-center md:text-left">
-                        <div className="flex items-center justify-center md:justify-start gap-2 text-stone-500 font-bold uppercase tracking-widest text-xs mb-3">
-                            <Camera size={14} />
-                            Style Inspiration
-                        </div>
                         <h2 className="text-4xl md:text-6xl font-black text-stone-900 tracking-tight leading-none">
                             Celebrity <br className="hidden md:block" /><span className="text-orange-600">Lookbook</span>
                         </h2>
                     </div>
-                    <p className="text-stone-500 text-lg max-w-md text-center md:text-right leading-relaxed font-medium">
-                        Analyze the exact style of cinema's most iconic characters. From formal suits to tactical gear.
-                    </p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

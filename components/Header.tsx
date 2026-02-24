@@ -89,22 +89,22 @@ export default function Header() {
                         FilmyFits
                     </Link>
 
-                    <ul className="desktop-nav">
+                    <ul className="hidden md:flex gap-8 list-none m-0 p-0">
                         <li><Link href="/collections" className="nav-link">Collections</Link></li>
-                        <li><Link href="/collections/batman" className="nav-link">Batman</Link></li>
-                        <li><Link href="/collections/spiderman" className="nav-link">Spider-Man</Link></li>
+                        <li><Link href="/collections" className="nav-link">Props</Link></li>
+                        <li><Link href="/collections" className="nav-link">Props</Link></li>
                     </ul>
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 md:gap-4">
                         <button
                             onClick={() => setRequestOpen(true)}
-                            className="hidden md:flex items-center gap-2 px-4 py-2 bg-stone-900 text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-stone-800 transition-all active:scale-95"
+                            className="hidden lg:flex items-center gap-2 px-4 py-2 bg-stone-900 text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-stone-800 transition-all active:scale-95"
                         >
                             <PlusCircle size={14} />
                             Request Item
                         </button>
 
-                        <div className="flex gap-2">
+                        <div className="flex gap-1 md:gap-2">
                             <button
                                 onClick={() => {
                                     setSearchOpen(!searchOpen);
@@ -120,7 +120,7 @@ export default function Header() {
                                     setOpen(!open);
                                     setSearchOpen(false);
                                 }}
-                                className="mobile-menu-btn header-icon-btn"
+                                className="md:hidden header-icon-btn"
                                 aria-label="Menu"
                             >
                                 {open ? <X size={20} /> : <Menu size={20} />}
@@ -238,18 +238,32 @@ export default function Header() {
 
             {/* Mobile Menu Panel */}
             {open && (
-                <div className="floating-panel !w-[calc(100%-40px)] left-5">
-                    <div className="grid gap-2 p-2">
-                        <Link href="/collections" onClick={() => setOpen(false)} className="px-4 py-4 hover:bg-stone-50 rounded-xl font-bold text-stone-900 border-b border-stone-50">All Collections</Link>
-                        <Link href="/collections/batman" onClick={() => setOpen(false)} className="px-4 py-4 hover:bg-stone-50 rounded-xl font-bold text-stone-900 border-b border-stone-50">Batman Lookbook</Link>
-                        <Link href="/collections/spiderman" onClick={() => setOpen(false)} className="px-4 py-4 hover:bg-stone-50 rounded-xl font-bold text-stone-900 border-b border-stone-50">Spider-Man Gear</Link>
+                <div
+                    className="fixed left-5 right-5 z-[1000] bg-white rounded-[2rem] p-4 shadow-2xl border border-stone-100 animate-in fade-in slide-in-from-top-4 duration-300"
+                    style={{ top: scrolled ? "75px" : "85px" }}
+                >
+                    <div className="flex flex-col gap-1">
+                        <Link href="/collections" onClick={() => setOpen(false)} className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 rounded-2xl font-bold text-stone-900 transition-colors">
+                            <span className="w-1.5 h-1.5 bg-orange-500 rounded-full" />
+                            All Collections
+                        </Link>
+                        <Link href="/collectionsn" onClick={() => setOpen(false)} className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 rounded-2xl font-bold text-stone-900 transition-colors">
+                            <span className="w-1.5 h-1.5 bg-stone-300 rounded-full" />
+                            Prop
+                        </Link>
+                        <Link href="/collections" onClick={() => setOpen(false)} className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 rounded-2xl font-bold text-stone-900 transition-colors">
+                            <span className="w-1.5 h-1.5 bg-stone-300 rounded-full" />
+                            Prop
+                        </Link>
+                        <div className="h-px bg-stone-100 my-2 mx-6" />
                         <button
                             onClick={() => {
                                 setRequestOpen(true);
                                 setOpen(false);
                             }}
-                            className="mt-4 px-4 py-4 bg-stone-900 text-white rounded-xl font-bold text-center active:scale-95 transition-transform"
+                            className="flex items-center justify-center gap-2 px-6 py-4 bg-stone-900 text-white rounded-2xl font-bold active:scale-95 transition-all"
                         >
+                            <PlusCircle size={18} />
                             Request an Item
                         </button>
                     </div>

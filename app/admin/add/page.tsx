@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Plus, Package, Database, Trash2, ArrowRight, Sparkles } from 'lucide-react';
 import Header from '@/components/Header';
+import Link from 'next/link';
 
 export default function AddProductPage() {
     const [formData, setFormData] = useState({
@@ -12,13 +13,25 @@ export default function AddProductPage() {
         price: '',
         image: '',
         buyLink: '',
-        collection: '',
+        collection: 'batman',
         actorName: '',
         movie: '',
     });
 
+    const [file, setFile] = useState<File | null>(null);
+    const [preview, setPreview] = useState<string | null>(null);
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [message, setMessage] = useState('');
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const selectedFile = e.target.files[0];
+            setFile(selectedFile);
+            setPreview(URL.createObjectURL(selectedFile));
+            // Clear URL input if file is selected
+            setFormData(prev => ({ ...prev, image: '' }));
+        }
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -37,11 +50,36 @@ export default function AddProductPage() {
         setStatus('loading');
 
         try {
+            let imageUrl = formData.image;
+
+            // Handle file upload if present
+            if (file) {
+                const uploadData = new FormData();
+                uploadData.append('file', file);
+                const uploadRes = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: uploadData,
+                });
+
+                if (uploadRes.ok) {
+                    const data = await uploadRes.json();
+                    imageUrl = data.url;
+                } else {
+                    const err = await uploadRes.json();
+                    throw new Error(err.error || 'Image upload failed');
+                }
+            }
+
+            if (!imageUrl) {
+                throw new Error('Please provide an image URL or upload a file');
+            }
+
             const res = await fetch('/api/products', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     ...formData,
+                    image: imageUrl,
                     price: parseInt(formData.price)
                 }),
             });
@@ -60,6 +98,8 @@ export default function AddProductPage() {
                     actorName: '',
                     movie: '',
                 });
+                setFile(null);
+                setPreview(null);
             } else {
                 const err = await res.json();
                 setStatus('error');
@@ -87,14 +127,23 @@ export default function AddProductPage() {
     return (
         <div className="min-h-screen bg-stone-50 pt-32 pb-24">
             <main className="max-w-4xl mx-auto px-6">
-                <header className="mb-12">
-                    <div className="flex items-center gap-2 text-orange-600 font-bold uppercase tracking-[0.3em] text-[10px] mb-4">
-                        <Database size={14} />
-                        Internal Archive Tool
+                <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div>
+                        <div className="flex items-center gap-2 text-orange-600 font-bold uppercase tracking-[0.3em] text-[10px] mb-4">
+                            <Database size={14} />
+                            Internal Archive Tool
+                        </div>
+                        <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-stone-900">
+                            Archive <span className="text-stone-300">New Item</span>
+                        </h1>
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-stone-900">
-                        Archive <span className="text-stone-300">New Item</span>
-                    </h1>
+                    <Link
+                        href="/admin/manage"
+                        className="px-8 py-4 bg-white border border-stone-100 text-stone-900 font-black rounded-2xl hover:bg-stone-50 transition-all shadow-sm flex items-center gap-2"
+                    >
+                        <Database size={20} />
+                        Manage Archives
+                    </Link>
                 </header>
 
                 <div className="bg-white rounded-[3rem] shadow-2xl overflow-hidden border border-stone-100">
@@ -222,16 +271,52 @@ export default function AddProductPage() {
                             </div>
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-1">Image URL</label>
-                            <input
-                                required
-                                name="image"
-                                value={formData.image}
-                                onChange={handleChange}
-                                placeholder="https://images.unsplash.com/..."
-                                className="w-full px-6 py-4 bg-stone-50 border border-stone-100 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all font-medium"
-                            />
+                        <div className="space-y-4">
+                            <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-1">Product Media</label>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div className="space-y-4">
+                                    <div
+                                        onClick={() => document.getElementById('file-upload')?.click()}
+                                        className="w-full aspect-video bg-stone-50 border-2 border-dashed border-stone-200 rounded-[2rem] flex flex-col items-center justify-center gap-4 cursor-pointer hover:bg-stone-100 hover:border-orange-500/20 transition-all overflow-hidden"
+                                    >
+                                        {preview ? (
+                                            <img src={preview} alt="Preview" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <>
+                                                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm">
+                                                    <Plus className="text-stone-300" size={24} />
+                                                </div>
+                                                <div className="text-center">
+                                                    <div className="text-[10px] font-black text-stone-900 uppercase tracking-widest">Upload Photo</div>
+                                                    <div className="text-[8px] text-stone-400 font-bold uppercase tracking-widest">JPG, PNG, WEBP</div>
+                                                </div>
+                                            </>
+                                        )}
+                                    </div>
+                                    <input
+                                        id="file-upload"
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleFileChange}
+                                        className="hidden"
+                                    />
+                                </div>
+
+                                <div className="space-y-4 flex flex-col justify-center">
+                                    <div className="text-center text-[10px] font-black text-stone-300 uppercase tracking-widest">— OR —</div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-1">Direct Image URL</label>
+                                        <input
+                                            name="image"
+                                            value={formData.image}
+                                            onChange={handleChange}
+                                            placeholder="https://images.unsplash.com/..."
+                                            className="w-full px-6 py-4 bg-stone-50 border border-stone-100 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all font-medium"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <button
