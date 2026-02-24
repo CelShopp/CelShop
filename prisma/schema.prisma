@@ -15,5 +15,14 @@ model Product {
   image       String
   buyLink     String
   collection  String
+  actorName   String?  // New field
+  movie       String?  // New field
   createdAt   DateTime @default(now())
+}
+
+model Request {
+  id        String   @id @default(cuid())
+  content   String
+  email     String?
+  createdAt DateTime @default(now())
 }
