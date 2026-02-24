@@ -1,14 +1,15 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { Metadata } from "next";
-import { ArrowLeft, ArrowRight, Star, ShoppingCart, Check, Award } from "lucide-react";
+import { ArrowLeft, ShoppingCart, Check, Award, BadgeCheck, Film, User } from "lucide-react";
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const product = await prisma.product.findUnique({
+  const product: any = await prisma.product.findUnique({
     where: { slug },
   });
 
@@ -20,42 +21,37 @@ export async function generateMetadata({
 
   return {
     title: `${product.name} | FilmyFits`,
-    description: `Buy ${product.name} online at best price. Find budget and premium alternatives.`,
+    description: `Iconic ${product.movie || 'film'} style worn by ${product.actorName || 'your favorite stars'}. Get the screen-accurate look of ${product.name}.`,
     alternates: {
       canonical: `https://filmyfits.vercel.app/products/${slug}`,
     },
   };
 }
 
+
 export default async function ProductPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const { slug } = params;
-  const product = await prisma.product.findUnique({
+  const { slug } = await params;
+  const product: any = await prisma.product.findUnique({
     where: { slug },
   });
 
-  if (!product) return <div>Not found</div>;
+  if (!product) return (
+    <div className="min-h-screen flex items-center justify-center bg-stone-50">
+      <div className="text-center">
+        <h1 className="text-2xl font-black text-stone-900 mb-4">Product Not Found</h1>
+        <Link href="/collections" className="text-orange-600 font-bold hover:underline">Back to Collections</Link>
+      </div>
+    </div>
+  );
+
+  const discountedPrice = Math.round(product.price * 1.3);
 
   return (
-    <main className="min-h-screen bg-stone-50 pt-16">
-      {/* Header Breadcrumb */}
-      <div className="bg-white border-b border-stone-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="py-4">
-            <Link
-              href={`/collections/${product.collection}`}
-              className="inline-flex items-center text-sm text-stone-500 hover:text-stone-900 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to {product.collection}
-            </Link>
-          </div>
-        </div>
-      </div>
-
+    <main className="min-h-screen bg-stone-50 pt-24 pb-32">
       {/* JSON-LD Structured Data */}
       <script
         type="application/ld+json"
@@ -65,10 +61,15 @@ export default async function ProductPage({
             "@type": "Product",
             name: product.name,
             image: product.image,
+            description: product.description,
+            brand: {
+              "@type": "Brand",
+              name: "FilmyFits"
+            },
             offers: {
               "@type": "Offer",
               priceCurrency: "INR",
-              price: product.price.toLocaleString(),
+              price: product.price,
               availability: "https://schema.org/InStock",
               url: product.buyLink,
             },
@@ -76,129 +77,154 @@ export default async function ProductPage({
         }}
       />
 
-      {/* Product Hero Section */}
-      <section className="bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-            {/* Product Image */}
-            <div className="relative">
-              <div className="aspect-square bg-stone-100 rounded-3xl overflow-hidden shadow-xl shadow-stone-200/50">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-                />
-              </div>
-              {/* Trust Badge */}
-              <div className="absolute -bottom-4 -right-4 bg-emerald-500 text-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2">
-                <Award className="w-4 h-4" />
-                <span className="text-sm font-semibold">Verified Quality</span>
-              </div>
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Breadcrumb */}
+        <div className="mb-12">
+          <Link
+            href={`/collections/${product.collection}`}
+            className="group inline-flex items-center text-xs font-bold uppercase tracking-widest text-stone-400 hover:text-stone-900 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+            Archive / {product.collection}
+          </Link>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start pb-24 border-b border-stone-200">
+          {/* Visual Side */}
+          <div className="relative sticky top-32">
+            <div className="aspect-[4/5] rounded-[3rem] overflow-hidden bg-stone-200 shadow-2xl">
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-full object-cover"
+              />
             </div>
 
-            {/* Product Info */}
-            <div className="space-y-8 pt-4">
-              {/* Title & Rating */}
-              <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="flex items-center bg-amber-50 text-amber-600 px-3 py-1 rounded-full">
-                    <Star className="w-4 h-4 fill-current" />
-                    <span className="text-sm font-semibold ml-1">4.9</span>
-                  </div>
-                  <span className="text-sm text-stone-500">1,200+ verified purchases</span>
+            {/* Context Badge */}
+            {(product.movie || product.actorName) && (
+              <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-[2rem] shadow-2xl border border-stone-100 max-w-[280px] animate-in slide-in-from-bottom-4 duration-700">
+                <div className="flex items-center gap-2 text-orange-600 font-black text-[10px] uppercase tracking-widest mb-3">
+                  <Film size={12} />
+                  As Seen In
                 </div>
-                <h1 className="text-4xl sm:text-5xl font-bold text-stone-900 leading-tight">
-                  {product.name}
-                </h1>
-                <p className="text-lg text-stone-600 mt-4 leading-relaxed">
-                  {product.description}
-                </p>
-              </div>
-
-              {/* Price */}
-              <div className="flex items-baseline gap-4">
-                <span className="text-5xl font-bold text-stone-900">
-                  {product.price}
-                </span>
-                <span className="text-lg text-stone-400 line-through">
-                  ₹{Math.round(product.price * 1.3)}
-                </span>
-                <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-semibold">
-                  Save 30%
-                </span>
-              </div>
-
-              {/* Features */}
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  "Movie-accurate design",
-                  "Premium fabric quality",
-                  "Free shipping",
-                  "Easy returns",
-                ].map((feature, i) => (
-                  <div key={i} className="flex items-center gap-3 text-stone-700">
-                    <div className="w-6 h-6 bg-emerald-100 rounded-full flex items-center justify-center">
-                      <Check className="w-4 h-4 text-emerald-600" />
+                <div className="space-y-3">
+                  {product.movie && (
+                    <div className="flex gap-3">
+                      <div className="p-2 bg-stone-50 rounded-lg h-fit"><Film size={16} className="text-stone-400" /></div>
+                      <div>
+                        <div className="text-[10px] text-stone-400 font-bold uppercase">Movie</div>
+                        <div className="text-sm font-black text-stone-900">{product.movie}</div>
+                      </div>
                     </div>
-                    <span className="text-sm">{feature}</span>
+                  )}
+                  {product.actorName && (
+                    <div className="flex gap-3">
+                      <div className="p-2 bg-stone-50 rounded-lg h-fit"><User size={16} className="text-stone-400" /></div>
+                      <div>
+                        <div className="text-[10px] text-stone-400 font-bold uppercase">Worn By</div>
+                        <div className="text-sm font-black text-stone-900">{product.actorName}</div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            <div className="absolute -top-6 -right-6 bg-stone-900 text-white p-6 rounded-[2rem] shadow-2xl">
+              <BadgeCheck size={32} className="text-orange-500" />
+            </div>
+          </div>
+
+          {/* Details Side */}
+          <div className="space-y-12">
+            <div>
+              <div className="flex items-center gap-3 mb-6">
+                <span className="px-3 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-widest rounded-full">In Stock</span>
+                <span className="text-stone-400 text-xs font-bold uppercase tracking-widest">Free Pan-India Delivery</span>
+              </div>
+
+              <h1 className="text-5xl md:text-7xl font-black text-stone-900 tracking-tighter leading-[0.9] mb-6">
+                {product.name}
+              </h1>
+
+              <p className="text-xl text-stone-500 font-medium leading-relaxed">
+                {product.description}
+              </p>
+            </div>
+
+            {/* Pricing Section */}
+            <div className="p-8 bg-white rounded-[2.5rem] shadow-xl border border-stone-100">
+              <div className="flex items-end gap-4 mb-8">
+                <div>
+                  <div className="text-[10px] text-stone-400 font-bold uppercase tracking-widest mb-1">Current Price</div>
+                  <div className="text-5xl font-black text-stone-900">₹{product.price.toLocaleString()}</div>
+                </div>
+                <div className="mb-1">
+                  <span className="text-lg text-stone-300 line-through font-bold">₹{discountedPrice.toLocaleString()}</span>
+                  <div className="text-orange-600 font-black text-xs uppercase tracking-widest mt-1">Limited Time Offer</div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 mb-8">
+                {[
+                  "Screen Accurate",
+                  "Premium Materials",
+                  "Collector's Item",
+                  "Express Shipping",
+                ].map((f, i) => (
+                  <div key={i} className="flex items-center gap-2 text-stone-600 text-sm font-bold">
+                    <div className="w-5 h-5 bg-emerald-50 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Check className="w-3 h-3 text-emerald-600" />
+                    </div>
+                    {f}
                   </div>
                 ))}
               </div>
 
-              {/* CTA Button */}
               <a
                 href={product.buyLink}
                 target="_blank"
                 rel="nofollow sponsored"
-                className="inline-flex items-center justify-center w-full sm:w-auto px-8 py-4 bg-stone-900 text-white font-semibold rounded-2xl hover:bg-stone-800 transition-all duration-300 hover:shadow-xl hover:shadow-stone-200 hover:-translate-y-1"
+                className="group flex items-center justify-center gap-4 w-full py-6 bg-stone-900 text-white font-black text-lg rounded-2xl hover:bg-orange-600 transition-all shadow-xl hover:shadow-orange-600/20 active:scale-[0.98]"
               >
-                <ShoppingCart className="w-5 h-5 mr-3" />
+                <ShoppingCart size={22} className="group-hover:rotate-12 transition-transform" />
                 Check Price on Amazon
               </a>
+            </div>
 
-              {/* Trust Indicators */}
-              <div className="flex items-center gap-6 pt-4 border-t border-stone-100">
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-stone-900">1000+</p>
-                  <p className="text-sm text-stone-500">Happy Fans</p>
-                </div>
-                <div className="w-px h-12 bg-stone-200" />
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-stone-900">4.9★</p>
-                  <p className="text-sm text-stone-500">Avg Rating</p>
-                </div>
-                <div className="w-px h-12 bg-stone-200" />
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-stone-900">24hr</p>
-                  <p className="text-sm text-stone-500">Dispatch</p>
-                </div>
+            {/* Quality Commitment */}
+            <div className="flex gap-8 items-start p-2">
+              <div className="flex-1">
+                <div className="font-black text-stone-900 mb-2 uppercase tracking-tight">Authentic Detail</div>
+                <p className="text-stone-500 text-sm leading-relaxed">We source products that capture the soul of the character. Each piece in the FilmyFits archive is selected for its proximity to screen accuracy.</p>
+              </div>
+              <div className="flex-1">
+                <div className="font-black text-stone-900 mb-2 uppercase tracking-tight">Hand-Picked</div>
+                <p className="text-stone-500 text-sm leading-relaxed">Our fashion experts scan thousands of items to find only those with the correct drape, material, and iconic silhouette.</p>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
       {/* Sticky Bottom CTA */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg border-t border-stone-200 p-4 z-50">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-          <div className="hidden sm:block">
-            <p className="text-sm text-stone-500">{product.name}</p>
-            <p className="text-xl font-bold text-stone-900">{product.price}</p>
+      <div className="fixed bottom-0 inset-x-0 p-4 md:p-6 z-50 pointer-events-none flex justify-center">
+        <div className="bg-white/80 backdrop-blur-xl border border-stone-100 shadow-2xl p-3 md:p-4 rounded-[2rem] w-full max-w-lg pointer-events-auto flex items-center justify-between gap-4">
+          <div className="hidden sm:block ml-4">
+            <div className="text-[10px] text-stone-400 font-black uppercase tracking-widest leading-none mb-1">Buy Now</div>
+            <div className="text-xl font-black text-stone-900 leading-none">₹{product.price.toLocaleString()}</div>
           </div>
           <a
             href={product.buyLink}
             target="_blank"
-            rel="nofollow sponsored"
-            className="flex-1 sm:flex-none inline-flex items-center justify-center px-8 py-3 bg-stone-900 text-white font-semibold rounded-xl hover:bg-stone-800 transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 bg-stone-900 text-white py-4 px-6 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-600 transition-all shadow-xl shadow-stone-900/10"
           >
-            <ShoppingCart className="w-5 h-5 mr-2" />
-            Buy Now
+            <ShoppingCart size={16} />
+            Claim Piece
           </a>
         </div>
       </div>
-
-      {/* Spacer for sticky CTA */}
-      <div className="h-24" />
     </main>
   );
 }
+

@@ -1,17 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { Button } from "@/components/Button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/Card";
-import { Badge } from "@/components/Badge";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Film, Sparkles, ShoppingCart } from "lucide-react";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -21,100 +11,119 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     .join(" ");
 
   return {
-    title: `${formattedTitle} Collection | FilmyFits`,
-    description: `Shop ${formattedTitle} inspired outfits from popular movies. Find jackets, gloves, masks and more with budget and premium alternatives.`,
-    alternates: {
-      canonical: `https://filmyfits.vercel.app/collections/${slug}`,
-    },
+    title: `${formattedTitle} | Cinematic Collection`,
+    description: `Shop iconic looks from ${formattedTitle}. Screen-accurate archives curated for true film lovers.`,
   };
 }
 
 export default async function CollectionPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
-  if (!slug) {
-    return <div>Slug not found</div>;
-  }
+  if (!slug) return (
+    <div className="min-h-screen flex items-center justify-center bg-stone-50">
+      <div className="text-center">
+        <h1 className="text-2xl font-black text-stone-900 mb-4">Collection Not Found</h1>
+        <Link href="/collections" className="text-orange-600 font-bold hover:underline">View All Collections</Link>
+      </div>
+    </div>
+  );
 
   const collectionName = slug
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
+
   const filtered = await prisma.product.findMany({
     where: {
       collection: slug,
     },
+    orderBy: {
+      createdAt: 'desc'
+    }
   });
 
   return (
-    <main className="min-h-screen bg-gray-50 font-sans text-gray-900 pt-20">
-      {/* Hero Section */}
-      <section className="bg-white border-b border-gray-200 py-12 px-6 sm:px-8 lg:px-12">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-10">
+    <main className="min-h-screen bg-stone-50 pt-32 pb-24">
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Navigation */}
+        <div className="mb-12">
           <Link
-            href="/"
-            className="flex items-center text-sm text-gray-500 hover:text-gray-900 transition"
-            aria-label="Back to Home"
+            href="/collections"
+            className="group inline-flex items-center text-xs font-black uppercase tracking-[0.2em] text-stone-400 hover:text-stone-900 transition-colors"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Home
+            <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+            Back to Archive
           </Link>
-          <div className="flex-1 text-center md:text-left">
-            <h1 className="text-4xl sm:text-5xl font-bold mb-4">{collectionName} Collection</h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto md:mx-0">
-              Shop outfits inspired by {collectionName} from popular movies. Find jackets, gloves, masks, and more
-              with budget and premium alternatives to match iconic looks.
-            </p>
-            <div className="flex justify-center md:justify-start gap-4 mt-6">
-              <Badge variant="secondary" className="bg-gray-100 text-gray-700 border-gray-200 px-4 py-1">
-                {filtered.length} Products Found
-              </Badge>
-              <Badge variant="outline" className="border-gray-300 text-gray-600 px-4 py-1">
-                Updated Daily
-              </Badge>
+        </div>
+
+        {/* Header */}
+        <header className="mb-20">
+          <div className="flex items-center gap-2 text-orange-600 font-black uppercase tracking-[0.3em] text-[10px] mb-4">
+            <Film size={14} />
+            Collection Archive
+          </div>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+            <div className="max-w-3xl">
+              <h1 className="text-5xl md:text-8xl font-black tracking-tighter mb-6 leading-[0.85]">
+                {collectionName} <br />
+                <span className="text-stone-300">Archive</span>
+              </h1>
+              <p className="text-xl text-stone-500 font-medium leading-relaxed">
+                Curated apparel and accessories inspired by the iconic cinematography and character design of {collectionName}.
+              </p>
+            </div>
+            <div className="flex items-center gap-6 pb-2">
+              <div className="text-right">
+                <div className="text-[10px] font-black text-stone-400 uppercase tracking-widest mb-1">Items in Vault</div>
+                <div className="text-4xl font-black text-stone-900 leading-none">{filtered.length}</div>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </header>
 
-      {/* Products Grid - Show filtered results */}
-      <section className="py-16 px-6 sm:px-8 lg:px-12">
-        <div className="max-w-7xl mx-auto">
+        {/* Products Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {filtered.length === 0 ? (
-            <div className="text-center py-20">
-              <div className="w-20 h-20 mx-auto mb-4 flex items-center justify-center bg-gray-100 rounded-full">
-                <CardDescription className="w-8 h-8 text-gray-400" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-900">No products found</h3>
-              <p className="text-gray-600">We haven't added any products to this collection yet. Check back soon!</p>
+            <div className="col-span-full py-32 text-center border-2 border-dashed border-stone-200 rounded-[3rem]">
+              <Sparkles className="mx-auto mb-6 text-stone-200" size={48} />
+              <h3 className="text-2xl font-black text-stone-900 mb-2">The vault is being updated</h3>
+              <p className="text-stone-500 font-medium italic">Iconic styles for this collection will appear here soon.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {filtered.map((product: any) => (
-                <Link key={product.slug} href={`/products/${product.slug}`} className="group block rounded-lg overflow-hidden border border-gray-200 hover:shadow-xl hover:scale-105 transition duration-300">
-                  {/* Image */}
-                  <div className="relative aspect-[4/5] bg-gray-100 overflow-hidden">
-                    <img src={product.image} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                    {/* Overlay on hover */}
-                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition duration-300"></div>
-                  </div>
-                  {/* Details */}
-                  <div className="p-4">
-                    <h3 className="text-lg font-semibold mb-2 line-clamp-2">{product.name}</h3>
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">{product.description}</p>
-                    <div className="flex justify-between items-center">
-                      <span className="font-bold text-gray-900">₹{product.price.toLocaleString()}</span>
-                      <Button size="sm" variant="ghost" className="px-3 py-1 rounded-full hover:bg-gray-200">
-                        View <ArrowLeft className="w-4 h-4 ml-1 transform rotate-180" />
-                      </Button>
+            filtered.map((product) => (
+              <Link
+                key={product.slug}
+                href={`/products/${product.slug}`}
+                className="group flex flex-col"
+              >
+                <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden bg-stone-100 shadow-sm group-hover:shadow-2xl transition-all duration-500 mb-6">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110"
+                  />
+                  {/* Hover Overlay */}
+                  <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+                    <div className="bg-stone-900 text-white py-4 rounded-2xl flex items-center justify-center gap-2 font-bold text-sm shadow-2xl">
+                      <ShoppingCart size={16} />
+                      View Masterpiece
                     </div>
                   </div>
-                </Link>
-              ))}
-            </div>
+                </div>
+
+                <div className="px-2">
+                  <div className="text-[10px] font-black text-orange-600 uppercase tracking-widest mb-2 opacity-0 group-hover:opacity-100 transition-opacity">Premium Replica</div>
+                  <h3 className="text-lg font-black text-stone-900 mb-1 line-clamp-1 leading-tight">{product.name}</h3>
+                  <div className="flex items-center justify-between mt-4">
+                    <span className="text-xl font-black text-stone-900">₹{product.price.toLocaleString()}</span>
+                    <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Master File No. {Math.floor(Math.random() * 9000) + 1000}</span>
+                  </div>
+                </div>
+              </Link>
+            ))
           )}
         </div>
-      </section>
+      </div>
     </main>
   );
 }

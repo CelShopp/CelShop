@@ -1,120 +1,105 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { Button } from "@/components/Button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/Card";
-import { Badge } from "@/components/Badge";
-import { ArrowRight } from "lucide-react";
+import { Film, ArrowRight, Sparkles } from "lucide-react";
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const { slug } = await params;
-  const formattedTitle = slug
-    .split("-")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
+export const metadata: Metadata = {
+  title: "Movie Collections | FilmyFits",
+  description: "Explore our curated collections of movie-inspired outfits.",
+};
 
-  return {
-    title: `${formattedTitle} Collection | FilmyFits`,
-    description: `Shop ${formattedTitle} inspired outfits from popular movies. Find jackets, gloves, masks and more with budget and premium alternatives.`,
-    alternates: {
-      canonical: `https://filmyfits.vercel.app/collections/${slug}`,
-    },
-  };
-}
+export default async function CollectionsPage() {
+  // Aggregate distinct collections and count products in each
+  const products = await prisma.product.findMany();
+  const collectionMap = new Map<string, number>();
 
-export default async function CollectionPage({ params }: { params: Promise<{ slug?: string }> }) {
-  const resolvedParams = await params;
-  const slug = resolvedParams.slug;
-  const filtered = await prisma.product.findMany({
-    where: slug ? {
-      collection: slug,
-    } : {},
+  products.forEach(p => {
+    collectionMap.set(p.collection, (collectionMap.get(p.collection) || 0) + 1);
   });
-  const collectionName = slug
-    ? slug
-      .split("-")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ")
-    : "All";
+
+  const uniqueCollections = Array.from(collectionMap.entries()).map(([slug, count]) => ({
+    slug,
+    count,
+    name: slug.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
+  }));
+
+  // Hand-picked imagery for popular collections
+  const collectionImages: Record<string, string> = {
+    "batman": "https://images.unsplash.com/photo-1531259683007-016a7b628fc3?q=80&w=1974&auto=format&fit=crop",
+    "spiderman": "https://images.unsplash.com/photo-1635805737707-575885ab0820?q=80&w=1974&auto=format&fit=crop",
+    "john-wick": "https://images.unsplash.com/photo-1590412200988-a436bb7050a8?q=80&w=1935&auto=format&fit=crop",
+    "top-gun": "https://images.unsplash.com/photo-1506190503913-909249826353?q=80&w=2072&auto=format&fit=crop",
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans text-gray-900">
-      <main>
-        {/* Hero Section */}
-        <section className="bg-white border-b border-gray-200 py-12 px-6 sm:px-8 lg:px-12">
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-10">
-            <Link
-              href="/"
-              className="flex items-center text-sm text-gray-500 hover:text-gray-900 transition"
-              aria-label="Back to Home"
-            >
-              <ArrowRight className="w-4 h-4 mr-2 transform rotate-180" />
-              Back to Home
-            </Link>
-            <div className="flex-1 text-center md:text-left">
-              <h1 className="text-4xl sm:text-5xl font-bold mb-4">{collectionName ? `${collectionName} Collection` : "All Collections"}</h1>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto md:mx-0">
-                Shop outfits inspired by your favorite movies. Find jackets, gloves, masks, and more
-                with budget and premium alternatives to match iconic looks.
-              </p>
-              <div className="flex justify-center md:justify-start gap-4 mt-6">
-                <Badge variant="secondary" className="bg-gray-100 text-gray-700 border-gray-200 px-4 py-1">
-                  {filtered.length} Products Found
-                </Badge>
-                <Badge variant="outline" className="border-gray-300 text-gray-600 px-4 py-1">
-                  Updated Daily
-                </Badge>
-              </div>
-            </div>
+    <div className="min-h-screen bg-stone-50 font-sans text-stone-900 pt-32 pb-24">
+      <main className="max-w-7xl mx-auto px-6">
+        {/* Header */}
+        <header className="mb-20 text-center">
+          <div className="flex items-center justify-center gap-2 text-orange-600 font-bold uppercase tracking-[0.3em] text-[10px] mb-4">
+            <Film size={14} />
+            Cinematic Archives
           </div>
-        </section>
+          <h1 className="text-5xl md:text-8xl font-black tracking-tighter mb-6">
+            Explore <span className="text-transparent bg-clip-text bg-gradient-to-r from-stone-900 to-stone-500">Collections</span>
+          </h1>
+          <p className="text-xl text-stone-500 max-w-2xl mx-auto font-medium">
+            Browse our curated archives of screen-worn replicas and cinematic style inspirations.
+          </p>
+        </header>
 
-        {/* Products Grid - Show immediately */}
-        <section className="py-16 px-6 sm:px-8 lg:px-12">
-          <div className="max-w-7xl mx-auto">
-            {filtered.length === 0 ? (
-              <div className="text-center py-20">
-                <div className="w-20 h-20 mx-auto mb-4 flex items-center justify-center bg-gray-100 rounded-full">
-                  <span className="text-gray-400">?</span>
+        {/* Collections Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {uniqueCollections.map((col) => {
+            const isBatman = col.slug === 'batman';
+            const movieContext = isBatman ? "The Dark Knight" : col.name;
+            const actorContext = isBatman ? "Christian Bale" : "Various Icons";
+
+            return (
+              <Link
+                key={col.slug}
+                href={`/collections/${col.slug}`}
+                className="group relative h-[600px] rounded-[3.5rem] overflow-hidden bg-stone-200 shadow-xl transition-all duration-700 hover:shadow-[0_40px_100px_-20px_rgba(0,0,0,0.3)] hover:-translate-y-3"
+              >
+                {/* Image */}
+                <img
+                  src={collectionImages[col.slug] || "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=2059&auto=format&fit=crop"}
+                  alt={col.name}
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                />
+
+                {/* Dramatic Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/20 to-transparent" />
+                <div className="absolute inset-0 bg-stone-900/10 group-hover:bg-transparent transition-colors duration-700" />
+
+                {/* Content */}
+                <div className="absolute inset-x-0 bottom-0 p-12 flex flex-col items-start translate-y-6 group-hover:translate-y-0 transition-transform duration-700">
+                  <div className="flex items-center gap-3 text-orange-500 text-[10px] font-black uppercase tracking-[0.3em] mb-4">
+                    <Sparkles size={14} />
+                    {col.count} Master Files
+                  </div>
+
+                  <h2 className="text-5xl font-black text-white mb-6 tracking-tighter leading-[0.9]">
+                    {col.name} <br />
+                    <span className="text-white/40 italic">Archive</span>
+                  </h2>
+
+                  <div className="flex flex-col gap-1 mb-8 opacity-0 group-hover:opacity-100 transition-all duration-700 delay-100">
+                    <div className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Featured Inspiration</div>
+                    <div className="text-white font-bold text-sm">{movieContext} / {actorContext}</div>
+                  </div>
+
+                  <div className="flex items-center gap-4 py-4 px-8 bg-white text-stone-900 rounded-2xl font-black uppercase tracking-widest text-[10px] opacity-0 group-hover:opacity-100 transition-all duration-700 delay-200 shadow-2xl">
+                    View Dossier
+                    <ArrowRight size={16} className="text-orange-600" />
+                  </div>
                 </div>
-                <h3 className="text-xl font-semibold mb-2 text-gray-900">No products found</h3>
-                <p className="text-gray-600">We haven't added any products to this collection yet. Check back soon!</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                {filtered.map((product: any) => (
-                  <Link key={product.slug} href={`/products/${product.slug}`} className="group block rounded-lg overflow-hidden border border-gray-200 hover:shadow-xl hover:scale-105 transition duration-300">
-                    {/* Image */}
-                    <div className="relative aspect-[4/5] bg-gray-100 overflow-hidden">
-                      <img src={product.image} alt={product.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                      {/* Overlay on hover */}
-                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition duration-300"></div>
-                    </div>
-                    {/* Details */}
-                    <div className="p-4">
-                      <h3 className="text-lg font-semibold mb-2 line-clamp-2">{product.name}</h3>
-                      <p className="text-gray-600 text-sm mb-4 line-clamp-2">{product.description}</p>
-                      <div className="flex justify-between items-center">
-                        <span className="font-bold text-gray-900">₹{product.price.toLocaleString()}</span>
-                        <Button size="sm" variant="ghost" className="px-3 py-1 rounded-full hover:bg-gray-200">
-                          View <ArrowRight className="w-4 h-4 ml-1" />
-                        </Button>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
+              </Link>
+            );
+          })}
+        </div>
       </main>
     </div>
   );
 }
+

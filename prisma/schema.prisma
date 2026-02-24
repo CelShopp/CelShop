@@ -15,8 +15,8 @@ model Product {
   image       String
   buyLink     String
   collection  String
-  actorName   String?  // New field
-  movie       String?  // New field
+  actorName   String?
+  movie       String?
   createdAt   DateTime @default(now())
 }
 

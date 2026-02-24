@@ -11,12 +11,14 @@ export async function GET(req: Request) {
 
   const results = await prisma.product.findMany({
     where: {
-      name: {
-        contains: query,
-        mode: "insensitive",
-      },
+      OR: [
+        { name: { contains: query, mode: "insensitive" } },
+        { movie: { contains: query, mode: "insensitive" } },
+        { actorName: { contains: query, mode: "insensitive" } },
+        { collection: { contains: query, mode: "insensitive" } },
+      ],
     },
-    take: 5,
+    take: 8,
   });
 
   return NextResponse.json(results);

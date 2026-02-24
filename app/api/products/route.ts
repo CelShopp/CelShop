@@ -1,0 +1,52 @@
+import { prisma } from "@/lib/prisma";
+import { NextResponse } from "next/server";
+
+export async function POST(req: Request) {
+    // Security: Only allow product creation in development environment
+    if (process.env.NODE_ENV !== "development" && process.env.ALLOW_PRODUCTION_ADMIN !== "true") {
+        return NextResponse.json({ error: "Access Denied: Admin operations only allowed locally." }, { status: 403 });
+    }
+
+    try {
+        const data = await req.json();
+
+        const { name, slug, description, price, image, buyLink, collection, actorName, movie } = data;
+
+        if (!name || !slug || !description || !price || !image || !buyLink || !collection) {
+            return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+        }
+
+        const newProduct = await prisma.product.create({
+            data: {
+                name,
+                slug,
+                description,
+                price,
+                image,
+                buyLink,
+                collection,
+                actorName: actorName || null,
+                movie: movie || null,
+            },
+        });
+
+        return NextResponse.json(newProduct, { status: 201 });
+    } catch (error: any) {
+        console.error("Archive Error:", error);
+        if (error.code === 'P2002') {
+            return NextResponse.json({ error: "A product with this slug already exists." }, { status: 400 });
+        }
+        return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
+    }
+}
+
+export async function GET() {
+    try {
+        const products = await prisma.product.findMany({
+            orderBy: { createdAt: 'desc' }
+        });
+        return NextResponse.json(products);
+    } catch (error) {
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    }
+}

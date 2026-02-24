@@ -12,7 +12,7 @@ export async function POST(req: Request) {
         const newRequest = await prisma.request.create({
             data: {
                 content,
-                email,
+                email: email || null,
             },
         });
 
@@ -22,3 +22,15 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }
+
+export async function GET() {
+    try {
+        const requests = await prisma.request.findMany({
+            orderBy: { createdAt: "desc" },
+        });
+        return NextResponse.json(requests);
+    } catch (error) {
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    }
+}
+
