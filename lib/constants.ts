@@ -5,15 +5,15 @@ export const PLACEHOLDER_IMAGES = {
     collection: "https://placehold.co/600x800",
     celebrity: "https://placehold.co/600x400",
     clothing: "https://placehold.co/150x200",
-  };
-  
-  export const BUTTON_TEXT = {
+};
+
+export const BUTTON_TEXT = {
     explore: "Explore",
     seeMore: "See More",
-  };
-  
-  export const SECTION_IDS = {
+};
+
+export const SECTION_IDS = {
     collections: "collections",
     lookbook: "lookbook",
     cta: "cta",
-  };
+};

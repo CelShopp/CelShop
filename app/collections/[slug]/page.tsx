@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { prisma } from "../../../lib/prisma";
-import { Button } from "../../components/button";
+import { prisma } from "@/lib/prisma";
+import { Button } from "@/components/Button";
 import {
   Card,
   CardContent,
@@ -9,10 +9,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../../components/card";
-import { Badge } from "../../components/badge";
-import { ArrowRight } from "lucide-react";
-import { products } from "@/prisma/products";
+} from "@/components/Card";
+import { Badge } from "@/components/Badge";
+import { ArrowLeft } from "lucide-react";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -22,28 +21,33 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     .join(" ");
 
   return {
-    title: `${formattedTitle} Collection | CelebStore`,
+    title: `${formattedTitle} Collection | FilmyFits`,
     description: `Shop ${formattedTitle} inspired outfits from popular movies. Find jackets, gloves, masks and more with budget and premium alternatives.`,
     alternates: {
-      canonical: `https://cel-shop-alpha.vercel.app/collections/${slug}`,
+      canonical: `https://filmyfits.vercel.app/collections/${slug}`,
     },
   };
 }
 
 export default async function CollectionPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+
+  if (!slug) {
+    return <div>Slug not found</div>;
+  }
+
+  const collectionName = slug
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
   const filtered = await prisma.product.findMany({
     where: {
       collection: slug,
     },
   });
-  const collectionName = slug
-    .split("-")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
 
   return (
-    <main className="min-h-screen bg-gray-50 font-sans text-gray-900">
+    <main className="min-h-screen bg-gray-50 font-sans text-gray-900 pt-20">
       {/* Hero Section */}
       <section className="bg-white border-b border-gray-200 py-12 px-6 sm:px-8 lg:px-12">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-10">
@@ -52,7 +56,7 @@ export default async function CollectionPage({ params }: { params: Promise<{ slu
             className="flex items-center text-sm text-gray-500 hover:text-gray-900 transition"
             aria-label="Back to Home"
           >
-            <ArrowRight className="w-4 h-4 mr-2 transform rotate-180" />
+            <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Home
           </Link>
           <div className="flex-1 text-center md:text-left">
@@ -73,7 +77,7 @@ export default async function CollectionPage({ params }: { params: Promise<{ slu
         </div>
       </section>
 
-      {/* Products Grid - Show immediately */}
+      {/* Products Grid - Show filtered results */}
       <section className="py-16 px-6 sm:px-8 lg:px-12">
         <div className="max-w-7xl mx-auto">
           {filtered.length === 0 ? (
@@ -86,7 +90,7 @@ export default async function CollectionPage({ params }: { params: Promise<{ slu
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {products.map((product: any) => (
+              {filtered.map((product: any) => (
                 <Link key={product.slug} href={`/products/${product.slug}`} className="group block rounded-lg overflow-hidden border border-gray-200 hover:shadow-xl hover:scale-105 transition duration-300">
                   {/* Image */}
                   <div className="relative aspect-[4/5] bg-gray-100 overflow-hidden">
@@ -99,9 +103,9 @@ export default async function CollectionPage({ params }: { params: Promise<{ slu
                     <h3 className="text-lg font-semibold mb-2 line-clamp-2">{product.name}</h3>
                     <p className="text-gray-600 text-sm mb-4 line-clamp-2">{product.description}</p>
                     <div className="flex justify-between items-center">
-                      <span className="font-bold text-gray-900">{product.price}</span>
+                      <span className="font-bold text-gray-900">₹{product.price.toLocaleString()}</span>
                       <Button size="sm" variant="ghost" className="px-3 py-1 rounded-full hover:bg-gray-200">
-                        View <ArrowRight className="w-4 h-4 ml-1" />
+                        View <ArrowLeft className="w-4 h-4 ml-1 transform rotate-180" />
                       </Button>
                     </div>
                   </div>

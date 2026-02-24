@@ -1,13 +1,13 @@
 import Link from "next/link";
-import { prisma } from "../../../lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { Metadata } from "next";
 import { ArrowLeft, ArrowRight, Star, ShoppingCart, Check, Award } from "lucide-react";
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const { slug } = params;
+  const { slug } = await params;
   const product = await prisma.product.findUnique({
     where: { slug },
   });
@@ -22,7 +22,7 @@ export async function generateMetadata({
     title: `${product.name} | FilmyFits`,
     description: `Buy ${product.name} online at best price. Find budget and premium alternatives.`,
     alternates: {
-      canonical: `https://cel-shop-alpha.vercel.app/products/${slug}`,
+      canonical: `https://filmyfits.vercel.app/products/${slug}`,
     },
   };
 }
@@ -30,9 +30,9 @@ export async function generateMetadata({
 export default async function ProductPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const { slug } = params;
+  const { slug } = await params;
   const product = await prisma.product.findUnique({
     where: { slug },
   });
@@ -40,7 +40,7 @@ export default async function ProductPage({
   if (!product) return <div>Not found</div>;
 
   return (
-    <main className="min-h-screen bg-stone-50">
+    <main className="min-h-screen bg-stone-50 pt-16">
       {/* Header Breadcrumb */}
       <div className="bg-white border-b border-stone-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
