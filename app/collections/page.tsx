@@ -23,7 +23,7 @@ export default async function CollectionsPage() {
     name: slug.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
   }));
 
-  // Hand-picked imagery for popular collections
+  // 1Hand-picked imagery for popular collections
   const collectionImages: Record<string, string> = {
     "batman": "https://images.unsplash.com/photo-1531259683007-016a7b628fc3?q=80&w=1974&auto=format&fit=crop",
     "spiderman": "https://images.unsplash.com/photo-1635805737707-575885ab0820?q=80&w=1974&auto=format&fit=crop",
