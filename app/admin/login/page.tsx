@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { Lock, ShieldAlert, ArrowRight } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 
-export default function AdminLoginPage() {
+function AdminLoginForm() {
     const searchParams = useSearchParams();
     const returnTo = searchParams.get('returnTo') || '/admin/add';
     const [password, setPassword] = useState('');
@@ -91,5 +91,13 @@ export default function AdminLoginPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function AdminLoginPage() {
+    return (
+        <Suspense fallback={null}>
+            <AdminLoginForm />
+        </Suspense>
     );
 }
