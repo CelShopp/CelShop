@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     try {
         const data = await req.json();
 
-        const { name, slug, description, price, image, buyLink, collection, actorName, movie } = data;
+        const { name, slug, description, price, image, buyLink, collection, actorName, movie, isFeatured } = data;
 
         if (!name || !slug || !description || !price || !image || !buyLink || !collection) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -27,6 +27,8 @@ export async function POST(req: Request) {
                 collection,
                 actorName: actorName || null,
                 movie: movie || null,
+                // @ts-ignore - Prisma client may need a restart to recognize this new field
+                isFeatured: !!isFeatured,
             },
         });
 

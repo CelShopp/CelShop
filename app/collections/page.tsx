@@ -14,7 +14,10 @@ export default async function CollectionsPage() {
   const collectionMap = new Map<string, number>();
 
   products.forEach(p => {
-    collectionMap.set(p.collection, (collectionMap.get(p.collection) || 0) + 1);
+    const collections = p.collection.split(',').map(c => c.trim()).filter(Boolean);
+    collections.forEach(slug => {
+      collectionMap.set(slug, (collectionMap.get(slug) || 0) + 1);
+    });
   });
 
   const uniqueCollections = Array.from(collectionMap.entries()).map(([slug, count]) => ({

@@ -1,0 +1,1839 @@
+ (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
+diff --git a/app/admin/add/page.tsx b/app/admin/add/page.tsx
+index 7a9bbd3da24cd5aa129d1d5b1441e32f45456f91..559e1eba9bf2e15cf316b0378bd0d6c4e672d3f6 100644
+--- a/app/admin/add/page.tsx
++++ b/app/admin/add/page.tsx
+@@ -1,64 +1,73 @@
+ "use client";
+ 
+ import React, { useState } from 'react';
+-import { Plus, Package, Database, Trash2, ArrowRight, Sparkles } from 'lucide-react';
+-import Header from '@/components/Header';
++import { Plus, Package, Database, Sparkles } from 'lucide-react';
+ import Link from 'next/link';
+ 
+ export default function AddProductPage() {
++    const suggestedCollections = ['batman', 'spiderman', 'john-wick', 'top-gun', 'matrix'];
++
+     const [formData, setFormData] = useState({
+         name: '',
+         slug: '',
+         description: '',
+         price: '',
+         image: '',
+         buyLink: '',
+         collection: 'batman',
+         actorName: '',
+         movie: '',
+     });
+ 
+     const [file, setFile] = useState<File | null>(null);
+     const [preview, setPreview] = useState<string | null>(null);
+     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+     const [message, setMessage] = useState('');
+ 
+     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+         if (e.target.files && e.target.files[0]) {
+             const selectedFile = e.target.files[0];
+             setFile(selectedFile);
+             setPreview(URL.createObjectURL(selectedFile));
+             // Clear URL input if file is selected
+             setFormData(prev => ({ ...prev, image: '' }));
+         }
+     };
+ 
+     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+         const { name, value } = e.target;
+         setFormData(prev => {
+-            const newData = { ...prev, [name]: value };
++            const normalizedValue = name === 'collection'
++                ? value
++                    .toLowerCase()
++                    .trim()
++                    .replace(/\s+/g, '-')
++                    .replace(/[^a-z0-9-]/g, '')
++                : value;
++
++            const newData = { ...prev, [name]: normalizedValue };
+             // Auto-generate slug from name if slug is empty
+             if (name === 'name' && !prev.slug) {
+                 newData.slug = value.toLowerCase().replace(/ /g, '-').replace(/[^\w-]/g, '');
+             }
+             return newData;
+         });
+     };
+ 
+     const handleSubmit = async (e: React.FormEvent) => {
+         e.preventDefault();
+         setStatus('loading');
+ 
+         try {
+             let imageUrl = formData.image;
+ 
+             // Handle file upload if present
+             if (file) {
+                 const uploadData = new FormData();
+                 uploadData.append('file', file);
+                 const uploadRes = await fetch('/api/upload', {
+                     method: 'POST',
+                     body: uploadData,
+                 });
+ 
+                 if (uploadRes.ok) {
+@@ -83,64 +92,64 @@ export default function AddProductPage() {
+                     price: parseInt(formData.price)
+                 }),
+             });
+ 
+             if (res.ok) {
+                 setStatus('success');
+                 setMessage('Product added to archives successfully.');
+                 setFormData({
+                     name: '',
+                     slug: '',
+                     description: '',
+                     price: '',
+                     image: '',
+                     buyLink: '',
+                     collection: 'batman',
+                     actorName: '',
+                     movie: '',
+                 });
+                 setFile(null);
+                 setPreview(null);
+             } else {
+                 const err = await res.json();
+                 setStatus('error');
+                 setMessage(err.error || 'Failed to archive item.');
+             }
+-        } catch (err) {
++        } catch {
+             setStatus('error');
+             setMessage('Network error. Check connection.');
+         }
+     };
+ 
+     // Prevent rendering the form in production
+     if (process.env.NODE_ENV !== "development" && process.env.ALLOW_PRODUCTION_ADMIN !== "true") {
+         return (
+             <div className="min-h-screen bg-stone-50 flex items-center justify-center p-6">
+                 <div className="text-center space-y-4">
+                     <h1 className="text-2xl font-black text-stone-900">Protected Route</h1>
+                     <p className="text-stone-500 text-sm">Admin tools are strictly restricted to local development for security.</p>
+-                    <a href="/" className="inline-block px-6 py-3 bg-stone-900 text-white rounded-full font-bold text-sm">Return Home</a>
++                    <Link href="/" className="inline-block px-6 py-3 bg-stone-900 text-white rounded-full font-bold text-sm">Return Home</Link>
+                 </div>
+             </div>
+         );
+     }
+ 
+     return (
+         <div className="min-h-screen bg-stone-50 pt-32 pb-24">
+             <main className="max-w-4xl mx-auto px-6">
+                 <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                     <div>
+                         <div className="flex items-center gap-2 text-orange-600 font-bold uppercase tracking-[0.3em] text-[10px] mb-4">
+                             <Database size={14} />
+                             Internal Archive Tool
+                         </div>
+                         <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-stone-900">
+                             Archive <span className="text-stone-300">New Item</span>
+                         </h1>
+                     </div>
+                     <Link
+                         href="/admin/manage"
+                         className="px-8 py-4 bg-white border border-stone-100 text-stone-900 font-black rounded-2xl hover:bg-stone-50 transition-all shadow-sm flex items-center gap-2"
+                     >
+                         <Database size={20} />
+                         Manage Archives
+                     </Link>
+@@ -200,62 +209,66 @@ export default function AddProductPage() {
+                                 required
+                                 name="description"
+                                 value={formData.description}
+                                 onChange={handleChange}
+                                 placeholder="Detailed description of the cinematic connection..."
+                                 rows={4}
+                                 className="w-full px-6 py-4 bg-stone-50 border border-stone-100 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all font-medium"
+                             />
+                         </div>
+ 
+                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                             <div className="space-y-2">
+                                 <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-1">Price (₹)</label>
+                                 <input
+                                     required
+                                     type="number"
+                                     name="price"
+                                     value={formData.price}
+                                     onChange={handleChange}
+                                     placeholder="2499"
+                                     className="w-full px-6 py-4 bg-stone-50 border border-stone-100 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all font-medium"
+                                 />
+                             </div>
+                             <div className="space-y-2">
+                                 <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-1">Collection</label>
+-                                <select
++                                <input
+                                     name="collection"
+                                     value={formData.collection}
+                                     onChange={handleChange}
++                                    list="collection-suggestions"
++                                    placeholder="batman"
+                                     className="w-full px-6 py-4 bg-stone-50 border border-stone-100 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all font-medium appearance-none"
+-                                >
+-                                    <option value="batman">Batman</option>
+-                                    <option value="spiderman">Spider-Man</option>
+-                                    <option value="john-wick">John Wick</option>
+-                                    <option value="top-gun">Top Gun</option>
+-                                    <option value="matrix">The Matrix</option>
+-                                </select>
++                                />
++                                <datalist id="collection-suggestions">
++                                    {suggestedCollections.map((collection) => (
++                                        <option key={collection} value={collection} />
++                                    ))}
++                                </datalist>
++                                <p className="text-[10px] text-stone-400 font-medium ml-1">
++                                    You can type any new collection slug (example: <span className="font-bold">interstellar</span>).
++                                </p>
+                             </div>
+                             <div className="space-y-2">
+                                 <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-1">Movie Title</label>
+                                 <input
+                                     name="movie"
+                                     value={formData.movie}
+                                     onChange={handleChange}
+                                     placeholder="The Dark Knight"
+                                     className="w-full px-6 py-4 bg-stone-50 border border-stone-100 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all font-medium"
+                                 />
+                             </div>
+                         </div>
+ 
+                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                             <div className="space-y-2">
+                                 <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-1">Actor Name</label>
+                                 <input
+                                     name="actorName"
+                                     value={formData.actorName}
+                                     onChange={handleChange}
+                                     placeholder="Christian Bale"
+                                     className="w-full px-6 py-4 bg-stone-50 border border-stone-100 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all font-medium"
+                                 />
+                             </div>
+                             <div className="space-y-2">
+diff --git a/app/api/search/route.ts b/app/api/search/route.ts
+index 8a3b419f0b0fe57c65247983986a4f3d0725c267..979f9d0d9539c867fd88d492819c19e68d731e79 100644
+--- a/app/api/search/route.ts
++++ b/app/api/search/route.ts
+@@ -1,25 +1,147 @@
+ import { prisma } from "@/lib/prisma";
+ import { NextResponse } from "next/server";
+ 
++type SearchResult = {
++  id: string;
++  type: "product" | "collection" | "movie" | "actor";
++  title: string;
++  subtitle: string;
++  href: string;
++  image: string | null;
++  price: number | null;
++  tags: string[];
++};
++
++const normalize = (value: string) =>
++  value
++    .toLowerCase()
++    .replace(/[^a-z0-9\s-]/g, " ")
++    .replace(/[-_]+/g, " ")
++    .replace(/\s+/g, " ")
++    .trim();
++
++const tokenize = (value: string) =>
++  normalize(value)
++    .split(" ")
++    .filter((token) => token.length > 1);
++
++const unique = <T,>(arr: T[]) => Array.from(new Set(arr));
++
+ export async function GET(req: Request) {
+   const { searchParams } = new URL(req.url);
+-  const query = searchParams.get("q");
++  const rawQuery = searchParams.get("q") ?? "";
++  const query = normalize(rawQuery);
+ 
+-  if (!query) {
++  if (query.length < 2) {
+     return NextResponse.json([]);
+   }
+ 
+-  const results = await prisma.product.findMany({
+-    where: {
+-      OR: [
+-        { name: { contains: query, mode: "insensitive" } },
+-        { movie: { contains: query, mode: "insensitive" } },
+-        { actorName: { contains: query, mode: "insensitive" } },
+-        { collection: { contains: query, mode: "insensitive" } },
+-      ],
+-    },
+-    take: 8,
++  const queryTokens = tokenize(query);
++
++  const products = await prisma.product.findMany({
++    orderBy: { createdAt: "desc" },
++    take: 80,
++  });
++
++  const matchedProducts = products.filter((product) => {
++    const source = [
++      product.name,
++      product.collection,
++      product.movie ?? "",
++      product.actorName ?? "",
++      product.description,
++      product.slug,
++    ].join(" ");
++
++    const searchable = normalize(source);
++    const searchableTokens = tokenize(searchable);
++
++    const exactMatch = searchable.includes(query);
++    const tokenMatch = queryTokens.some((token) =>
++      searchableTokens.some((candidate) => candidate.includes(token) || token.includes(candidate))
++    );
++
++    return exactMatch || tokenMatch;
++  });
++
++  const results: SearchResult[] = [];
++
++  matchedProducts.forEach((product) => {
++    const tags = unique(
++      [product.collection, product.movie ?? "", product.actorName ?? "", product.name]
++        .flatMap((item) => tokenize(item))
++        .filter(Boolean)
++    );
++
++    results.push({
++      id: product.id,
++      type: "product",
++      title: product.name,
++      subtitle: `${product.movie || product.collection}${product.actorName ? ` • ${product.actorName}` : ""}`,
++      href: `/products/${product.slug}`,
++      image: product.image,
++      price: product.price,
++      tags,
++    });
++  });
++
++  const matchedCollectionSlugs = unique(matchedProducts.map((p) => p.collection));
++  matchedCollectionSlugs.forEach((slug) => {
++    const linked = matchedProducts.find((p) => p.collection === slug);
++    const title = slug
++      .split("-")
++      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
++      .join(" ");
++
++    results.push({
++      id: `collection-${slug}`,
++      type: "collection",
++      title,
++      subtitle: "Collection",
++      href: `/collections/${slug}`,
++      image: linked?.image ?? null,
++      price: null,
++      tags: tokenize(`${slug} ${title}`),
++    });
+   });
+ 
+-  return NextResponse.json(results);
++  const matchedMovies = unique(matchedProducts.map((p) => p.movie).filter((movie): movie is string => Boolean(movie)));
++  matchedMovies.forEach((movie) => {
++    const linked = matchedProducts.find((p) => p.movie === movie);
++    const movieSlug = movie.toLowerCase().replace(/\s+/g, "-");
++    results.push({
++      id: `movie-${movieSlug}`,
++      type: "movie",
++      title: movie,
++      subtitle: "Movie Tag",
++      href: linked ? `/collections/${linked.collection}` : "/collections",
++      image: linked?.image ?? null,
++      price: null,
++      tags: tokenize(movie),
++    });
++  });
++
++  const matchedActors = unique(
++    matchedProducts.map((p) => p.actorName).filter((actor): actor is string => Boolean(actor))
++  );
++  matchedActors.forEach((actor) => {
++    const linked = matchedProducts.find((p) => p.actorName === actor);
++    const actorSlug = actor.toLowerCase().replace(/\s+/g, "-");
++    results.push({
++      id: `actor-${actorSlug}`,
++      type: "actor",
++      title: actor,
++      subtitle: "Actor Tag",
++      href: linked ? `/collections/${linked.collection}` : "/collections",
++      image: linked?.image ?? null,
++      price: null,
++      tags: tokenize(actor),
++    });
++  });
++
++  const deduped = unique(results.map((result) => `${result.type}:${result.title.toLowerCase()}`))
++    .map((key) => results.find((result) => `${result.type}:${result.title.toLowerCase()}` === key))
++    .filter((result): result is SearchResult => Boolean(result));
++
++  return NextResponse.json(deduped.slice(0, 12));
+ }
+diff --git a/app/collections/[slug]/page.tsx b/app/collections/[slug]/page.tsx
+index a8fcda05e6f30182083ba599d22f2dca86903a7a..3a264b703e431c1aa09bade15c18af5ecc1de114 100644
+--- a/app/collections/[slug]/page.tsx
++++ b/app/collections/[slug]/page.tsx
+@@ -21,109 +21,109 @@ export default async function CollectionPage({ params }: { params: Promise<{ slu
+ 
+   if (!slug) return (
+     <div className="min-h-screen flex items-center justify-center bg-stone-50">
+       <div className="text-center">
+         <h1 className="text-2xl font-black text-stone-900 mb-4">Collection Not Found</h1>
+         <Link href="/collections" className="text-orange-600 font-bold hover:underline">View All Collections</Link>
+       </div>
+     </div>
+   );
+ 
+   const collectionName = slug
+     .split("-")
+     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+     .join(" ");
+ 
+   const filtered = await prisma.product.findMany({
+     where: {
+       collection: slug,
+     },
+     orderBy: {
+       createdAt: 'desc'
+     }
+   });
+ 
+   return (
+-    <main className="min-h-screen bg-stone-50 pt-32 pb-24">
+-      <div className="max-w-7xl mx-auto px-6">
++    <main className="min-h-screen bg-stone-50 pt-24 sm:pt-32 pb-16 sm:pb-24">
++      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+         {/* Navigation */}
+         <div className="mb-12">
+           <Link
+             href="/collections"
+             className="group inline-flex items-center text-xs font-black uppercase tracking-[0.2em] text-stone-400 hover:text-stone-900 transition-colors"
+           >
+             <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+             Back to Archive
+           </Link>
+         </div>
+ 
+         {/* Header */}
+-        <header className="mb-20">
++        <header className="mb-12 sm:mb-20">
+           <div className="flex items-center gap-2 text-orange-600 font-black uppercase tracking-[0.3em] text-[10px] mb-4">
+             <Film size={14} />
+             Collection Archive
+           </div>
+           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+             <div className="max-w-3xl">
+               <h1 className="text-5xl md:text-8xl font-black tracking-tighter mb-6 leading-[0.85]">
+                 {collectionName} <br />
+                 <span className="text-stone-300">Archive</span>
+               </h1>
+-              <p className="text-xl text-stone-500 font-medium leading-relaxed">
++              <p className="text-base sm:text-xl text-stone-500 font-medium leading-relaxed">
+                 Curated apparel and accessories inspired by the iconic cinematography and character design of {collectionName}.
+               </p>
+             </div>
+             <div className="flex items-center gap-6 pb-2">
+               <div className="text-right">
+                 <div className="text-[10px] font-black text-stone-400 uppercase tracking-widest mb-1">Items in Vault</div>
+                 <div className="text-4xl font-black text-stone-900 leading-none">{filtered.length}</div>
+               </div>
+             </div>
+           </div>
+         </header>
+ 
+         {/* Products Grid */}
+-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
++        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-8">
+           {filtered.length === 0 ? (
+             <div className="col-span-full py-32 text-center border-2 border-dashed border-stone-200 rounded-[3rem]">
+               <Sparkles className="mx-auto mb-6 text-stone-200" size={48} />
+               <h3 className="text-2xl font-black text-stone-900 mb-2">The vault is being updated</h3>
+               <p className="text-stone-500 font-medium italic">Iconic styles for this collection will appear here soon.</p>
+             </div>
+           ) : (
+-            filtered.map((product) => (
++            filtered.map((product, index) => (
+               <Link
+                 key={product.slug}
+                 href={`/products/${product.slug}`}
+                 className="group flex flex-col"
+               >
+-                <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden bg-stone-100 shadow-sm group-hover:shadow-2xl transition-all duration-500 mb-6">
++                <div className="relative aspect-[4/5] rounded-2xl sm:rounded-[2.5rem] overflow-hidden bg-stone-100 shadow-sm group-hover:shadow-2xl transition-all duration-500 mb-3 sm:mb-6">
+                   <img
+                     src={product.image}
+                     alt={product.name}
+                     className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110"
+                   />
+                   {/* Hover Overlay */}
+                   <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+                     <div className="bg-stone-900 text-white py-4 rounded-2xl flex items-center justify-center gap-2 font-bold text-sm shadow-2xl">
+                       <ShoppingCart size={16} />
+                       View Masterpiece
+                     </div>
+                   </div>
+                 </div>
+ 
+                 <div className="px-2">
+                   <div className="text-[10px] font-black text-orange-600 uppercase tracking-widest mb-2 opacity-0 group-hover:opacity-100 transition-opacity">Premium Replica</div>
+-                  <h3 className="text-lg font-black text-stone-900 mb-1 line-clamp-1 leading-tight">{product.name}</h3>
++                  <h3 className="text-sm sm:text-lg font-black text-stone-900 mb-1 line-clamp-1 leading-tight">{product.name}</h3>
+                   <div className="flex items-center justify-between mt-4">
+-                    <span className="text-xl font-black text-stone-900">₹{product.price.toLocaleString()}</span>
+-                    <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Master File No. {Math.floor(Math.random() * 9000) + 1000}</span>
++                    <span className="text-sm sm:text-xl font-black text-stone-900">₹{product.price.toLocaleString()}</span>
++                    <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Master File No. {(index + 1).toString().padStart(4, "0")}</span>
+                   </div>
+                 </div>
+               </Link>
+             ))
+           )}
+         </div>
+       </div>
+     </main>
+   );
+ }
+diff --git a/app/collections/page.tsx b/app/collections/page.tsx
+index 40b7028ae593c3430db5a41ca550f792d773135d..387858f3141a79ecc889c25033244d269934ad63 100644
+--- a/app/collections/page.tsx
++++ b/app/collections/page.tsx
+@@ -10,96 +10,96 @@ export const metadata: Metadata = {
+ 
+ export default async function CollectionsPage() {
+   // Aggregate distinct collections and count products in each
+   const products = await prisma.product.findMany();
+   const collectionMap = new Map<string, number>();
+ 
+   products.forEach(p => {
+     collectionMap.set(p.collection, (collectionMap.get(p.collection) || 0) + 1);
+   });
+ 
+   const uniqueCollections = Array.from(collectionMap.entries()).map(([slug, count]) => ({
+     slug,
+     count,
+     name: slug.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
+   }));
+ 
+   // Hand-picked imagery for popular collections
+   const collectionImages: Record<string, string> = {
+     "batman": "https://images.unsplash.com/photo-1531259683007-016a7b628fc3?q=80&w=1974&auto=format&fit=crop",
+     "spiderman": "https://images.unsplash.com/photo-1635805737707-575885ab0820?q=80&w=1974&auto=format&fit=crop",
+     "john-wick": "https://images.unsplash.com/photo-1590412200988-a436bb7050a8?q=80&w=1935&auto=format&fit=crop",
+     "top-gun": "https://images.unsplash.com/photo-1506190503913-909249826353?q=80&w=2072&auto=format&fit=crop",
+   };
+ 
+   return (
+-    <div className="min-h-screen bg-stone-50 font-sans text-stone-900 pt-32 pb-24">
+-      <main className="max-w-7xl mx-auto px-6">
++    <div className="min-h-screen bg-stone-50 font-sans text-stone-900 pt-24 sm:pt-32 pb-16 sm:pb-24">
++      <main className="max-w-7xl mx-auto px-4 sm:px-6">
+         {/* Header */}
+-        <header className="mb-20 text-center">
++        <header className="mb-12 sm:mb-20 text-center">
+           <div className="flex items-center justify-center gap-2 text-orange-600 font-bold uppercase tracking-[0.3em] text-[10px] mb-4">
+             <Film size={14} />
+             Cinematic Archives
+           </div>
+-          <h1 className="text-5xl md:text-8xl font-black tracking-tighter mb-6">
++          <h1 className="text-4xl sm:text-5xl md:text-8xl font-black tracking-tighter mb-4 sm:mb-6">
+             Explore <span className="text-transparent bg-clip-text bg-gradient-to-r from-stone-900 to-stone-500">Collections</span>
+           </h1>
+-          <p className="text-xl text-stone-500 max-w-2xl mx-auto font-medium">
++          <p className="text-base sm:text-xl text-stone-500 max-w-2xl mx-auto font-medium">
+             Browse our curated archives of screen-worn replicas and cinematic style inspirations.
+           </p>
+         </header>
+ 
+         {/* Collections Grid */}
+-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
++        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
+           {uniqueCollections.map((col) => {
+             const isBatman = col.slug === 'batman';
+             const movieContext = isBatman ? "The Dark Knight" : col.name;
+             const actorContext = isBatman ? "Christian Bale" : "Various Icons";
+ 
+             return (
+               <Link
+                 key={col.slug}
+                 href={`/collections/${col.slug}`}
+-                className="group relative h-[600px] rounded-[3.5rem] overflow-hidden bg-stone-200 shadow-xl transition-all duration-700 hover:shadow-[0_40px_100px_-20px_rgba(0,0,0,0.3)] hover:-translate-y-3"
++                className="group relative h-[420px] sm:h-[540px] lg:h-[600px] rounded-[2rem] sm:rounded-[3.5rem] overflow-hidden bg-stone-200 shadow-xl transition-all duration-700 hover:shadow-[0_40px_100px_-20px_rgba(0,0,0,0.3)] hover:-translate-y-2 sm:hover:-translate-y-3"
+               >
+                 {/* Image */}
+                 <img
+                   src={collectionImages[col.slug] || "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=2059&auto=format&fit=crop"}
+                   alt={col.name}
+                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                 />
+ 
+                 {/* Dramatic Overlay */}
+                 <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/20 to-transparent" />
+                 <div className="absolute inset-0 bg-stone-900/10 group-hover:bg-transparent transition-colors duration-700" />
+ 
+                 {/* Content */}
+-                <div className="absolute inset-x-0 bottom-0 p-12 flex flex-col items-start translate-y-6 group-hover:translate-y-0 transition-transform duration-700">
++                <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 lg:p-12 flex flex-col items-start translate-y-2 sm:translate-y-6 group-hover:translate-y-0 transition-transform duration-700">
+                   <div className="flex items-center gap-3 text-orange-500 text-[10px] font-black uppercase tracking-[0.3em] mb-4">
+                     <Sparkles size={14} />
+                     {col.count} Master Files
+                   </div>
+ 
+-                  <h2 className="text-5xl font-black text-white mb-6 tracking-tighter leading-[0.9]">
++                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4 sm:mb-6 tracking-tighter leading-[0.9]">
+                     {col.name} <br />
+                     <span className="text-white/40 italic">Archive</span>
+                   </h2>
+ 
+                   <div className="flex flex-col gap-1 mb-8 opacity-0 group-hover:opacity-100 transition-all duration-700 delay-100">
+                     <div className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Featured Inspiration</div>
+                     <div className="text-white font-bold text-sm">{movieContext} / {actorContext}</div>
+                   </div>
+ 
+                   <div className="flex items-center gap-4 py-4 px-8 bg-white text-stone-900 rounded-2xl font-black uppercase tracking-widest text-[10px] opacity-0 group-hover:opacity-100 transition-all duration-700 delay-200 shadow-2xl">
+                     View Dossier
+                     <ArrowRight size={16} className="text-orange-600" />
+                   </div>
+                 </div>
+               </Link>
+             );
+           })}
+         </div>
+       </main>
+     </div>
+   );
+ }
+ 
+diff --git a/app/globals.css b/app/globals.css
+index dd6f19d23a15397e700eafabc33787ae9529069e..82edfb01a863a06f098a16ba71cf4befd27b12a6 100644
+--- a/app/globals.css
++++ b/app/globals.css
+@@ -335,52 +335,88 @@ textarea::placeholder {
+   background: #ffffff;
+   border-radius: 24px;
+   padding: 24px;
+   border: 1px solid rgba(0, 0, 0, 0.06);
+   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+ }
+ 
+ .card:hover {
+   transform: translateY(-8px);
+   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+   border-color: rgba(0, 0, 0, 0.1);
+ }
+ 
+ .card img {
+   width: 100%;
+   height: 220px;
+   object-fit: cover;
+   border-radius: 16px;
+   margin-bottom: 16px;
+ }
+ 
+ /* Responsive adjustments */
+ @media (max-width: 640px) {
+   .glass-header {
+-    width: calc(100% - 20px);
+-    top: 10px;
++    width: calc(100% - 16px);
++    top: 8px;
++  }
++
++  .glass-nav {
++    padding: 8px 16px;
++    gap: 12px;
++    border-radius: 1.6rem;
++  }
++
++  .logo-text {
++    font-size: 40px;
++    transform: scale(0.48);
++    transform-origin: left center;
++    margin-right: -28px;
++  }
++
++  .header-icon-btn {
++    width: 40px;
++    height: 40px;
++  }
++
++  .floating-panel {
++    top: 74px;
++    left: 8px;
++    right: 8px;
++    width: auto;
++    border-radius: 1.6rem;
++    padding: 16px;
++  }
++
++  .modal-overlay {
++    padding: 12px;
++  }
++
++  .modal-content {
++    padding: 20px;
++    border-radius: 1.8rem;
+   }
+ 
+   .card {
+     padding: 20px;
+     border-radius: 20px;
+   }
+ 
+   .button {
+     padding: 14px 24px;
+     font-size: 14px;
+   }
+ }
+ 
+ /* styles.module.css */
+ 
+ .container {
+   max-width: 1200px;
+   margin: 0 auto;
+   padding: 20px;
+   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+   background-color: #f4f4f4;
+ }
+ 
+ .header {
+   text-align: center;
+diff --git a/app/lookbook/[id]/page.tsx b/app/lookbook/[id]/page.tsx
+index 5aa6912780861e90e97f4d93e8ca4e0df8f25a02..a1a6fb3a08e2a00a0618c02e1602a6ff685714e8 100644
+--- a/app/lookbook/[id]/page.tsx
++++ b/app/lookbook/[id]/page.tsx
+@@ -50,121 +50,121 @@ const lookbookData = [
+             { name: "Club Collar Shirt", color: "#f3f4f6", brand: "Garrison Style" },
+             { name: "Herringbone Waistcoat", color: "#4b5563", brand: "Peaky Sharp" },
+             { name: "Service Combat Boots", color: "#2d2d2d", brand: "Industrial Era" },
+         ],
+         description: "By order of the Peaky Blinders. Dark, heavy textures that scream authority and razor-sharp precision."
+     },
+ ];
+ 
+ export default function LookbookDetail({ params }: { params: Promise<{ id: string }> }) {
+     const { id } = use(params);
+     const lookbookIndex = parseInt(id as string);
+     const lookbook = lookbookData[lookbookIndex];
+ 
+     if (!lookbook) {
+         return (
+             <div className="min-h-screen flex items-center justify-center bg-stone-50">
+                 <div className="text-center">
+                     <h1 className="text-2xl font-black text-stone-900 mb-4">Evidence Not Found</h1>
+                     <Link href="/" className="text-orange-600 font-bold hover:underline">Back to Files</Link>
+                 </div>
+             </div>
+         );
+     }
+ 
+     return (
+-        <main className="min-h-screen bg-stone-50 pt-32 pb-24">
+-            <div className="max-w-7xl mx-auto px-6">
++        <main className="min-h-screen bg-stone-50 pt-24 sm:pt-32 pb-16 sm:pb-24">
++            <div className="max-w-7xl mx-auto px-4 sm:px-6">
+                 {/* Navigation */}
+-                <div className="mb-12">
++                <div className="mb-8 sm:mb-12">
+                     <Link
+                         href="/"
+                         className="group inline-flex items-center text-xs font-black uppercase tracking-[0.2em] text-stone-400 hover:text-stone-900 transition-colors"
+                     >
+                         <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+                         Back to Lookbook
+                     </Link>
+                 </div>
+ 
+-                <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
++                <div className="flex flex-col lg:flex-row gap-8 sm:gap-16 lg:gap-24 items-start">
+                     {/* Visual Side */}
+-                    <div className="flex-1 sticky top-32">
+-                        <div className="relative aspect-[3/4] rounded-[3rem] overflow-hidden bg-stone-200 shadow-2xl group">
++                    <div className="flex-1 w-full max-w-sm sm:max-w-md lg:max-w-none mx-auto lg:mx-0 lg:sticky lg:top-28">
++                        <div className="relative aspect-[3/4] rounded-[2rem] sm:rounded-[3rem] overflow-hidden bg-stone-200 shadow-xl sm:shadow-2xl group">
+                             <img
+                                 src={lookbook.image}
+                                 alt={lookbook.celebrity}
+                                 className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                             />
+                             {/* Overlay */}
+                             <div className="absolute inset-0 bg-gradient-to-t from-stone-950/60 to-transparent" />
+ 
+-                            <div className="absolute bottom-10 left-10">
++                            <div className="absolute bottom-5 left-5 sm:bottom-10 sm:left-10">
+                                 <div className="flex items-center gap-2 text-white/80 font-bold uppercase tracking-widest text-[10px] mb-2">
+                                     <Camera size={12} />
+                                     Captured Silhouette
+                                 </div>
+-                                <h1 className="text-5xl font-black text-white tracking-tighter leading-none">{lookbook.celebrity}</h1>
++                                <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tighter leading-none">{lookbook.celebrity}</h1>
+                             </div>
+                         </div>
+                     </div>
+ 
+                     {/* Analysis Side */}
+                     <div className="flex-1 space-y-12">
+                         <header>
+                             <div className="flex items-center gap-2 text-orange-600 font-black uppercase tracking-[0.3em] text-[10px] mb-4">
+                                 <Info size={14} />
+                                 Style Breakdown
+                             </div>
+-                            <h2 className="text-4xl font-black text-stone-900 tracking-tight leading-none mb-6">
+-                                The <span className="text-orange-600 italic">"{lookbook.movie}"</span> <br /> Blueprint
++                            <h2 className="text-3xl sm:text-4xl font-black text-stone-900 tracking-tight leading-none mb-4 sm:mb-6">
++                                The <span className="text-orange-600 italic">&quot;{lookbook.movie}&quot;</span> <br /> Blueprint
+                             </h2>
+-                            <p className="text-xl text-stone-500 font-medium leading-relaxed">
++                            <p className="text-base sm:text-xl text-stone-500 font-medium leading-relaxed">
+                                 {lookbook.description}
+                             </p>
+                         </header>
+ 
+                         <div className="space-y-6">
+                             <div className="text-[10px] font-black text-stone-400 uppercase tracking-widest">Outfit Component Analysis</div>
+                             {lookbook.items.map((item, index) => (
+                                 <div
+                                     key={index}
+-                                    className="group flex items-center p-6 bg-white border border-stone-100 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1"
++                                    className="group flex items-center p-4 sm:p-6 bg-white border border-stone-100 rounded-[1.5rem] sm:rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1"
+                                 >
+                                     {/* Swatch */}
+                                     <div
+-                                        className="w-20 h-20 rounded-2xl shadow-inner border border-stone-100 flex-shrink-0 flex items-center justify-center relative overflow-hidden group-hover:scale-105 transition-transform"
++                                        className="w-14 h-14 sm:w-20 sm:h-20 rounded-2xl shadow-inner border border-stone-100 flex-shrink-0 flex items-center justify-center relative overflow-hidden group-hover:scale-105 transition-transform"
+                                         style={{ backgroundColor: item.color }}
+                                     >
+                                         <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
+                                     </div>
+ 
+                                     {/* Details */}
+-                                    <div className="ml-8 flex-1">
++                                    <div className="ml-4 sm:ml-8 flex-1">
+                                         <div className="text-[10px] text-orange-600 font-black uppercase tracking-widest mb-1">{item.brand}</div>
+-                                        <div className="text-xl font-black text-stone-900 mb-4">{item.name}</div>
++                                        <div className="text-base sm:text-xl font-black text-stone-900 mb-3 sm:mb-4">{item.name}</div>
+                                         <Link
+                                             href="/collections"
+                                             className="inline-flex items-center gap-2 px-6 py-3 bg-stone-900 text-white text-xs font-black uppercase tracking-widest rounded-xl hover:bg-orange-600 transition-all shadow-lg hover:shadow-orange-600/20"
+                                         >
+                                             <ShoppingBag size={14} />
+                                             Find Match
+                                         </Link>
+                                     </div>
+                                 </div>
+                             ))}
+                         </div>
+ 
+                         {/* Footer Note */}
+-                        <div className="flex items-center gap-4 p-8 bg-stone-950 rounded-[2.5rem] text-white">
++                        <div className="flex items-center gap-3 sm:gap-4 p-5 sm:p-8 bg-stone-950 rounded-[2rem] sm:rounded-[2.5rem] text-white">
+                             <div className="p-3 bg-white/10 rounded-2xl"><Sparkles className="text-orange-500" size={24} /></div>
+                             <div>
+                                 <div className="text-sm font-black uppercase tracking-widest mb-1">Expert Curation</div>
+                                 <div className="text-xs text-white/50 font-medium leading-relaxed">This selection has been analyzed by our master tailors to ensure 95%+ color match accuracy.</div>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </main>
+     );
+ }
+ 
+diff --git a/app/products/[slug]/page.tsx b/app/products/[slug]/page.tsx
+index b0a87aea03c6d7258b427ff16b01d2e2abd38481..c1bc3831b4491c7dff6163b40fbe6f8b63f02be9 100644
+--- a/app/products/[slug]/page.tsx
++++ b/app/products/[slug]/page.tsx
+@@ -1,221 +1,222 @@
+ import Link from "next/link";
+ import { prisma } from "@/lib/prisma";
+ import { Metadata } from "next";
+-import { ArrowLeft, ShoppingCart, Check, Award, BadgeCheck, Film, User } from "lucide-react";
++import type { Product } from "@prisma/client";
++import { ArrowLeft, ShoppingCart, Check, BadgeCheck, Film, User } from "lucide-react";
+ 
+ export async function generateMetadata({
+   params,
+ }: {
+   params: Promise<{ slug: string }>;
+ }): Promise<Metadata> {
+   const { slug } = await params;
+-  const product: any = await prisma.product.findUnique({
++  const product: Product | null = await prisma.product.findUnique({
+     where: { slug },
+   });
+ 
+   if (!product) {
+     return {
+       title: "Product Not Found",
+     };
+   }
+ 
+   return {
+     title: `${product.name} | FilmyFits`,
+     description: `Iconic ${product.movie || 'film'} style worn by ${product.actorName || 'your favorite stars'}. Get the screen-accurate look of ${product.name}.`,
+     alternates: {
+       canonical: `https://filmyfits.vercel.app/products/${slug}`,
+     },
+   };
+ }
+ 
+ 
+ export default async function ProductPage({
+   params,
+ }: {
+   params: Promise<{ slug: string }>;
+ }) {
+   const { slug } = await params;
+-  const product: any = await prisma.product.findUnique({
++  const product: Product | null = await prisma.product.findUnique({
+     where: { slug },
+   });
+ 
+   if (!product) return (
+     <div className="min-h-screen flex items-center justify-center bg-stone-50">
+       <div className="text-center">
+         <h1 className="text-2xl font-black text-stone-900 mb-4">Product Not Found</h1>
+         <Link href="/collections" className="text-orange-600 font-bold hover:underline">Back to Collections</Link>
+       </div>
+     </div>
+   );
+ 
+   const discountedPrice = Math.round(product.price * 1.3);
+ 
+   return (
+     <main className="min-h-screen bg-stone-50 pt-24 pb-32">
+       {/* JSON-LD Structured Data */}
+       <script
+         type="application/ld+json"
+         dangerouslySetInnerHTML={{
+           __html: JSON.stringify({
+             "@context": "https://schema.org/",
+             "@type": "Product",
+             name: product.name,
+             image: product.image,
+             description: product.description,
+             brand: {
+               "@type": "Brand",
+               name: "FilmyFits"
+             },
+             offers: {
+               "@type": "Offer",
+               priceCurrency: "INR",
+               price: product.price,
+               availability: "https://schema.org/InStock",
+               url: product.buyLink,
+             },
+           }),
+         }}
+       />
+ 
+-      <div className="max-w-7xl mx-auto px-6">
++      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+         {/* Breadcrumb */}
+-        <div className="mb-12">
++        <div className="mb-8 md:mb-12">
+           <Link
+             href={`/collections/${product.collection}`}
+             className="group inline-flex items-center text-xs font-bold uppercase tracking-widest text-stone-400 hover:text-stone-900 transition-colors"
+           >
+             <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+             Archive / {product.collection}
+           </Link>
+         </div>
+ 
+-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start pb-24 border-b border-stone-200">
++        <div className="grid lg:grid-cols-2 gap-10 md:gap-16 lg:gap-24 items-start pb-16 md:pb-24 border-b border-stone-200">
+           {/* Visual Side */}
+-          <div className="relative sticky top-32">
+-            <div className="aspect-[4/5] rounded-[3rem] overflow-hidden bg-stone-200 shadow-2xl">
++          <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-none mx-auto lg:mx-0 lg:sticky lg:top-28">
++            <div className="aspect-[4/5] rounded-[2rem] sm:rounded-[3rem] overflow-hidden bg-stone-200 shadow-xl sm:shadow-2xl">
+               <img
+                 src={product.image}
+                 alt={product.name}
+                 className="w-full h-full object-cover"
+               />
+             </div>
+ 
+             {/* Context Badge */}
+             {(product.movie || product.actorName) && (
+-              <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-[2rem] shadow-2xl border border-stone-100 max-w-[280px] animate-in slide-in-from-bottom-4 duration-700">
++              <div className="absolute -bottom-4 left-2 right-2 sm:-bottom-6 sm:-left-6 sm:right-auto bg-white p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] shadow-2xl border border-stone-100 sm:max-w-[280px] animate-in slide-in-from-bottom-4 duration-700">
+                 <div className="flex items-center gap-2 text-orange-600 font-black text-[10px] uppercase tracking-widest mb-3">
+                   <Film size={12} />
+                   As Seen In
+                 </div>
+                 <div className="space-y-3">
+                   {product.movie && (
+                     <div className="flex gap-3">
+                       <div className="p-2 bg-stone-50 rounded-lg h-fit"><Film size={16} className="text-stone-400" /></div>
+                       <div>
+                         <div className="text-[10px] text-stone-400 font-bold uppercase">Movie</div>
+                         <div className="text-sm font-black text-stone-900">{product.movie}</div>
+                       </div>
+                     </div>
+                   )}
+                   {product.actorName && (
+                     <div className="flex gap-3">
+                       <div className="p-2 bg-stone-50 rounded-lg h-fit"><User size={16} className="text-stone-400" /></div>
+                       <div>
+                         <div className="text-[10px] text-stone-400 font-bold uppercase">Worn By</div>
+                         <div className="text-sm font-black text-stone-900">{product.actorName}</div>
+                       </div>
+                     </div>
+                   )}
+                 </div>
+               </div>
+             )}
+ 
+-            <div className="absolute -top-6 -right-6 bg-stone-900 text-white p-6 rounded-[2rem] shadow-2xl">
++            <div className="absolute -top-3 -right-3 sm:-top-6 sm:-right-6 bg-stone-900 text-white p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] shadow-2xl">
+               <BadgeCheck size={32} className="text-orange-500" />
+             </div>
+           </div>
+ 
+           {/* Details Side */}
+           <div className="space-y-12">
+             <div>
+               <div className="flex items-center gap-3 mb-6">
+                 <span className="px-3 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-widest rounded-full">In Stock</span>
+                 <span className="text-stone-400 text-xs font-bold uppercase tracking-widest">Free Pan-India Delivery</span>
+               </div>
+ 
+-              <h1 className="text-5xl md:text-7xl font-black text-stone-900 tracking-tighter leading-[0.9] mb-6">
++              <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-stone-900 tracking-tighter leading-[0.9] mb-5 md:mb-6">
+                 {product.name}
+               </h1>
+ 
+-              <p className="text-xl text-stone-500 font-medium leading-relaxed">
++              <p className="text-base sm:text-xl text-stone-500 font-medium leading-relaxed">
+                 {product.description}
+               </p>
+             </div>
+ 
+             {/* Pricing Section */}
+-            <div className="p-8 bg-white rounded-[2.5rem] shadow-xl border border-stone-100">
++            <div className="p-5 sm:p-8 bg-white rounded-[2rem] sm:rounded-[2.5rem] shadow-xl border border-stone-100">
+               <div className="flex items-end gap-4 mb-8">
+                 <div>
+                   <div className="text-[10px] text-stone-400 font-bold uppercase tracking-widest mb-1">Current Price</div>
+-                  <div className="text-5xl font-black text-stone-900">₹{product.price.toLocaleString()}</div>
++                  <div className="text-4xl sm:text-5xl font-black text-stone-900">₹{product.price.toLocaleString()}</div>
+                 </div>
+                 <div className="mb-1">
+                   <span className="text-lg text-stone-300 line-through font-bold">₹{discountedPrice.toLocaleString()}</span>
+                   <div className="text-orange-600 font-black text-xs uppercase tracking-widest mt-1">Limited Time Offer</div>
+                 </div>
+               </div>
+ 
+               <div className="grid grid-cols-2 gap-4 mb-8">
+                 {[
+                   "Screen Accurate",
+                   "Premium Materials",
+                   "Collector's Item",
+                   "Express Shipping",
+                 ].map((f, i) => (
+                   <div key={i} className="flex items-center gap-2 text-stone-600 text-sm font-bold">
+                     <div className="w-5 h-5 bg-emerald-50 rounded-full flex items-center justify-center flex-shrink-0">
+                       <Check className="w-3 h-3 text-emerald-600" />
+                     </div>
+                     {f}
+                   </div>
+                 ))}
+               </div>
+ 
+               <a
+                 href={product.buyLink}
+                 target="_blank"
+                 rel="nofollow sponsored"
+-                className="group flex items-center justify-center gap-4 w-full py-6 bg-stone-900 text-white font-black text-lg rounded-2xl hover:bg-orange-600 transition-all shadow-xl hover:shadow-orange-600/20 active:scale-[0.98]"
++                className="group flex items-center justify-center gap-3 sm:gap-4 w-full py-4 sm:py-6 bg-stone-900 text-white font-black text-sm sm:text-lg rounded-2xl hover:bg-orange-600 transition-all shadow-xl hover:shadow-orange-600/20 active:scale-[0.98]"
+               >
+                 <ShoppingCart size={22} className="group-hover:rotate-12 transition-transform" />
+                 Check Price on Amazon
+               </a>
+             </div>
+ 
+             {/* Quality Commitment */}
+-            <div className="flex gap-8 items-start p-2">
++            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 items-start p-2">
+               <div className="flex-1">
+                 <div className="font-black text-stone-900 mb-2 uppercase tracking-tight">Authentic Detail</div>
+                 <p className="text-stone-500 text-sm leading-relaxed">We source products that capture the soul of the character. Each piece in the FilmyFits archive is selected for its proximity to screen accuracy.</p>
+               </div>
+               <div className="flex-1">
+                 <div className="font-black text-stone-900 mb-2 uppercase tracking-tight">Hand-Picked</div>
+                 <p className="text-stone-500 text-sm leading-relaxed">Our fashion experts scan thousands of items to find only those with the correct drape, material, and iconic silhouette.</p>
+               </div>
+             </div>
+           </div>
+         </div>
+       </div>
+ 
+       {/* Sticky Bottom CTA */}
+       <div className="fixed bottom-0 inset-x-0 p-4 md:p-6 z-50 pointer-events-none flex justify-center">
+         <div className="bg-white/80 backdrop-blur-xl border border-stone-100 shadow-2xl p-3 md:p-4 rounded-[2rem] w-full max-w-lg pointer-events-auto flex items-center justify-between gap-4">
+           <div className="hidden sm:block ml-4">
+             <div className="text-[10px] text-stone-400 font-black uppercase tracking-widest leading-none mb-1">Buy Now</div>
+             <div className="text-xl font-black text-stone-900 leading-none">₹{product.price.toLocaleString()}</div>
+           </div>
+           <a
+             href={product.buyLink}
+             target="_blank"
+             className="flex-1 flex items-center justify-center gap-2 bg-stone-900 text-white py-4 px-6 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-600 transition-all shadow-xl shadow-stone-900/10"
+           >
+diff --git a/components/Header.tsx b/components/Header.tsx
+index 75a9d5c020d0c23b213729916afc12b64dd98b1e..bd1b2fe43ee7a9c36bf6e39e55cab8108775d99e 100644
+--- a/components/Header.tsx
++++ b/components/Header.tsx
+@@ -1,290 +1,286 @@
+ "use client";
+ 
+-import { useState, useEffect } from "react";
++import { useEffect, useState } from "react";
+ import Link from "next/link";
+ import { Search, X, Menu, Send, PlusCircle } from "lucide-react";
+ 
++type SearchResult = {
++  id: string;
++  type: "product" | "collection" | "movie" | "actor";
++  title: string;
++  subtitle: string;
++  href: string;
++  image: string | null;
++  price: number | null;
++};
++
+ export default function Header() {
+-    const [open, setOpen] = useState(false);
+-    const [searchOpen, setSearchOpen] = useState(false);
+-    const [requestOpen, setRequestOpen] = useState(false);
+-    const [query, setQuery] = useState("");
+-    const [results, setResults] = useState<any[]>([]);
+-    const [scrolled, setScrolled] = useState(false);
++  const [open, setOpen] = useState(false);
++  const [searchOpen, setSearchOpen] = useState(false);
++  const [requestOpen, setRequestOpen] = useState(false);
++  const [query, setQuery] = useState("");
++  const [results, setResults] = useState<SearchResult[]>([]);
++  const [scrolled, setScrolled] = useState(false);
+ 
+-    // Request form state
+-    const [requestContent, setRequestContent] = useState("");
+-    const [requestEmail, setRequestEmail] = useState("");
+-    const [isSubmitting, setIsSubmitting] = useState(false);
+-    const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
++  const [requestContent, setRequestContent] = useState("");
++  const [requestEmail, setRequestEmail] = useState("");
++  const [isSubmitting, setIsSubmitting] = useState(false);
++  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+ 
+-    useEffect(() => {
+-        const handleScroll = () => setScrolled(window.scrollY > 20);
+-        window.addEventListener("scroll", handleScroll);
+-        return () => window.removeEventListener("scroll", handleScroll);
+-    }, []);
++  useEffect(() => {
++    const handleScroll = () => setScrolled(window.scrollY > 20);
++    window.addEventListener("scroll", handleScroll);
++    return () => window.removeEventListener("scroll", handleScroll);
++  }, []);
+ 
+-    useEffect(() => {
+-        if (query.length < 2) {
+-            setResults([]);
+-            return;
+-        }
++  useEffect(() => {
++    if (query.trim().length < 2) {
++      setResults([]);
++      return;
++    }
+ 
+-        const timeout = setTimeout(async () => {
+-            try {
+-                const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+-                const data = await res.json();
+-                setResults(Array.isArray(data) ? data : []);
+-            } catch (err) {
+-                console.error("Search error:", err);
+-            }
+-        }, 300);
++    const timeout = setTimeout(async () => {
++      try {
++        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
++        const data = await res.json();
++        setResults(Array.isArray(data) ? data : []);
++      } catch (error) {
++        console.error("Search error:", error);
++      }
++    }, 250);
+ 
+-        return () => clearTimeout(timeout);
+-    }, [query]);
++    return () => clearTimeout(timeout);
++  }, [query]);
+ 
+-    const handleRequestSubmit = async (e: React.FormEvent) => {
+-        e.preventDefault();
+-        setIsSubmitting(true);
+-        setSubmitStatus("idle");
++  const closePanels = () => {
++    setOpen(false);
++    setSearchOpen(false);
++    setRequestOpen(false);
++  };
+ 
+-        try {
+-            const res = await fetch("/api/requests", {
+-                method: "POST",
+-                headers: { "Content-Type": "application/json" },
+-                body: JSON.stringify({ content: requestContent, email: requestEmail }),
+-            });
++  const handleRequestSubmit = async (e: React.FormEvent) => {
++    e.preventDefault();
++    setIsSubmitting(true);
++    setSubmitStatus("idle");
+ 
+-            if (res.ok) {
+-                setSubmitStatus("success");
+-                setRequestContent("");
+-                setRequestEmail("");
+-                setTimeout(() => setRequestOpen(false), 2000);
+-            } else {
+-                setSubmitStatus("error");
+-            }
+-        } catch (err) {
+-            setSubmitStatus("error");
+-        } finally {
+-            setIsSubmitting(false);
+-        }
+-    };
++    try {
++      const res = await fetch("/api/requests", {
++        method: "POST",
++        headers: { "Content-Type": "application/json" },
++        body: JSON.stringify({ content: requestContent, email: requestEmail }),
++      });
+ 
+-    return (
+-        <>
+-            <header
+-                className="glass-header"
+-                style={{
+-                    position: "fixed",
+-                    top: scrolled ? "10px" : "20px",
+-                    left: "50%",
+-                    transform: "translateX(-50%)",
+-                    width: "calc(100% - 40px)",
+-                    zIndex: 1000,
+-                    transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+-                }}
+-            >
+-                <nav className="glass-nav">
+-                    <Link href="/" className="logo-text">
+-                        FilmyFits
+-                    </Link>
++      if (!res.ok) {
++        setSubmitStatus("error");
++        return;
++      }
+ 
+-                    <ul className="hidden md:flex gap-8 list-none m-0 p-0">
+-                        <li><Link href="/collections" className="nav-link">Collections</Link></li>
+-                        <li><Link href="/collections" className="nav-link">Props</Link></li>
+-                        <li><Link href="/collections" className="nav-link">Props</Link></li>
+-                    </ul>
++      setSubmitStatus("success");
++      setRequestContent("");
++      setRequestEmail("");
++      setTimeout(() => setRequestOpen(false), 1400);
++    } catch (error) {
++      console.error("Request submit error", error);
++      setSubmitStatus("error");
++    } finally {
++      setIsSubmitting(false);
++    }
++  };
+ 
+-                    <div className="flex items-center gap-2 md:gap-4">
+-                        <button
+-                            onClick={() => setRequestOpen(true)}
+-                            className="hidden lg:flex items-center gap-2 px-4 py-2 bg-stone-900 text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-stone-800 transition-all active:scale-95"
+-                        >
+-                            <PlusCircle size={14} />
+-                            Request Item
+-                        </button>
++  return (
++    <>
++      <header
++        className="glass-header"
++        style={{
++          position: "fixed",
++          top: scrolled ? "10px" : "20px",
++          left: "50%",
++          transform: "translateX(-50%)",
++          width: "calc(100% - 40px)",
++          zIndex: 1000,
++          transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
++        }}
++      >
++        <nav className="glass-nav">
++          <Link href="/" className="logo-text">
++            FilmyFits
++          </Link>
+ 
+-                        <div className="flex gap-1 md:gap-2">
+-                            <button
+-                                onClick={() => {
+-                                    setSearchOpen(!searchOpen);
+-                                    setOpen(false);
+-                                }}
+-                                className="header-icon-btn"
+-                                aria-label="Search"
+-                            >
+-                                {searchOpen ? <X size={20} /> : <Search size={20} />}
+-                            </button>
+-                            <button
+-                                onClick={() => {
+-                                    setOpen(!open);
+-                                    setSearchOpen(false);
+-                                }}
+-                                className="md:hidden header-icon-btn"
+-                                aria-label="Menu"
+-                            >
+-                                {open ? <X size={20} /> : <Menu size={20} />}
+-                            </button>
+-                        </div>
+-                    </div>
+-                </nav>
+-            </header>
++          <ul className="hidden md:flex gap-8 list-none m-0 p-0">
++            <li><Link href="/collections" className="nav-link">Collections</Link></li>
++            <li><Link href="/lookbook/0" className="nav-link">Lookbook</Link></li>
++          </ul>
+ 
+-            {/* Request Modal */}
+-            {requestOpen && (
+-                <div className="modal-overlay" onClick={() => setRequestOpen(false)}>
+-                    <div className="modal-content" onClick={e => e.stopPropagation()}>
+-                        <button
+-                            onClick={() => setRequestOpen(false)}
+-                            className="absolute top-6 right-6 p-2 hover:bg-stone-100 rounded-full transition-colors"
+-                        >
+-                            <X size={20} />
+-                        </button>
++          <div className="flex items-center gap-2 md:gap-4">
++            <button
++              onClick={() => setRequestOpen(true)}
++              className="hidden lg:flex items-center gap-2 px-4 py-2 bg-stone-900 text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-stone-800 transition-all active:scale-95"
++            >
++              <PlusCircle size={14} />
++              Request Item
++            </button>
+ 
+-                        <h2 className="text-2xl font-bold text-stone-900 mb-2">Request an Outfit</h2>
+-                        <p className="text-stone-500 mb-8">Can't find a specific movie look? Tell us what you're looking for!</p>
++            <div className="flex gap-1 md:gap-2">
++              <button
++                onClick={() => {
++                  setSearchOpen(!searchOpen);
++                  setOpen(false);
++                }}
++                className="header-icon-btn"
++                aria-label="Search"
++              >
++                {searchOpen ? <X size={20} /> : <Search size={20} />}
++              </button>
++              <button
++                onClick={() => {
++                  setOpen(!open);
++                  setSearchOpen(false);
++                }}
++                className="md:hidden header-icon-btn"
++                aria-label="Menu"
++              >
++                {open ? <X size={20} /> : <Menu size={20} />}
++              </button>
++            </div>
++          </div>
++        </nav>
++      </header>
+ 
+-                        {submitStatus === "success" ? (
+-                            <div className="bg-emerald-50 text-emerald-700 p-6 rounded-2xl text-center animate-in fade-in zoom-in">
+-                                <PlusCircle className="mx-auto mb-4 w-12 h-12" />
+-                                <h3 className="text-xl font-bold mb-1">Request Received!</h3>
+-                                <p>We'll look for this iconic fit and let you know.</p>
+-                            </div>
+-                        ) : (
+-                            <form onSubmit={handleRequestSubmit} className="space-y-4">
+-                                <div>
+-                                    <label className="block text-sm font-bold text-stone-700 mb-2 uppercase tracking-tight">What movie or character?</label>
+-                                    <textarea
+-                                        required
+-                                        value={requestContent}
+-                                        onChange={e => setRequestContent(e.target.value)}
+-                                        placeholder="e.g. John Wick's black suit from Chapter 4"
+-                                        className="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl focus:ring-2 focus:ring-stone-900 focus:border-transparent outline-none transition-all h-32 resize-none"
+-                                    />
+-                                </div>
+-                                <div>
+-                                    <label className="block text-sm font-bold text-stone-700 mb-2 uppercase tracking-tight">Your Email (Optional)</label>
+-                                    <input
+-                                        type="email"
+-                                        value={requestEmail}
+-                                        onChange={e => setRequestEmail(e.target.value)}
+-                                        placeholder="To notify you when it's added"
+-                                        className="w-full p-4 bg-stone-50 border border-stone-200 rounded-2xl focus:ring-2 focus:ring-stone-900 focus:border-transparent outline-none transition-all"
+-                                    />
+-                                </div>
+-                                <button
+-                                    disabled={isSubmitting}
+-                                    type="submit"
+-                                    className="w-full flex items-center justify-center gap-2 py-4 bg-stone-900 text-white font-bold rounded-2xl hover:bg-stone-800 transition-all disabled:opacity-50"
+-                                >
+-                                    {isSubmitting ? "Sending..." : (
+-                                        <>
+-                                            <Send size={18} />
+-                                            Submit Request
+-                                        </>
+-                                    )}
+-                                </button>
+-                                {submitStatus === "error" && (
+-                                    <p className="text-red-600 text-sm text-center">Something went wrong. Please try again.</p>
+-                                )}
+-                            </form>
+-                        )}
+-                    </div>
+-                </div>
+-            )}
++      {requestOpen && (
++        <div className="modal-overlay" onClick={() => setRequestOpen(false)}>
++          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
++            <button
++              onClick={() => setRequestOpen(false)}
++              className="absolute top-6 right-6 p-2 hover:bg-stone-100 rounded-full transition-colors"
++            >
++              <X size={20} />
++            </button>
+ 
+-            {/* Search Overlay */}
+-            {searchOpen && (
+-                <div className="floating-panel">
+-                    <div className="relative">
+-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" size={18} />
+-                        <input
+-                            type="text"
+-                            placeholder="Search outfits, movies, actors..."
+-                            value={query}
+-                            onChange={(e) => setQuery(e.target.value)}
+-                            className="search-input !pl-12"
+-                            autoFocus
+-                        />
+-                    </div>
++            <h2 className="text-2xl font-bold text-stone-900 mb-2">Request an Outfit</h2>
++            <p className="text-stone-500 mb-8">Drop the movie/actor/collection vibe and we will try to source it.</p>
+ 
+-                    <div className="mt-6 space-y-2 max-h-[60vh] overflow-y-auto pr-2">
+-                        {results.length > 0 ? (
+-                            results.map((p) => (
+-                                <Link
+-                                    key={p.id}
+-                                    href={`/products/${p.slug}`}
+-                                    onClick={() => setSearchOpen(false)}
+-                                    className="search-result group"
+-                                >
+-                                    <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-stone-100">
+-                                        <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+-                                    </div>
+-                                    <div className="flex-1 min-w-0">
+-                                        <div className="font-bold text-stone-900 truncate">{p.name}</div>
+-                                        <div className="text-xs text-stone-500 truncate">{p.movie || p.collection}</div>
+-                                    </div>
+-                                    <div className="text-sm font-bold text-stone-900">₹{p.price.toLocaleString()}</div>
+-                                </Link>
+-                            ))
+-                        ) : query.length >= 2 ? (
+-                            <div className="text-center py-8 text-stone-400 text-sm">No results found for "{query}"</div>
+-                        ) : (
+-                            <div className="text-center py-8 text-stone-400 text-sm italic">Type to search iconic film styles...</div>
+-                        )}
+-                    </div>
+-                </div>
++            {submitStatus === "success" ? (
++              <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-semibold text-center">
++                Request submitted. We will reach out soon.
++              </div>
++            ) : (
++              <form onSubmit={handleRequestSubmit} className="space-y-4">
++                <textarea
++                  required
++                  rows={4}
++                  value={requestContent}
++                  onChange={(e) => setRequestContent(e.target.value)}
++                  placeholder="e.g. John Wick Chapter 4 suit with matching tie"
++                  className="w-full px-4 py-3 rounded-2xl bg-stone-50 border border-stone-200 outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
++                />
++                <input
++                  type="email"
++                  value={requestEmail}
++                  onChange={(e) => setRequestEmail(e.target.value)}
++                  placeholder="Email (optional)"
++                  className="w-full px-4 py-3 rounded-2xl bg-stone-50 border border-stone-200 outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
++                />
++                <button
++                  disabled={isSubmitting}
++                  className="w-full flex items-center justify-center gap-2 py-4 bg-stone-900 text-white font-bold rounded-2xl hover:bg-stone-800 transition-all disabled:opacity-50"
++                >
++                  {isSubmitting ? "Sending..." : <><Send size={18} />Submit Request</>}
++                </button>
++                {submitStatus === "error" && (
++                  <p className="text-red-600 text-sm text-center">Something went wrong. Please try again.</p>
++                )}
++              </form>
+             )}
++          </div>
++        </div>
++      )}
+ 
+-            {/* Mobile Menu Panel */}
+-            {open && (
+-                <div
+-                    className="fixed left-5 right-5 z-[1000] bg-white rounded-[2rem] p-4 shadow-2xl border border-stone-100 animate-in fade-in slide-in-from-top-4 duration-300"
+-                    style={{ top: scrolled ? "75px" : "85px" }}
++      {searchOpen && (
++        <div className="floating-panel">
++          <div className="relative">
++            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" size={18} />
++            <input
++              type="text"
++              placeholder="Search tags: collections, products, movies, actors..."
++              value={query}
++              onChange={(e) => setQuery(e.target.value)}
++              className="search-input !pl-12"
++              autoFocus
++            />
++          </div>
++
++          <div className="mt-6 space-y-2 max-h-[60vh] overflow-y-auto pr-2">
++            {results.length > 0 ? (
++              results.map((result) => (
++                <Link
++                  key={result.id}
++                  href={result.href}
++                  onClick={() => setSearchOpen(false)}
++                  className="search-result group"
+                 >
+-                    <div className="flex flex-col gap-1">
+-                        <Link href="/collections" onClick={() => setOpen(false)} className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 rounded-2xl font-bold text-stone-900 transition-colors">
+-                            <span className="w-1.5 h-1.5 bg-orange-500 rounded-full" />
+-                            All Collections
+-                        </Link>
+-                        <Link href="/collectionsn" onClick={() => setOpen(false)} className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 rounded-2xl font-bold text-stone-900 transition-colors">
+-                            <span className="w-1.5 h-1.5 bg-stone-300 rounded-full" />
+-                            Prop
+-                        </Link>
+-                        <Link href="/collections" onClick={() => setOpen(false)} className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 rounded-2xl font-bold text-stone-900 transition-colors">
+-                            <span className="w-1.5 h-1.5 bg-stone-300 rounded-full" />
+-                            Prop
+-                        </Link>
+-                        <div className="h-px bg-stone-100 my-2 mx-6" />
+-                        <button
+-                            onClick={() => {
+-                                setRequestOpen(true);
+-                                setOpen(false);
+-                            }}
+-                            className="flex items-center justify-center gap-2 px-6 py-4 bg-stone-900 text-white rounded-2xl font-bold active:scale-95 transition-all"
+-                        >
+-                            <PlusCircle size={18} />
+-                            Request an Item
+-                        </button>
+-                    </div>
+-                </div>
++                  <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-stone-100 flex items-center justify-center text-[10px] font-black uppercase tracking-wider text-stone-500">
++                    {result.image ? (
++                      <img src={result.image} alt={result.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
++                    ) : (
++                      result.type
++                    )}
++                  </div>
++                  <div className="flex-1 min-w-0">
++                    <div className="font-bold text-stone-900 truncate">{result.title}</div>
++                    <div className="text-xs text-stone-500 truncate">{result.subtitle}</div>
++                  </div>
++                  <div className="text-[10px] font-black uppercase tracking-wider text-stone-400 text-right">
++                    {result.price !== null ? `₹${result.price.toLocaleString()}` : result.type}
++                  </div>
++                </Link>
++              ))
++            ) : query.length >= 2 ? (
++              <div className="text-center py-8 text-stone-400 text-sm">No matches for &quot;{query}&quot;.</div>
++            ) : (
++              <div className="text-center py-8 text-stone-400 text-sm italic">Type at least 2 letters to search by tags.</div>
+             )}
++          </div>
++        </div>
++      )}
+ 
+-            {/* Global Overlay */}
+-            {(open || searchOpen || requestOpen) && (
+-                <div
+-                    onClick={() => {
+-                        setOpen(false);
+-                        setSearchOpen(false);
+-                        setRequestOpen(false);
+-                    }}
+-                    className="fixed inset-0 z-[900]"
+-                    style={{
+-                        background: (open || searchOpen) ? "rgba(0,0,0,0.1)" : "transparent",
+-                    }}
+-                />
+-            )}
+-        </>
+-    );
+-}
++      {open && (
++        <div
++          className="fixed left-3 right-3 sm:left-5 sm:right-5 z-[1000] bg-white rounded-[2rem] p-4 shadow-2xl border border-stone-100 animate-in fade-in slide-in-from-top-4 duration-300"
++          style={{ top: scrolled ? "72px" : "84px" }}
++        >
++          <div className="flex flex-col gap-1">
++            <Link href="/collections" onClick={() => setOpen(false)} className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 rounded-2xl font-bold text-stone-900 transition-colors">
++              <span className="w-1.5 h-1.5 bg-orange-500 rounded-full" />
++              All Collections
++            </Link>
++            <Link href="/lookbook/0" onClick={() => setOpen(false)} className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 rounded-2xl font-bold text-stone-900 transition-colors">
++              <span className="w-1.5 h-1.5 bg-stone-300 rounded-full" />
++              Lookbook
++            </Link>
++            <div className="h-px bg-stone-100 my-2 mx-6" />
++            <button
++              onClick={() => {
++                setRequestOpen(true);
++                setOpen(false);
++              }}
++              className="flex items-center justify-center gap-2 px-6 py-4 bg-stone-900 text-white rounded-2xl font-bold active:scale-95 transition-all"
++            >
++              <PlusCircle size={18} />
++              Request an Item
++            </button>
++          </div>
++        </div>
++      )}
+ 
++      {(open || searchOpen || requestOpen) && (
++        <div
++          onClick={closePanels}
++          className="fixed inset-0 z-[900]"
++          style={{
++            background: (open || searchOpen) ? "rgba(0,0,0,0.1)" : "transparent",
++          }}
++        />
++      )}
++    </>
++  );
++}
+diff --git a/components/LookbookSection.tsx b/components/LookbookSection.tsx
+index 3f0b661a304c88a846a32e34a7a85297db9e3707..2a237bd1c617bdda4c558bbbdca31d4c1e1fc6d5 100644
+--- a/components/LookbookSection.tsx
++++ b/components/LookbookSection.tsx
+@@ -1,69 +1,67 @@
+ import Link from 'next/link';
+-import { Camera } from 'lucide-react';
+-
+ const lookbookData = [
+     {
+         celebrity: "James Bond",
+         movie: "Casino Royale",
+         image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1974&auto=format&fit=crop",
+     },
+     {
+         celebrity: "Don Draper",
+         movie: "Mad Men",
+         image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=2070&auto=format&fit=crop",
+     },
+     {
+         celebrity: "Tony Stark",
+         movie: "Iron Man",
+         image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1974&auto=format&fit=crop",
+     },
+     {
+         celebrity: "Thomas Shelby",
+         movie: "Peaky Blinders",
+         image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=1974&auto=format&fit=crop",
+     },
+ ];
+ 
+ export default function LookbookSection() {
+     return (
+-        <section className="py-24 px-6 md:px-12 bg-stone-50">
++        <section className="py-16 md:py-24 px-4 sm:px-6 md:px-12 bg-stone-50">
+             <div className="max-w-7xl mx-auto">
+-                <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-6">
++                <div className="flex flex-col md:flex-row justify-between items-center mb-10 md:mb-16 gap-4 md:gap-6">
+                     <div className="text-center md:text-left">
+-                        <h2 className="text-4xl md:text-6xl font-black text-stone-900 tracking-tight leading-none">
++                        <h2 className="text-3xl sm:text-4xl md:text-6xl font-black text-stone-900 tracking-tight leading-none">
+                             Celebrity <br className="hidden md:block" /><span className="text-orange-600">Lookbook</span>
+                         </h2>
+                     </div>
+                 </div>
+ 
+-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
++                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+                     {lookbookData.map((lookbook, index) => (
+-                        <Link key={index} href={`/lookbook/${index}`} className="group relative aspect-[3/4] overflow-hidden rounded-[2.5rem] bg-stone-200 shadow-2xl transition-all duration-500 hover:-translate-y-2">
++                        <Link key={index} href={`/lookbook/${index}`} className="group relative aspect-[3/4] overflow-hidden rounded-2xl sm:rounded-[2.5rem] bg-stone-200 shadow-lg sm:shadow-2xl transition-all duration-500 hover:-translate-y-2">
+                             {/* Image Background */}
+                             <img
+                                 src={lookbook.image}
+                                 alt={lookbook.celebrity}
+                                 className="absolute inset-0 w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110"
+                             />
+ 
+                             {/* Overlay Gradient */}
+                             <div className="absolute inset-0 bg-gradient-to-t from-stone-900 via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
+ 
+                             {/* Content */}
+-                            <div className="absolute inset-0 p-8 flex flex-col justify-end">
++                            <div className="absolute inset-0 p-4 sm:p-8 flex flex-col justify-end">
+                                 <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+-                                    <div className="text-white font-black text-2xl mb-1">{lookbook.celebrity}</div>
+-                                    <div className="text-white/60 text-sm font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-500">
++                                    <div className="text-white font-black text-base sm:text-2xl mb-1">{lookbook.celebrity}</div>
++                                    <div className="text-white/60 text-[10px] sm:text-sm font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                                         Seen in {lookbook.movie}
+                                     </div>
+                                 </div>
+                                 <div className="mt-4 w-12 h-1 bg-orange-600 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-500" />
+                             </div>
+                         </Link>
+                     ))}
+                 </div>
+             </div>
+         </section>
+     );
+ }
+ 
+diff --git a/components/NewestProducts.tsx b/components/NewestProducts.tsx
+index f10e7fed5233223491221b5b1e8fcf8abca8e0cd..e5ad758dc5b90cc009296190b9f17f5318ce0854 100644
+--- a/components/NewestProducts.tsx
++++ b/components/NewestProducts.tsx
+@@ -1,83 +1,82 @@
+ import Link from "next/link";
+ import { prisma } from "@/lib/prisma";
+-import { ArrowRight, Sparkles, Film, ShoppingBag } from "lucide-react";
++import type { Product } from "@prisma/client";
++import { ArrowRight, Sparkles, ShoppingBag } from "lucide-react";
+ 
+ export default async function NewestProducts() {
+-    let latestProducts: any[] = [];
++    let latestProducts: Product[] = [];
+     try {
+         latestProducts = await prisma.product.findMany({
+-            take: 4,
+             orderBy: {
+                 createdAt: 'desc'
+             }
+         });
+     } catch (e) {
+         console.error("Failed to fetch latest products", e);
+     }
+ 
+ 
+     if (latestProducts.length === 0) return null;
+ 
+     return (
+-        <section className="py-24 px-6 sm:px-8 lg:px-12 bg-white relative overflow-hidden">
++        <section className="py-24 px-4 sm:px-8 lg:px-12 bg-white relative overflow-hidden">
+             {/* Background Accent */}
+             <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[500px] h-[500px] bg-stone-50 rounded-full blur-3xl opacity-50 pointer-events-none" />
+ 
+             <div className="max-w-7xl mx-auto relative">
+-                <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
++                <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 md:mb-16 gap-6">
+                     <div className="max-w-2xl">
+                         <div className="flex items-center gap-2 text-orange-600 font-black uppercase tracking-[0.3em] text-[10px] mb-4">
+                             <Sparkles size={14} />
+ 
+                         </div>
+                         <h2 className="text-2xl md:text-3xl font-black text-stone-900 tracking-tighter leading-none mb-6">
+                             Latest <span className="text-stone-300">Artifacts</span>
+                         </h2>
+                     </div>
+                     <Link
+                         href="/collections"
+-                        className="group flex items-center gap-2 text-stone-400 font-black uppercase tracking-widest text-xs hover:text-stone-900 transition-all pb-2"
++                        className="group flex items-center gap-2 text-stone-400 font-black uppercase tracking-widest text-xs hover:text-stone-900 transition-all pb-2 self-start md:self-auto"
+                     >
+                         Explore The Vault
+                         <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform text-orange-600" />
+                     </Link>
+                 </div>
+ 
+-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
++                <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-8 md:gap-10 sm:overflow-visible sm:snap-none">
+                     {latestProducts.map((product) => (
+                         <Link
+                             key={product.id}
+                             href={`/products/${product.slug}`}
+-                            className="group flex flex-col"
++                            className="group flex-shrink-0 basis-[42%] min-w-[42%] max-w-[180px] snap-start sm:min-w-0 sm:max-w-none sm:basis-auto sm:flex sm:flex-col"
+                         >
+-                            <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden bg-stone-100 mb-8 shadow-sm group-hover:shadow-2xl transition-all duration-700">
++                            <div className="relative aspect-[4/5] rounded-3xl sm:rounded-[2.5rem] overflow-hidden bg-stone-100 mb-4 sm:mb-8 shadow-sm group-hover:shadow-2xl transition-all duration-700">
+                                 <img
+                                     src={product.image}
+                                     alt={product.name}
+                                     className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
+                                 />
+ 
+ 
+                                 {/* Hover Overlay Component */}
+                                 <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+                                     <div className="bg-stone-900 text-white py-4 rounded-2xl flex items-center justify-center gap-2 font-black uppercase tracking-widest text-[10px] shadow-2xl">
+                                         <ShoppingBag size={14} className="text-orange-500" />
+                                         See Product
+                                     </div>
+                                 </div>
+                             </div>
+-                            <h3 className="text-xl font-black text-stone-900 mb-2 tracking-tight group-hover:text-orange-600 transition-colors line-clamp-1">
++                            <h3 className="text-base sm:text-xl font-black text-stone-900 mb-1 sm:mb-2 tracking-tight group-hover:text-orange-600 transition-colors line-clamp-1">
+                                 {product.name}
+                             </h3>
+                             <div className="flex items-center justify-between">
+-                                <div className="text-2xl font-black text-stone-900 leading-none">₹{product.price.toLocaleString()}</div>
++                                <div className="text-base sm:text-2xl font-black text-stone-900 leading-none">₹{product.price.toLocaleString()}</div>
+                                 <div className="text-[10px] font-bold text-stone-300 uppercase tracking-widest">{product.collection}</div>
+                             </div>
+                         </Link>
+                     ))}
+                 </div>
+             </div>
+         </section>
+     );
+ }
+-
+ 
+EOF
+)

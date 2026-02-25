@@ -1,3 +1,4 @@
+import React from "react";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { Metadata } from "next";
@@ -80,14 +81,28 @@ export default async function ProductPage({
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Breadcrumb */}
-        <div className="mb-8 md:mb-12">
+        <div className="mb-8 md:mb-12 flex flex-wrap items-center gap-2">
           <Link
-            href={`/collections/${product.collection}`}
+            href="/collections"
             className="group inline-flex items-center text-xs font-bold uppercase tracking-widest text-stone-400 hover:text-stone-900 transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-            Archive / {product.collection}
+            Archive
           </Link>
+          <span className="text-stone-300 text-xs">/</span>
+          <div className="flex flex-wrap gap-2">
+            {product.collection.split(',').map((slug, i, arr) => (
+              <React.Fragment key={slug}>
+                <Link
+                  href={`/collections/${slug.trim()}`}
+                  className="text-xs font-bold uppercase tracking-widest text-orange-600 hover:text-stone-900 transition-colors"
+                >
+                  {slug.trim()}
+                </Link>
+                {i < arr.length - 1 && <span className="text-stone-300">,</span>}
+              </React.Fragment>
+            ))}
+          </div>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-10 md:gap-16 lg:gap-24 items-start pb-16 md:pb-24 border-b border-stone-200">

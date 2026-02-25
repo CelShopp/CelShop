@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Plus, Package, Database, Trash2, ArrowRight, Sparkles } from 'lucide-react';
-import Header from '@/components/Header';
+import React, { useState, useEffect } from 'react';
+import { Plus, Package, Database, Sparkles, Check } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AddProductPage() {
+    const [suggestedCollections, setSuggestedCollections] = useState(['batman', 'spiderman', 'john-wick', 'top-gun', 'matrix']);
     const [formData, setFormData] = useState({
         name: '',
         slug: '',
@@ -16,7 +16,19 @@ export default function AddProductPage() {
         collection: 'batman',
         actorName: '',
         movie: '',
+        isFeatured: false,
     });
+
+    useEffect(() => {
+        fetch('/api/collections')
+            .then(res => res.json())
+            .then(data => {
+                if (Array.isArray(data)) {
+                    setSuggestedCollections(prev => Array.from(new Set([...prev, ...data])));
+                }
+            })
+            .catch(err => console.error("Error fetching collections:", err));
+    }, []);
 
     const [file, setFile] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
@@ -34,9 +46,25 @@ export default function AddProductPage() {
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
+        const { name, value, type } = e.target;
+        const checked = (e.target as HTMLInputElement).checked;
+
         setFormData(prev => {
-            const newData = { ...prev, [name]: value };
+            let finalValue: any = type === 'checkbox' ? checked : value;
+
+            if (name === 'collection') {
+                // Normalize multiple collections (comma separated)
+                finalValue = value
+                    .toLowerCase()
+                    .replace(/\s+/g, '-')
+                    .replace(/[^a-z0-9-,]/g, '') // Allow commas
+                    .split(',')
+                    .map(s => s.trim())
+                    .filter(Boolean)
+                    .join(',');
+            }
+
+            const newData = { ...prev, [name]: finalValue };
             // Auto-generate slug from name if slug is empty
             if (name === 'name' && !prev.slug) {
                 newData.slug = value.toLowerCase().replace(/ /g, '-').replace(/[^\w-]/g, '');
@@ -97,6 +125,7 @@ export default function AddProductPage() {
                     collection: 'batman',
                     actorName: '',
                     movie: '',
+                    isFeatured: false,
                 });
                 setFile(null);
                 setPreview(null);
@@ -105,7 +134,7 @@ export default function AddProductPage() {
                 setStatus('error');
                 setMessage(err.error || 'Failed to archive item.');
             }
-        } catch (err) {
+        } catch {
             setStatus('error');
             setMessage('Network error. Check connection.');
         }
@@ -118,7 +147,7 @@ export default function AddProductPage() {
                 <div className="text-center space-y-4">
                     <h1 className="text-2xl font-black text-stone-900">Protected Route</h1>
                     <p className="text-stone-500 text-sm">Admin tools are strictly restricted to local development for security.</p>
-                    <a href="/" className="inline-block px-6 py-3 bg-stone-900 text-white rounded-full font-bold text-sm">Return Home</a>
+                    <Link href="/" className="inline-block px-6 py-3 bg-stone-900 text-white rounded-full font-bold text-sm">Return Home</Link>
                 </div>
             </div>
         );
@@ -169,6 +198,23 @@ export default function AddProductPage() {
                     </div>
 
                     <form onSubmit={handleSubmit} className="p-10 space-y-8">
+                        <div className="flex items-center p-6 bg-orange-50 rounded-[2rem] border border-orange-100 group cursor-pointer transition-all hover:bg-orange-100/50" onClick={() => setFormData(prev => ({ ...prev, isFeatured: !prev.isFeatured }))}>
+                            <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${formData.isFeatured ? 'bg-orange-600 border-orange-600 shadow-lg shadow-orange-600/20' : 'bg-white border-stone-200'}`}>
+                                {formData.isFeatured && <Check className="text-white" size={14} strokeWidth={4} />}
+                            </div>
+                            <div className="ml-4">
+                                <div className="text-sm font-black text-stone-900">Show in Landing Page</div>
+                                <div className="text-[10px] text-stone-400 font-bold uppercase tracking-widest">Featured in &quot;Latest Finds&quot; section</div>
+                            </div>
+                            <input
+                                type="checkbox"
+                                name="isFeatured"
+                                checked={formData.isFeatured}
+                                onChange={handleChange}
+                                className="hidden"
+                            />
+                        </div>
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-1">Product Name</label>
@@ -221,19 +267,23 @@ export default function AddProductPage() {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-1">Collection</label>
-                                <select
+                                <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-1">Collection(s)</label>
+                                <input
                                     name="collection"
                                     value={formData.collection}
                                     onChange={handleChange}
+                                    list="collection-suggestions"
+                                    placeholder="batman, movies"
                                     className="w-full px-6 py-4 bg-stone-50 border border-stone-100 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all font-medium appearance-none"
-                                >
-                                    <option value="batman">Batman</option>
-                                    <option value="spiderman">Spider-Man</option>
-                                    <option value="john-wick">John Wick</option>
-                                    <option value="top-gun">Top Gun</option>
-                                    <option value="matrix">The Matrix</option>
-                                </select>
+                                />
+                                <datalist id="collection-suggestions">
+                                    {suggestedCollections.map((collection) => (
+                                        <option key={collection} value={collection} />
+                                    ))}
+                                </datalist>
+                                <p className="text-[10px] text-stone-400 font-medium ml-1">
+                                    Separate with commas for multiple (example: <span className="font-bold">batman, dc-comics</span>).
+                                </p>
                             </div>
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-1">Movie Title</label>

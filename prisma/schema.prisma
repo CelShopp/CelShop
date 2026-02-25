@@ -17,6 +17,7 @@ model Product {
   collection  String
   actorName   String?
   movie       String?
+  isFeatured  Boolean  @default(false)
   createdAt   DateTime @default(now())
 }
 

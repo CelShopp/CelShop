@@ -7,10 +7,25 @@ export default async function NewestProducts() {
     let latestProducts: Product[] = [];
     try {
         latestProducts = await prisma.product.findMany({
+            where: {
+                // @ts-ignore
+                isFeatured: true
+            },
             orderBy: {
                 createdAt: 'desc'
-            }
+            },
+            take: 8 // Limit to 8 featured products
         });
+
+        // Fallback to latest if no featured products exist (to avoid empty section during transition)
+        if (latestProducts.length === 0) {
+            latestProducts = await prisma.product.findMany({
+                orderBy: {
+                    createdAt: 'desc'
+                },
+                take: 8
+            });
+        }
     } catch (e) {
         console.error("Failed to fetch latest products", e);
     }
@@ -31,7 +46,7 @@ export default async function NewestProducts() {
 
                         </div>
                         <h2 className="text-2xl md:text-3xl font-black text-stone-900 tracking-tighter leading-none mb-6">
-                            Latest <span className="text-stone-300">Artifacts</span>
+                            Latest <span className="text-stone-300">Finds</span>
                         </h2>
                     </div>
                     <Link

@@ -35,7 +35,9 @@ export default async function CollectionPage({ params }: { params: Promise<{ slu
 
   const filtered = await prisma.product.findMany({
     where: {
-      collection: slug,
+      collection: {
+        contains: slug
+      },
     },
     orderBy: {
       createdAt: 'desc'
