@@ -1,0 +1,62 @@
+[33m0389f20[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{0}: checkout: moving from codex/clarify-branch-impact-of-changes-rosip8 to main
+[33m0a3bf0e[m[33m ([m[1;32mcodex/clarify-branch-impact-of-changes-rosip8[m[33m)[m HEAD@{1}: commit: update
+[33m0389f20[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{2}: reset: moving to origin/main
+[33m8dfd130[m[33m ([m[1;31morigin/codex/clarify-branch-impact-of-changes-rosip8[m[33m)[m HEAD@{3}: checkout: moving from codex/clarify-branch-impact-of-changes-rosip8 to codex/clarify-branch-impact-of-changes-rosip8
+[33m8dfd130[m[33m ([m[1;31morigin/codex/clarify-branch-impact-of-changes-rosip8[m[33m)[m HEAD@{4}: reset: moving to origin/codex/clarify-branch-impact-of-changes-rosip8
+[33m8dfd130[m[33m ([m[1;31morigin/codex/clarify-branch-impact-of-changes-rosip8[m[33m)[m HEAD@{5}: checkout: moving from main to codex/clarify-branch-impact-of-changes-rosip8
+[33m0389f20[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{6}: commit: update
+[33mc8744f8[m HEAD@{7}: reset: moving to origin/main
+[33ma8b84eb[m HEAD@{8}: commit: Update
+[33ma9eaf18[m HEAD@{9}: commit: Update
+[33mc1c6059[m HEAD@{10}: commit: heatmap
+[33m203d392[m HEAD@{11}: commit: heatmap
+[33maeef4f4[m HEAD@{12}: commit: security update
+[33m2fcecd4[m HEAD@{13}: commit: pleaseeeee
+[33ma21e72d[m HEAD@{14}: commit: bigupdate
+[33m4ffe8fe[m HEAD@{15}: commit: update
+[33mf29721e[m HEAD@{16}: commit: update
+[33mf0747e3[m HEAD@{17}: commit: hn
+[33m7fd5f6f[m HEAD@{18}: commit: hn
+[33m51ae5bb[m HEAD@{19}: commit: up
+[33mc4761b3[m HEAD@{20}: commit: up
+[33m3681781[m HEAD@{21}: commit: hi
+[33m559257c[m HEAD@{22}: commit: hi
+[33mbda2491[m HEAD@{23}: commit: hi
+[33m3739bc8[m HEAD@{24}: commit: hi
+[33m83be368[m HEAD@{25}: commit: hi
+[33mb067371[m HEAD@{26}: commit: update
+[33mda6fdf0[m HEAD@{27}: commit: update
+[33m7138815[m HEAD@{28}: commit: update
+[33m0d07c80[m HEAD@{29}: pull origin main --rebase (finish): returning to refs/heads/main
+[33m0d07c80[m HEAD@{30}: pull origin main --rebase (pick): update
+[33m626f33c[m HEAD@{31}: pull origin main --rebase (start): checkout 626f33c9c632d606da6d0b37c4ea8bd0b16c0a2e
+[33m6ba8ad9[m HEAD@{32}: commit: update
+[33md3b2db9[m HEAD@{33}: commit: update
+[33m24145ea[m HEAD@{34}: commit: update
+[33m0d852c4[m HEAD@{35}: commit: update
+[33m1d96ebd[m HEAD@{36}: commit: upadate in add/page.tsx
+[33m9fbd922[m HEAD@{37}: commit: update
+[33m4c66307[m HEAD@{38}: commit: UI: glass header blur increase
+[33mb5d11b7[m HEAD@{39}: commit: Header layout grid fix + glass nav alignment
+[33mab10c00[m HEAD@{40}: commit: UI + product layout + mobile fixes before header redesign
+[33ma77a43b[m HEAD@{41}: commit: collection seo metadata
+[33mf3797a5[m HEAD@{42}: commit: collection seo metadata
+[33med4d197[m HEAD@{43}: commit: collection seo metadata
+[33m78d4be6[m HEAD@{44}: commit: collection seo metadata
+[33m94fc229[m HEAD@{45}: commit: collection seo metadata
+[33m169b407[m HEAD@{46}: commit: collection seo metadata
+[33m14d91fa[m HEAD@{47}: commit: collection seo metadata
+[33md26f74e[m HEAD@{48}: commit: collection seo metadata
+[33m57c6c1a[m HEAD@{49}: commit: collection seo metadata
+[33mb177411[m HEAD@{50}: commit: homepage seo
+[33mf4547ad[m HEAD@{51}: commit: homepage seo
+[33ma0a6d69[m HEAD@{52}: commit: homepage seo
+[33m0f2442f[m HEAD@{53}: commit: homepage seo
+[33m5bc6914[m HEAD@{54}: commit: added GSC verification
+[33m7415b5e[m HEAD@{55}: commit: added GSC verification
+[33mb977993[m HEAD@{56}: commit: fixed sitemap domain
+[33mc33c741[m HEAD@{57}: commit: added batman cluster
+[33mc42d662[m HEAD@{58}: commit: fixed sitemap domain
+[33m392508d[m HEAD@{59}: commit: added GSC verification
+[33m07510f0[m HEAD@{60}: Branch: renamed refs/heads/master to refs/heads/main
+[33m07510f0[m HEAD@{62}: commit (initial): first commit
