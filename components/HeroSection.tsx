@@ -1,5 +1,5 @@
 "use client";
-
+import YehJawaaniHaiDeewani from "../public/YehJawaaniHaiDeewani.png";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -9,9 +9,10 @@ import Link from "next/link";
 const MOVIES = [
     {
         id: 1,
-        title: "The Batman",
-        posterURL: "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=2070&auto=format&fit=crop",
-        cta: "/collections/batman",
+        title: "Yeh Jawaani Hai Deewani",
+        posterURL: YehJawaaniHaiDeewani.src,
+        rating: "⭐7.3",
+        cta: "/collections",
     },
     {
         id: 2,
@@ -61,9 +62,6 @@ const HeroSection = () => {
                         <div className="relative h-full max-w-7xl mx-auto px-6 flex flex-col justify-center items-start pt-16">
                             <div className="animate-in fade-in slide-in-from-left-12 duration-1000">
                                 <div className="flex items-center gap-3 mb-8">
-                                    <div className="flex gap-1 opacity-50">
-                                        {[...Array(5)].map((_, i) => <Sparkles key={i} size={10} className="text-white" />)}
-                                    </div>
                                 </div>
                                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-8 tracking-tighter max-w-4xl leading-[0.9] drop-shadow-2xl">
                                     {movie.title}
@@ -74,7 +72,7 @@ const HeroSection = () => {
                                         className="group flex items-center justify-center gap-3 bg-white text-stone-900 font-black py-4 px-8 rounded-2xl text-[10px] uppercase tracking-[0.2em] hover:bg-orange-600 hover:text-white transition-all transform hover:-translate-y-1 shadow-2xl active:scale-95 whitespace-nowrap"
                                     >
                                         <Play size={14} fill="currentColor" className="transition-transform group-hover:scale-110" />
-                                        Enter Archive
+                                        See Collection
                                     </Link>
                                 </div>
                             </div>
