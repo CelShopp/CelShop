@@ -59,17 +59,7 @@ function ManageProductsContent() {
         }
     };
 
-    if (process.env.NODE_ENV !== "development" && process.env.ALLOW_PRODUCTION_ADMIN !== "true") {
-        return (
-            <div className="min-h-screen bg-stone-50 flex items-center justify-center p-6">
-                <div className="text-center space-y-4">
-                    <h1 className="text-2xl font-black text-stone-900">Protected Route</h1>
-                    <p className="text-stone-500 text-sm">Access restricted to local development.</p>
-                    <Link href="/" className="inline-block px-6 py-3 bg-stone-900 text-white rounded-full font-bold text-sm">Return Home</Link>
-                </div>
-            </div>
-        );
-    }
+    if (!isAuthenticated) return null;
 
     return (
         <div className="min-h-screen bg-stone-50 pt-32 pb-24">
@@ -177,3 +167,12 @@ function ManageProductsContent() {
         </div>
     );
 }
+
+export default function ManageProductsPage() {
+    return (
+        <Suspense fallback={null}>
+            <ManageProductsContent />
+        </Suspense>
+    );
+}
+
