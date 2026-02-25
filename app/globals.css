@@ -357,8 +357,44 @@ textarea::placeholder {
 /* Responsive adjustments */
 @media (max-width: 640px) {
   .glass-header {
-    width: calc(100% - 20px);
-    top: 10px;
+    width: calc(100% - 16px);
+    top: 8px;
+  }
+
+  .glass-nav {
+    padding: 8px 16px;
+    gap: 12px;
+    border-radius: 1.6rem;
+  }
+
+  .logo-text {
+    font-size: 40px;
+    transform: scale(0.48);
+    transform-origin: left center;
+    margin-right: -28px;
+  }
+
+  .header-icon-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .floating-panel {
+    top: 74px;
+    left: 8px;
+    right: 8px;
+    width: auto;
+    border-radius: 1.6rem;
+    padding: 16px;
+  }
+
+  .modal-overlay {
+    padding: 12px;
+  }
+
+  .modal-content {
+    padding: 20px;
+    border-radius: 1.8rem;
   }
 
   .card {

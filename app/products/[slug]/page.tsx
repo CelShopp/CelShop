@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { Metadata } from "next";
-import { ArrowLeft, ShoppingCart, Check, Award, BadgeCheck, Film, User } from "lucide-react";
+import type { Product } from "@prisma/client";
+import { ArrowLeft, ShoppingCart, Check, BadgeCheck, Film, User } from "lucide-react";
 
 export async function generateMetadata({
   params,
@@ -9,7 +10,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const product: any = await prisma.product.findUnique({
+  const product: Product | null = await prisma.product.findUnique({
     where: { slug },
   });
 
@@ -35,7 +36,7 @@ export default async function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product: any = await prisma.product.findUnique({
+  const product: Product | null = await prisma.product.findUnique({
     where: { slug },
   });
 
@@ -77,9 +78,9 @@ export default async function ProductPage({
         }}
       />
 
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Breadcrumb */}
-        <div className="mb-12">
+        <div className="mb-8 md:mb-12">
           <Link
             href={`/collections/${product.collection}`}
             className="group inline-flex items-center text-xs font-bold uppercase tracking-widest text-stone-400 hover:text-stone-900 transition-colors"
@@ -89,10 +90,10 @@ export default async function ProductPage({
           </Link>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start pb-24 border-b border-stone-200">
+        <div className="grid lg:grid-cols-2 gap-10 md:gap-16 lg:gap-24 items-start pb-16 md:pb-24 border-b border-stone-200">
           {/* Visual Side */}
-          <div className="relative sticky top-32">
-            <div className="aspect-[4/5] rounded-[3rem] overflow-hidden bg-stone-200 shadow-2xl">
+          <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-none mx-auto lg:mx-0 lg:sticky lg:top-28">
+            <div className="aspect-[4/5] rounded-[2rem] sm:rounded-[3rem] overflow-hidden bg-stone-200 shadow-xl sm:shadow-2xl">
               <img
                 src={product.image}
                 alt={product.name}
@@ -102,7 +103,7 @@ export default async function ProductPage({
 
             {/* Context Badge */}
             {(product.movie || product.actorName) && (
-              <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-[2rem] shadow-2xl border border-stone-100 max-w-[280px] animate-in slide-in-from-bottom-4 duration-700">
+              <div className="absolute -bottom-4 left-2 right-2 sm:-bottom-6 sm:-left-6 sm:right-auto bg-white p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] shadow-2xl border border-stone-100 sm:max-w-[280px] animate-in slide-in-from-bottom-4 duration-700">
                 <div className="flex items-center gap-2 text-orange-600 font-black text-[10px] uppercase tracking-widest mb-3">
                   <Film size={12} />
                   As Seen In
@@ -130,7 +131,7 @@ export default async function ProductPage({
               </div>
             )}
 
-            <div className="absolute -top-6 -right-6 bg-stone-900 text-white p-6 rounded-[2rem] shadow-2xl">
+            <div className="absolute -top-3 -right-3 sm:-top-6 sm:-right-6 bg-stone-900 text-white p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2rem] shadow-2xl">
               <BadgeCheck size={32} className="text-orange-500" />
             </div>
           </div>
@@ -143,21 +144,21 @@ export default async function ProductPage({
                 <span className="text-stone-400 text-xs font-bold uppercase tracking-widest">Free Pan-India Delivery</span>
               </div>
 
-              <h1 className="text-5xl md:text-7xl font-black text-stone-900 tracking-tighter leading-[0.9] mb-6">
+              <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-stone-900 tracking-tighter leading-[0.9] mb-5 md:mb-6">
                 {product.name}
               </h1>
 
-              <p className="text-xl text-stone-500 font-medium leading-relaxed">
+              <p className="text-base sm:text-xl text-stone-500 font-medium leading-relaxed">
                 {product.description}
               </p>
             </div>
 
             {/* Pricing Section */}
-            <div className="p-8 bg-white rounded-[2.5rem] shadow-xl border border-stone-100">
+            <div className="p-5 sm:p-8 bg-white rounded-[2rem] sm:rounded-[2.5rem] shadow-xl border border-stone-100">
               <div className="flex items-end gap-4 mb-8">
                 <div>
                   <div className="text-[10px] text-stone-400 font-bold uppercase tracking-widest mb-1">Current Price</div>
-                  <div className="text-5xl font-black text-stone-900">₹{product.price.toLocaleString()}</div>
+                  <div className="text-4xl sm:text-5xl font-black text-stone-900">₹{product.price.toLocaleString()}</div>
                 </div>
                 <div className="mb-1">
                   <span className="text-lg text-stone-300 line-through font-bold">₹{discountedPrice.toLocaleString()}</span>
@@ -185,7 +186,7 @@ export default async function ProductPage({
                 href={product.buyLink}
                 target="_blank"
                 rel="nofollow sponsored"
-                className="group flex items-center justify-center gap-4 w-full py-6 bg-stone-900 text-white font-black text-lg rounded-2xl hover:bg-orange-600 transition-all shadow-xl hover:shadow-orange-600/20 active:scale-[0.98]"
+                className="group flex items-center justify-center gap-3 sm:gap-4 w-full py-4 sm:py-6 bg-stone-900 text-white font-black text-sm sm:text-lg rounded-2xl hover:bg-orange-600 transition-all shadow-xl hover:shadow-orange-600/20 active:scale-[0.98]"
               >
                 <ShoppingCart size={22} className="group-hover:rotate-12 transition-transform" />
                 Check Price on Amazon
@@ -193,7 +194,7 @@ export default async function ProductPage({
             </div>
 
             {/* Quality Commitment */}
-            <div className="flex gap-8 items-start p-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 items-start p-2">
               <div className="flex-1">
                 <div className="font-black text-stone-900 mb-2 uppercase tracking-tight">Authentic Detail</div>
                 <p className="text-stone-500 text-sm leading-relaxed">We source products that capture the soul of the character. Each piece in the FilmyFits archive is selected for its proximity to screen accuracy.</p>

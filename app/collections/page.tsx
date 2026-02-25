@@ -32,24 +32,24 @@ export default async function CollectionsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50 font-sans text-stone-900 pt-32 pb-24">
-      <main className="max-w-7xl mx-auto px-6">
+    <div className="min-h-screen bg-stone-50 font-sans text-stone-900 pt-24 sm:pt-32 pb-16 sm:pb-24">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Header */}
-        <header className="mb-20 text-center">
+        <header className="mb-12 sm:mb-20 text-center">
           <div className="flex items-center justify-center gap-2 text-orange-600 font-bold uppercase tracking-[0.3em] text-[10px] mb-4">
             <Film size={14} />
             Cinematic Archives
           </div>
-          <h1 className="text-5xl md:text-8xl font-black tracking-tighter mb-6">
+          <h1 className="text-4xl sm:text-5xl md:text-8xl font-black tracking-tighter mb-4 sm:mb-6">
             Explore <span className="text-transparent bg-clip-text bg-gradient-to-r from-stone-900 to-stone-500">Collections</span>
           </h1>
-          <p className="text-xl text-stone-500 max-w-2xl mx-auto font-medium">
+          <p className="text-base sm:text-xl text-stone-500 max-w-2xl mx-auto font-medium">
             Browse our curated archives of screen-worn replicas and cinematic style inspirations.
           </p>
         </header>
 
         {/* Collections Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
           {uniqueCollections.map((col) => {
             const isBatman = col.slug === 'batman';
             const movieContext = isBatman ? "The Dark Knight" : col.name;
@@ -59,7 +59,7 @@ export default async function CollectionsPage() {
               <Link
                 key={col.slug}
                 href={`/collections/${col.slug}`}
-                className="group relative h-[600px] rounded-[3.5rem] overflow-hidden bg-stone-200 shadow-xl transition-all duration-700 hover:shadow-[0_40px_100px_-20px_rgba(0,0,0,0.3)] hover:-translate-y-3"
+                className="group relative h-[420px] sm:h-[540px] lg:h-[600px] rounded-[2rem] sm:rounded-[3.5rem] overflow-hidden bg-stone-200 shadow-xl transition-all duration-700 hover:shadow-[0_40px_100px_-20px_rgba(0,0,0,0.3)] hover:-translate-y-2 sm:hover:-translate-y-3"
               >
                 {/* Image */}
                 <img
@@ -73,13 +73,13 @@ export default async function CollectionsPage() {
                 <div className="absolute inset-0 bg-stone-900/10 group-hover:bg-transparent transition-colors duration-700" />
 
                 {/* Content */}
-                <div className="absolute inset-x-0 bottom-0 p-12 flex flex-col items-start translate-y-6 group-hover:translate-y-0 transition-transform duration-700">
+                <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 lg:p-12 flex flex-col items-start translate-y-2 sm:translate-y-6 group-hover:translate-y-0 transition-transform duration-700">
                   <div className="flex items-center gap-3 text-orange-500 text-[10px] font-black uppercase tracking-[0.3em] mb-4">
                     <Sparkles size={14} />
                     {col.count} Master Files
                   </div>
 
-                  <h2 className="text-5xl font-black text-white mb-6 tracking-tighter leading-[0.9]">
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4 sm:mb-6 tracking-tighter leading-[0.9]">
                     {col.name} <br />
                     <span className="text-white/40 italic">Archive</span>
                   </h2>
