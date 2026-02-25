@@ -11,7 +11,7 @@ export async function POST(req: Request) {
 
             // Set cookie that expires in 30 days
             response.cookies.set("admin_auth", adminPassword, {
-                httpOnly: true,
+                httpOnly: false, // Allow client-side check to see the cookie
                 secure: process.env.NODE_ENV === "production",
                 sameSite: "strict",
                 maxAge: 60 * 60 * 24 * 30, // 30 days
