@@ -72,10 +72,10 @@ export default function LookbookDetail({ params }: { params: Promise<{ id: strin
     }
 
     return (
-        <main className="min-h-screen bg-stone-50 pt-32 pb-24">
-            <div className="max-w-7xl mx-auto px-6">
+        <main className="min-h-screen bg-stone-50 pt-24 sm:pt-32 pb-16 sm:pb-24">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6">
                 {/* Navigation */}
-                <div className="mb-12">
+                <div className="mb-8 sm:mb-12">
                     <Link
                         href="/"
                         className="group inline-flex items-center text-xs font-black uppercase tracking-[0.2em] text-stone-400 hover:text-stone-900 transition-colors"
@@ -85,10 +85,10 @@ export default function LookbookDetail({ params }: { params: Promise<{ id: strin
                     </Link>
                 </div>
 
-                <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
+                <div className="flex flex-col lg:flex-row gap-8 sm:gap-16 lg:gap-24 items-start">
                     {/* Visual Side */}
-                    <div className="flex-1 sticky top-32">
-                        <div className="relative aspect-[3/4] rounded-[3rem] overflow-hidden bg-stone-200 shadow-2xl group">
+                    <div className="flex-1 w-full max-w-sm sm:max-w-md lg:max-w-none mx-auto lg:mx-0 lg:sticky lg:top-28">
+                        <div className="relative aspect-[3/4] rounded-[2rem] sm:rounded-[3rem] overflow-hidden bg-stone-200 shadow-xl sm:shadow-2xl group">
                             <img
                                 src={lookbook.image}
                                 alt={lookbook.celebrity}
@@ -97,12 +97,12 @@ export default function LookbookDetail({ params }: { params: Promise<{ id: strin
                             {/* Overlay */}
                             <div className="absolute inset-0 bg-gradient-to-t from-stone-950/60 to-transparent" />
 
-                            <div className="absolute bottom-10 left-10">
+                            <div className="absolute bottom-5 left-5 sm:bottom-10 sm:left-10">
                                 <div className="flex items-center gap-2 text-white/80 font-bold uppercase tracking-widest text-[10px] mb-2">
                                     <Camera size={12} />
                                     Captured Silhouette
                                 </div>
-                                <h1 className="text-5xl font-black text-white tracking-tighter leading-none">{lookbook.celebrity}</h1>
+                                <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tighter leading-none">{lookbook.celebrity}</h1>
                             </div>
                         </div>
                     </div>
@@ -114,10 +114,10 @@ export default function LookbookDetail({ params }: { params: Promise<{ id: strin
                                 <Info size={14} />
                                 Style Breakdown
                             </div>
-                            <h2 className="text-4xl font-black text-stone-900 tracking-tight leading-none mb-6">
-                                The <span className="text-orange-600 italic">"{lookbook.movie}"</span> <br /> Blueprint
+                            <h2 className="text-3xl sm:text-4xl font-black text-stone-900 tracking-tight leading-none mb-4 sm:mb-6">
+                                The <span className="text-orange-600 italic">&quot;{lookbook.movie}&quot;</span> <br /> Blueprint
                             </h2>
-                            <p className="text-xl text-stone-500 font-medium leading-relaxed">
+                            <p className="text-base sm:text-xl text-stone-500 font-medium leading-relaxed">
                                 {lookbook.description}
                             </p>
                         </header>
@@ -127,20 +127,20 @@ export default function LookbookDetail({ params }: { params: Promise<{ id: strin
                             {lookbook.items.map((item, index) => (
                                 <div
                                     key={index}
-                                    className="group flex items-center p-6 bg-white border border-stone-100 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1"
+                                    className="group flex items-center p-4 sm:p-6 bg-white border border-stone-100 rounded-[1.5rem] sm:rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1"
                                 >
                                     {/* Swatch */}
                                     <div
-                                        className="w-20 h-20 rounded-2xl shadow-inner border border-stone-100 flex-shrink-0 flex items-center justify-center relative overflow-hidden group-hover:scale-105 transition-transform"
+                                        className="w-14 h-14 sm:w-20 sm:h-20 rounded-2xl shadow-inner border border-stone-100 flex-shrink-0 flex items-center justify-center relative overflow-hidden group-hover:scale-105 transition-transform"
                                         style={{ backgroundColor: item.color }}
                                     >
                                         <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
                                     </div>
 
                                     {/* Details */}
-                                    <div className="ml-8 flex-1">
+                                    <div className="ml-4 sm:ml-8 flex-1">
                                         <div className="text-[10px] text-orange-600 font-black uppercase tracking-widest mb-1">{item.brand}</div>
-                                        <div className="text-xl font-black text-stone-900 mb-4">{item.name}</div>
+                                        <div className="text-base sm:text-xl font-black text-stone-900 mb-3 sm:mb-4">{item.name}</div>
                                         <Link
                                             href="/collections"
                                             className="inline-flex items-center gap-2 px-6 py-3 bg-stone-900 text-white text-xs font-black uppercase tracking-widest rounded-xl hover:bg-orange-600 transition-all shadow-lg hover:shadow-orange-600/20"
@@ -154,7 +154,7 @@ export default function LookbookDetail({ params }: { params: Promise<{ id: strin
                         </div>
 
                         {/* Footer Note */}
-                        <div className="flex items-center gap-4 p-8 bg-stone-950 rounded-[2.5rem] text-white">
+                        <div className="flex items-center gap-3 sm:gap-4 p-5 sm:p-8 bg-stone-950 rounded-[2rem] sm:rounded-[2.5rem] text-white">
                             <div className="p-3 bg-white/10 rounded-2xl"><Sparkles className="text-orange-500" size={24} /></div>
                             <div>
                                 <div className="text-sm font-black uppercase tracking-widest mb-1">Expert Curation</div>

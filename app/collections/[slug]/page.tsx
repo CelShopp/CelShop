@@ -43,8 +43,8 @@ export default async function CollectionPage({ params }: { params: Promise<{ slu
   });
 
   return (
-    <main className="min-h-screen bg-stone-50 pt-32 pb-24">
-      <div className="max-w-7xl mx-auto px-6">
+    <main className="min-h-screen bg-stone-50 pt-24 sm:pt-32 pb-16 sm:pb-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Navigation */}
         <div className="mb-12">
           <Link
@@ -57,7 +57,7 @@ export default async function CollectionPage({ params }: { params: Promise<{ slu
         </div>
 
         {/* Header */}
-        <header className="mb-20">
+        <header className="mb-12 sm:mb-20">
           <div className="flex items-center gap-2 text-orange-600 font-black uppercase tracking-[0.3em] text-[10px] mb-4">
             <Film size={14} />
             Collection Archive
@@ -68,7 +68,7 @@ export default async function CollectionPage({ params }: { params: Promise<{ slu
                 {collectionName} <br />
                 <span className="text-stone-300">Archive</span>
               </h1>
-              <p className="text-xl text-stone-500 font-medium leading-relaxed">
+              <p className="text-base sm:text-xl text-stone-500 font-medium leading-relaxed">
                 Curated apparel and accessories inspired by the iconic cinematography and character design of {collectionName}.
               </p>
             </div>
@@ -82,7 +82,7 @@ export default async function CollectionPage({ params }: { params: Promise<{ slu
         </header>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-8">
           {filtered.length === 0 ? (
             <div className="col-span-full py-32 text-center border-2 border-dashed border-stone-200 rounded-[3rem]">
               <Sparkles className="mx-auto mb-6 text-stone-200" size={48} />
@@ -90,13 +90,13 @@ export default async function CollectionPage({ params }: { params: Promise<{ slu
               <p className="text-stone-500 font-medium italic">Iconic styles for this collection will appear here soon.</p>
             </div>
           ) : (
-            filtered.map((product) => (
+            filtered.map((product, index) => (
               <Link
                 key={product.slug}
                 href={`/products/${product.slug}`}
                 className="group flex flex-col"
               >
-                <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden bg-stone-100 shadow-sm group-hover:shadow-2xl transition-all duration-500 mb-6">
+                <div className="relative aspect-[4/5] rounded-2xl sm:rounded-[2.5rem] overflow-hidden bg-stone-100 shadow-sm group-hover:shadow-2xl transition-all duration-500 mb-3 sm:mb-6">
                   <img
                     src={product.image}
                     alt={product.name}
@@ -113,10 +113,10 @@ export default async function CollectionPage({ params }: { params: Promise<{ slu
 
                 <div className="px-2">
                   <div className="text-[10px] font-black text-orange-600 uppercase tracking-widest mb-2 opacity-0 group-hover:opacity-100 transition-opacity">Premium Replica</div>
-                  <h3 className="text-lg font-black text-stone-900 mb-1 line-clamp-1 leading-tight">{product.name}</h3>
+                  <h3 className="text-sm sm:text-lg font-black text-stone-900 mb-1 line-clamp-1 leading-tight">{product.name}</h3>
                   <div className="flex items-center justify-between mt-4">
-                    <span className="text-xl font-black text-stone-900">₹{product.price.toLocaleString()}</span>
-                    <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Master File No. {Math.floor(Math.random() * 9000) + 1000}</span>
+                    <span className="text-sm sm:text-xl font-black text-stone-900">₹{product.price.toLocaleString()}</span>
+                    <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Master File No. {(index + 1).toString().padStart(4, "0")}</span>
                   </div>
                 </div>
               </Link>
