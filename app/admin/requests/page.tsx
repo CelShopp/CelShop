@@ -1,8 +1,19 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { ArrowLeft, Inbox, Mail, Clock } from "lucide-react";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { getAdminPassword } from "@/lib/auth";
 
 export default async function RequestsPage() {
+    const cookieStore = await cookies();
+    const adminAuth = cookieStore.get("admin_auth")?.value;
+    const adminPassword = getAdminPassword();
+
+    if (adminAuth !== adminPassword) {
+        redirect("/admin/login?returnTo=/admin/requests");
+    }
+
     let requests: any[] = [];
     try {
         requests = await prisma.request.findMany({

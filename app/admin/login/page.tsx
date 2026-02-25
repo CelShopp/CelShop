@@ -2,8 +2,11 @@
 
 import React, { useState } from 'react';
 import { Lock, ShieldAlert, ArrowRight } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 
 export default function AdminLoginPage() {
+    const searchParams = useSearchParams();
+    const returnTo = searchParams.get('returnTo') || '/admin/add';
     const [password, setPassword] = useState('');
     const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle');
     const [error, setError] = useState('');
@@ -21,8 +24,8 @@ export default function AdminLoginPage() {
             });
 
             if (res.ok) {
-                // Success! Redirect to the admin dashboard
-                window.location.href = '/admin/add';
+                // Success! Redirect to the admin dashboard or the requested page
+                window.location.href = returnTo;
             } else {
                 const data = await res.json();
                 setStatus('error');

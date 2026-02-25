@@ -1,13 +1,10 @@
 import { NextResponse } from "next/server";
+import { getAdminPassword } from "@/lib/auth";
 
 export async function POST(req: Request) {
     try {
         const { password } = await req.json();
-        const adminPassword = process.env.ADMIN_PASSWORD;
-
-        if (!adminPassword) {
-            return NextResponse.json({ error: "Admin password not configured on server" }, { status: 500 });
-        }
+        const adminPassword = getAdminPassword();
 
         if (password === adminPassword) {
             const response = NextResponse.json({ success: true });

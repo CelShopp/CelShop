@@ -1,10 +1,15 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { getAdminPassword } from "@/lib/auth";
+import { cookies } from "next/headers";
 
 export async function POST(req: Request) {
-    // Security: Only allow product creation in development environment
-    if (process.env.NODE_ENV !== "development" && process.env.ALLOW_PRODUCTION_ADMIN !== "true") {
-        return NextResponse.json({ error: "Access Denied: Admin operations only allowed locally." }, { status: 403 });
+    const cookieStore = await cookies();
+    const adminAuth = cookieStore.get("admin_auth")?.value;
+    const adminPassword = getAdminPassword();
+
+    if (adminAuth !== adminPassword) {
+        return NextResponse.json({ error: "Access Denied: Unauthorized" }, { status: 403 });
     }
 
     try {
@@ -53,8 +58,12 @@ export async function GET() {
     }
 }
 export async function DELETE(req: Request) {
-    if (process.env.NODE_ENV !== "development" && process.env.ALLOW_PRODUCTION_ADMIN !== "true") {
-        return NextResponse.json({ error: "Access Denied" }, { status: 403 });
+    const cookieStore = await cookies();
+    const adminAuth = cookieStore.get("admin_auth")?.value;
+    const adminPassword = getAdminPassword();
+
+    if (adminAuth !== adminPassword) {
+        return NextResponse.json({ error: "Access Denied: Unauthorized" }, { status: 403 });
     }
 
     try {
