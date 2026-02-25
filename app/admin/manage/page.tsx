@@ -1,10 +1,21 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { Trash2, Package, Database, ExternalLink, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 
-export default function ManageProductsPage() {
+function ManageProductsContent() {
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    useEffect(() => {
+        const authCookie = typeof document !== 'undefined' ? document.cookie.split('; ').find(row => row.startsWith('admin_auth=')) : null;
+        if (!authCookie) {
+            window.location.href = '/admin/login?returnTo=/admin/manage';
+        } else {
+            setIsAuthenticated(true);
+        }
+    }, []);
+
     const [products, setProducts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [deletingId, setDeletingId] = useState<string | null>(null);

@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Package, Database, Sparkles, Check } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function AddProductPage() {
+function AddProductForm() {
     // Basic protection (server-side check is done in the API, but this improves UX)
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const searchParams = useSearchParams();
@@ -394,3 +395,12 @@ export default function AddProductPage() {
         </div>
     );
 }
+
+export default function AddProductPage() {
+    return (
+        <Suspense fallback={null}>
+            <AddProductForm />
+        </Suspense>
+    );
+}
+
