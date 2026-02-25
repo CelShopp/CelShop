@@ -3,8 +3,24 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Package, Database, Sparkles, Check } from 'lucide-react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 export default function AddProductPage() {
+    // Basic protection (server-side check is done in the API, but this improves UX)
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const searchParams = useSearchParams();
+
+    useEffect(() => {
+        // Simple client-side check to see if we have the auth cookie
+        // The real security happens in the POST requests to /api/products
+        const authCookie = typeof document !== 'undefined' ? document.cookie.split('; ').find(row => row.startsWith('admin_auth=')) : null;
+        if (!authCookie) {
+            window.location.href = '/admin/login?returnTo=/admin/add';
+        } else {
+            setIsAuthenticated(true);
+        }
+    }, []);
+
     const [suggestedCollections, setSuggestedCollections] = useState(['batman', 'spiderman', 'john-wick', 'top-gun', 'matrix']);
     const [formData, setFormData] = useState({
         name: '',
@@ -140,18 +156,7 @@ export default function AddProductPage() {
         }
     };
 
-    // Prevent rendering the form in production
-    if (process.env.NODE_ENV !== "development" && process.env.ALLOW_PRODUCTION_ADMIN !== "true") {
-        return (
-            <div className="min-h-screen bg-stone-50 flex items-center justify-center p-6">
-                <div className="text-center space-y-4">
-                    <h1 className="text-2xl font-black text-stone-900">Protected Route</h1>
-                    <p className="text-stone-500 text-sm">Admin tools are strictly restricted to local development for security.</p>
-                    <Link href="/" className="inline-block px-6 py-3 bg-stone-900 text-white rounded-full font-bold text-sm">Return Home</Link>
-                </div>
-            </div>
-        );
-    }
+    if (!isAuthenticated) return null;
 
     return (
         <div className="min-h-screen bg-stone-50 pt-32 pb-24">
