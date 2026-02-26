@@ -14,18 +14,6 @@ const MOVIES = [
         rating: "⭐7.3",
         cta: "/collections",
     },
-    {
-        id: 2,
-        title: "John Wick",
-        posterURL: "https://images.unsplash.com/photo-1590412200988-a436bb7050a8?q=80&w=1935&auto=format&fit=crop",
-        cta: "/collections/john-wick",
-    },
-    {
-        id: 3,
-        title: "Top Gun: Maverick",
-        posterURL: "https://images.unsplash.com/photo-1506190503913-909249826353?q=80&w=2072&auto=format&fit=crop",
-        cta: "/collections/top-gun",
-    },
 ];
 
 const HeroSection = () => {
