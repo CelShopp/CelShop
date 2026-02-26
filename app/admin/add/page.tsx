@@ -204,14 +204,7 @@ function AddProductForm() {
                     </div>
 
                     <form onSubmit={handleSubmit} className="p-10 space-y-8">
-                        <div className="flex items-center p-6 bg-orange-50 rounded-[2rem] border border-orange-100 group cursor-pointer transition-all hover:bg-orange-100/50" onClick={() => setFormData(prev => ({ ...prev, isFeatured: !prev.isFeatured }))}>
-                            <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${formData.isFeatured ? 'bg-orange-600 border-orange-600 shadow-lg shadow-orange-600/20' : 'bg-white border-stone-200'}`}>
-                                {formData.isFeatured && <Check className="text-white" size={14} strokeWidth={4} />}
-                            </div>
-                            <div className="ml-4">
-                                <div className="text-sm font-black text-stone-900">Show in Landing Page</div>
-                                <div className="text-[10px] text-stone-400 font-bold uppercase tracking-widest">Featured in &quot;Latest Finds&quot; section</div>
-                            </div>
+                        <div className="flex items-center p-6 bg-orange-50 rounded-[2rem] border border-orange-100 group transition-all hidden">
                             <input
                                 type="checkbox"
                                 name="isFeatured"
@@ -274,22 +267,107 @@ function AddProductForm() {
                             </div>
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-1">Collection(s)</label>
-                                <input
-                                    name="collection"
-                                    value={formData.collection}
-                                    onChange={handleChange}
-                                    list="collection-suggestions"
-                                    placeholder="batman, movies"
-                                    className="w-full px-6 py-4 bg-stone-50 border border-stone-100 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all font-medium appearance-none"
-                                />
-                                <datalist id="collection-suggestions">
-                                    {suggestedCollections.map((collection) => (
-                                        <option key={collection} value={collection} />
-                                    ))}
-                                </datalist>
-                                <p className="text-[10px] text-stone-400 font-medium ml-1">
-                                    Separate with commas for multiple (example: <span className="font-bold">batman, dc-comics</span>).
-                                </p>
+                                <div className="space-y-2">
+                                    <div className="flex flex-wrap gap-2 mb-2">
+                                        {formData.collection.split(',').map(c => c.trim()).filter(Boolean).map(collection => (
+                                            <span key={collection} className="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-xs font-bold flex items-center gap-1">
+                                                {collection}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        const currentCols = formData.collection.split(',').map(c => c.trim()).filter(Boolean);
+                                                        setFormData(prev => ({
+                                                            ...prev,
+                                                            collection: currentCols.filter(c => c !== collection).join(', ')
+                                                        }));
+                                                    }}
+                                                    className="hover:text-red-500 transition-colors"
+                                                >
+                                                    &times;
+                                                </button>
+                                            </span>
+                                        ))}
+                                    </div>
+                                    <select
+                                        className="w-full px-6 py-4 bg-stone-50 border border-stone-100 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all font-medium appearance-none"
+                                        onChange={(e) => {
+                                            if (!e.target.value) return;
+                                            const currentCols = formData.collection.split(',').map(c => c.trim()).filter(Boolean);
+                                            if (!currentCols.includes(e.target.value)) {
+                                                setFormData(prev => ({
+                                                    ...prev,
+                                                    collection: [...currentCols, e.target.value].join(', ')
+                                                }));
+                                            }
+                                            e.target.value = ''; // Reset select
+                                        }}
+                                        defaultValue=""
+                                    >
+                                        <option value="" disabled>Select an existing collection...</option>
+                                        {suggestedCollections.map((collection) => (
+                                            <option key={collection} value={collection}>{collection}</option>
+                                        ))}
+                                    </select>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            placeholder="Or enter new collection name"
+                                            className="flex-1 px-6 py-4 bg-stone-50 border border-stone-100 rounded-2xl focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all font-medium"
+                                            id="new-collection-input"
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    e.preventDefault();
+                                                    const input = e.currentTarget;
+                                                    const val = input.value.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+                                                    if (val) {
+                                                        const currentCols = formData.collection.split(',').map(c => c.trim()).filter(Boolean);
+                                                        if (!currentCols.includes(val)) {
+                                                            setFormData(prev => ({
+                                                                ...prev,
+                                                                collection: [...currentCols, val].join(', ')
+                                                            }));
+                                                            // Add to suggestions if not there
+                                                            if (!suggestedCollections.includes(val)) {
+                                                                setSuggestedCollections(prev => [...prev, val]);
+                                                            }
+                                                        }
+                                                        input.value = '';
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const input = document.getElementById('new-collection-input') as HTMLInputElement;
+                                                if (input) {
+                                                    const val = input.value.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+                                                    if (val) {
+                                                        const currentCols = formData.collection.split(',').map(c => c.trim()).filter(Boolean);
+                                                        if (!currentCols.includes(val)) {
+                                                            setFormData(prev => ({
+                                                                ...prev,
+                                                                collection: [...currentCols, val].join(', ')
+                                                            }));
+                                                            if (!suggestedCollections.includes(val)) {
+                                                                setSuggestedCollections(prev => [...prev, val]);
+                                                            }
+                                                        }
+                                                        input.value = '';
+                                                    }
+                                                }
+                                            }}
+                                            className="px-6 py-4 bg-stone-200 text-stone-900 font-bold rounded-2xl hover:bg-stone-300 transition-colors"
+                                        >
+                                            Add
+                                        </button>
+                                    </div>
+                                    <input
+                                        type="hidden"
+                                        name="collection"
+                                        value={formData.collection}
+                                    />
+                                </div>
                             </div>
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-1">Movie Title</label>

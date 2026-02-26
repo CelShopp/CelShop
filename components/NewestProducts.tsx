@@ -5,21 +5,27 @@ import { ArrowRight, Sparkles, ShoppingBag } from "lucide-react";
 
 export default async function NewestProducts() {
     let latestProducts: Product[] = [];
+    let collectionName = "Latest Finds";
+
     try {
-        latestProducts = await prisma.product.findMany({
-            where: {
-                // @ts-ignore
-                isFeatured: true
-            },
+        // Find the most recently added product to determine the latest collection
+        const mostRecentProduct = await prisma.product.findFirst({
             orderBy: {
                 createdAt: 'desc'
-            },
-            take: 8 // Limit to 8 featured products
+            }
         });
 
-        // Fallback to latest if no featured products exist (to avoid empty section during transition)
-        if (latestProducts.length === 0) {
+        if (mostRecentProduct) {
+            const latestCollection = mostRecentProduct.collection.split(',')[0].trim();
+            const formattedName = latestCollection.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+            collectionName = `${formattedName} Collection`;
+
             latestProducts = await prisma.product.findMany({
+                where: {
+                    collection: {
+                        contains: latestCollection
+                    }
+                },
                 orderBy: {
                     createdAt: 'desc'
                 },
@@ -29,7 +35,6 @@ export default async function NewestProducts() {
     } catch (e) {
         console.error("Failed to fetch latest products", e);
     }
-
 
     if (latestProducts.length === 0) return null;
 
@@ -43,10 +48,10 @@ export default async function NewestProducts() {
                     <div className="max-w-2xl">
                         <div className="flex items-center gap-2 text-orange-600 font-black uppercase tracking-[0.3em] text-[10px] mb-4">
                             <Sparkles size={14} />
-
+                            <span>FRESH FROM THE VAULT</span>
                         </div>
                         <h2 className="text-2xl md:text-3xl font-black text-stone-900 tracking-tighter leading-none mb-6">
-                            Latest <span className="text-stone-300">Finds</span>
+                            {collectionName.replace(/ Collection$/i, '')} <span className="text-stone-300">Collection</span>
                         </h2>
                     </div>
                     <Link
