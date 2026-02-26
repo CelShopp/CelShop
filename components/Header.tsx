@@ -107,8 +107,9 @@ export default function Header() {
           </Link>
 
           <ul className="hidden md:flex gap-8 list-none m-0 p-0">
+            <li><Link href="/" className="nav-link">Home</Link></li>
             <li><Link href="/collections" className="nav-link">Collections</Link></li>
-            <li><Link href="/lookbook/0" className="nav-link">Lookbook</Link></li>
+            <li><Link href="/products" className="nav-link">All Products</Link></li>
           </ul>
 
           <div className="flex items-center gap-2 md:gap-4">
@@ -249,13 +250,17 @@ export default function Header() {
           style={{ top: scrolled ? "72px" : "84px" }}
         >
           <div className="flex flex-col gap-1">
-            <Link href="/collections" onClick={() => setOpen(false)} className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 rounded-2xl font-bold text-stone-900 transition-colors">
+            <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 rounded-2xl font-bold text-stone-900 transition-colors">
               <span className="w-1.5 h-1.5 bg-orange-500 rounded-full" />
-              All Collections
+              Home
             </Link>
-            <Link href="/lookbook/0" onClick={() => setOpen(false)} className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 rounded-2xl font-bold text-stone-900 transition-colors">
+            <Link href="/collections" onClick={() => setOpen(false)} className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 rounded-2xl font-bold text-stone-900 transition-colors">
               <span className="w-1.5 h-1.5 bg-stone-300 rounded-full" />
-              Lookbook
+              Collections
+            </Link>
+            <Link href="/products" onClick={() => setOpen(false)} className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 rounded-2xl font-bold text-stone-900 transition-colors">
+              <span className="w-1.5 h-1.5 bg-stone-300 rounded-full" />
+              All Products
             </Link>
             <div className="h-px bg-stone-100 my-2 mx-6" />
             <button

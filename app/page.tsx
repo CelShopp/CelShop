@@ -1,5 +1,4 @@
 import HeroSection from "@/components/HeroSection";
-import LookbookSection from "@/components/LookbookSection";
 import NewestProducts from "@/components/NewestProducts";
 export default async function Page() {
   return (
@@ -17,10 +16,7 @@ export default async function Page() {
           <NewestProducts/>
         </div>
 
-        {/* Lookbook Section */}
-        <div className="w-full border-y border-stone-200 bg-white">
-          <LookbookSection />
-        </div>
+
 
       </main>
     </div>
