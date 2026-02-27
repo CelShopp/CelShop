@@ -19,7 +19,7 @@ model Product {
   movie       String?
   isFeatured  Boolean  @default(false)
   createdAt   DateTime @default(now())
-  randomValue Float @default(dbgenerated("random()"))
+
 }
 
 model Request {
