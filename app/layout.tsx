@@ -14,12 +14,13 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
-
 export const metadata: Metadata = {
   title: "FilmyFits | Screen-Accurate Cinematic Archives",
   description: "Discover and source the most iconic outfits from film history. Your archive for cinematic style.",
+  verification: {
+    google: "googlee6d247104ad617ad.html",
+  },
 };
-
 export default function RootLayout({
   children,
 }: {
