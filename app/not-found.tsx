@@ -1,4 +1,5 @@
 import { Button } from "../components/Ui/button";
+import DecryptedText from "@/DecryptedText";
 import {
     Empty,
     EmptyContent,
@@ -16,9 +17,18 @@ export default function NotFound() {
                     <EmptyTitle className="mask-b-from-20% mask-b-to-80% font-extrabold text-9xl">
                         404
                     </EmptyTitle>
-                    <EmptyDescription className="-mt-8 text-nowrap text-foreground/80">
-                        The page you're looking for might have been <br />
-                        moved or doesn't exist.
+                    <EmptyDescription className="-mt-8 text-nowrap text-foreground/80 flex flex-col items-center gap-2">
+                    
+                      <DecryptedText
+                        text="Wrong Move"
+                        className="text-2xl font-semibold"
+                      />
+                    
+                      <DecryptedText
+                        text="Probably a missing semicolon."
+                        className="text-base opacity-70"
+                      />
+
                     </EmptyDescription>
                 </EmptyHeader>
                 <EmptyContent>
