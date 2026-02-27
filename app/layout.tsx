@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   title: "FilmyFits | Screen-Accurate Cinematic Archives",
   description: "Discover and source the most iconic outfits from film history. Your archive for cinematic style.",
   verification: {
-    google: "googlee6d247104ad617ad.html",
+    google: "kideHJOfbns4URNInTmtAcLxH-1ouvbOkGe-jj60l0o",
   },
 };
 export default function RootLayout({
