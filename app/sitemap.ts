@@ -1,26 +1,27 @@
-import { MetadataRoute } from 'next'
-import { prisma } from '@/lib/prisma'
+import { MetadataRoute } from "next";
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://filmyfits.vercel.app'
+export default function sitemap(): MetadataRoute.Sitemap {
+  const baseUrl = "https://filmyfits.vercel.app";
 
-  const products = await prisma.product.findMany({
-    select: {
-      id: true,
-      createdAt: true,
-    },
-  })
+  const pages = [
+    "",
+    "/collections",
+    "/products",
 
-  const productUrls = products.map((product) => ({
-    url: `${baseUrl}/products/${product.id}`,
-    lastModified: product.createdAt,
-  }))
+    "/collections/yeh-jawaani-hai-deewani",
+    "/collections/pants",
+    "/collections/ranbir-kapoor",
+    "/collections/shirts",
+    "/collections/jackets",
 
-  return [
-    {
-      url: baseUrl,
-      lastModified: new Date(),
-    },
-    ...productUrls,
-  ]
+    "/products/ranbir-kapoor-cargo-pants",
+    "/products/ranbir-kapoor-checked-shirt",
+    "/products/ranbir-kapoor-jacket",
+    "/products/ranbir-kapoor-brown-jacket",
+  ];
+
+  return pages.map((route) => ({
+    url: `${baseUrl}${route}`,
+    lastModified: new Date(),
+  }));
 }
