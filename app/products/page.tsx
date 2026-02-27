@@ -1,13 +1,22 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import type { Product } from "@prisma/client";
-import { Beaker } from "lucide-react";
 
 export default async function AllProducts() {
-  const products: Product[] = await prisma.$queryRaw`
-    SELECT * FROM "Product"
-    ORDER BY RANDOM()
-  `;
+  // 1️⃣ Get total number of products
+  const totalCount = await prisma.product.count();
+
+  // 2️⃣ Generate random starting point
+  const randomSkip =
+    totalCount > 20
+      ? Math.floor(Math.random() * (totalCount - 20))
+      : 0;
+
+  // 3️⃣ Fetch 20 products from random position
+  const products: Product[] = await prisma.product.findMany({
+    take: 20,
+    skip: randomSkip,
+  });
 
   return (
     <div className="min-h-screen bg-stone-50 pt-24 px-6">
@@ -25,11 +34,11 @@ export default async function AllProducts() {
                 className="w-full h-full object-cover"
               />
             </div>
-  
+
             <h3 className="mt-4 font-black text-stone-900 group-hover:text-orange-600 transition">
               {product.name}
             </h3>
-  
+
             <p className="text-stone-500 font-bold">
               ₹{product.price.toLocaleString()}
             </p>
