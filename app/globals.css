@@ -713,3 +713,19 @@ textarea::placeholder {
     font-size: 15px;
   }
 }
+.animated-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.animated-button:hover {
+  transform: scale(1.05);
+}
+
+.animated-button.hovered {
+  background-color: #4caf50; /* Green */
+  color: white;
+}

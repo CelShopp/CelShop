@@ -89,11 +89,13 @@ export default function LookbookDetail({ params }: { params: Promise<{ id: strin
                     {/* Visual Side */}
                     <div className="flex-1 w-full max-w-sm sm:max-w-md lg:max-w-none mx-auto lg:mx-0 lg:sticky lg:top-28">
                         <div className="relative aspect-[3/4] rounded-[2rem] sm:rounded-[3rem] overflow-hidden bg-stone-200 shadow-xl sm:shadow-2xl group">
-                            <img
-                                src={lookbook.image}
-                                alt={lookbook.celebrity}
-                                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                            />
+                           {look.image && (
+                             <img
+                               src={look.image}
+                               alt={look.actorName}
+                               className="w-full h-screen object-cover sticky top-0"
+                             />
+                           )}
                             {/* Overlay */}
                             <div className="absolute inset-0 bg-gradient-to-t from-stone-950/60 to-transparent" />
 

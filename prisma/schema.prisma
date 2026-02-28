@@ -5,6 +5,16 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+model ActorLook {
+  id        String    @id @default(cuid())
+  slug      String    @unique
+  actorName String
+  movie     String
+  image     String
+  createdAt DateTime  @default(now())
+
+  products  Product[]
+}
 
 model Product {
   id          String   @id @default(cuid())
@@ -15,11 +25,10 @@ model Product {
   image       String
   buyLink     String
   collection  String
-  actorName   String?
-  movie       String?
   isFeatured  Boolean  @default(false)
   createdAt   DateTime @default(now())
-
+  actorLookId String?
+  actorLook   ActorLook? @relation(fields: [actorLookId], references: [id])
 }
 
 model Request {

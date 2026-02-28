@@ -1,4 +1,6 @@
 import HeroSection from "@/components/HeroSection";
+import ChaosMode from "@/components/ChaosMode";
+
 import NewestProducts from "@/components/NewestProducts";
 export default async function Page() {
   return (
@@ -13,11 +15,9 @@ export default async function Page() {
 
         {/* Newest Products Section */}
         <div className="w-full">
-          <NewestProducts/>
+          <NewestProducts />
+          <ChaosMode />
         </div>
-
-
-
       </main>
     </div>
   );
