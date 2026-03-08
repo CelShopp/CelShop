@@ -16,11 +16,43 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FilmyFits | Screen-Accurate Cinematic Archives",
-  description: "Discover and source the most iconic outfits from film history. Your archive for cinematic style.",
+  title: {
+    default: "FilmyFits — Shop Iconic Bollywood & Hollywood Outfits",
+    template: "%s | FilmyFits",
+  },
+  description:
+    "Shop screen-accurate outfits from your favourite Bollywood and Hollywood films. Yeh Jawaani Hai Deewani, John Wick, Batman & more. Curated affiliate links to trusted retailers.",
+  keywords: [
+    "bollywood outfits",
+    "hollywood movie clothes",
+    "film fashion",
+    "screen accurate outfits",
+    "Yeh Jawaani Hai Deewani jacket",
+    "Ranbir Kapoor style",
+    "John Wick suit",
+    "movie inspired clothing India",
+    "filmyfits",
+  ],
+  openGraph: {
+    title: "FilmyFits — Dress Like the Screen",
+    description:
+      "Shop screen-accurate outfits from iconic Bollywood & Hollywood films.",
+    url: "https://filmyfits.vercel.app",
+    siteName: "FilmyFits",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "FilmyFits — Dress Like the Screen",
+    description: "Screen-accurate film outfits. Shop YJHD, John Wick, Batman & more.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   verification: {
     google: "POHSrNwaNDYHk6krd0lOC5jY7qj5k5NVJHZQUwAzu4w",
- }
+  },
 };
 
 export default function RootLayout({
@@ -34,9 +66,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-stone-50 text-stone-900 flex flex-col min-h-screen`}
       >
         <Header />
-        <main className="flex-grow">
-          {children}
-        </main>
+        <main className="flex-grow">{children}</main>
         <Footer />
         <CookieBanner />
       </body>
