@@ -88,8 +88,8 @@ const HeroSection = () => {
                 {/* Stats */}
                 <div className="flex gap-8 mt-10 pt-6 border-t border-white/10 max-w-2xl">
                   {[
-                    { num: "4+", label: "Collections" },
-                    { num: "10+", label: "Products" },
+                    { num: "40+", label: "Collections" },
+                    { num: "1000+", label: "Products" },
                     { num: "100%", label: "Affiliate" },
                   ].map(({ num, label }) => (
                     <div key={label}>
