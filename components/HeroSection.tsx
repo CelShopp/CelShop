@@ -1,30 +1,45 @@
 "use client";
 
-import YehJawaaniHaiDeewani from "../public/YehJawaaniHaiDeewani.png";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { Play, Sparkles, ArrowRight } from "lucide-react";
+import { Play, ArrowRight } from "lucide-react";
 import Link from "next/link";
-
-const MOVIES = [
-  {
-    id: 1,
-    title: "Yeh Jawaani Hai Deewani",
-    posterURL: YehJawaaniHaiDeewani.src,
-    cta: "/collections",
-  },
-];
+import { useEffect, useState } from "react";
 
 const HeroSection = () => {
+  const [movies, setMovies] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch('/api/hero')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setMovies(data);
+        } else {
+          // Fallback if no items in DB
+          setMovies([
+            {
+              id: 'default',
+              title: "Iconic outfits from iconic films",
+              movieName: "Yeh Jawaani Hai Deewani",
+              image: "/YehJawaaniHaiDeewani.png",
+              ctaLink: "/collections",
+            }
+          ]);
+        }
+      })
+      .catch(err => console.error("Error fetching hero:", err));
+  }, []);
+
   const settings = {
     dots: false,
-    infinite: true,
+    infinite: movies.length > 1,
     speed: 1200,
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 2000,
+    autoplaySpeed: 4000,
     arrows: false,
     fade: true,
   };
@@ -32,15 +47,13 @@ const HeroSection = () => {
   return (
     <section className="relative bg-stone-950 overflow-hidden w-full lg:w-[75%] mx-auto lg:rounded-[30px] mt-[10px]">
       <Slider {...settings}>
-        {MOVIES.map((movie) => (
+        {movies.map((movie) => (
           <div key={movie.id} className="relative w-full h-[72vh] md:h-[82vh] outline-none">
-      
-
             {/* Background image — low opacity for clean look */}
             <div className="absolute inset-0">
               <img
-                src={movie.posterURL}
-                alt={movie.title}
+                src={movie.image}
+                alt={movie.movieName}
                 className="w-full h-full object-cover opacity-[0.75] scale-100 animate-slow-zoom"
               />
               {/* Gradient overlays */}
@@ -64,13 +77,17 @@ const HeroSection = () => {
                   className="font-black text-white tracking-tighter leading-[0.93] mb-3 drop-shadow-2xl"
                   style={{ fontSize: "clamp(2.0rem, 4vw, 5.5rem)" }}
                 >
-                  Iconic outfits<br />from iconic films
+                  {movie.title === "Iconic outfits from iconic films" ? (
+                    <>Iconic outfits<br />from iconic films</>
+                  ) : (
+                    movie.title
+                  )}
                 </h1>
 
                 {/* CTAs */}
                 <div className="flex flex-wrap gap-3">
                   <Link
-                    href={movie.cta}
+                    href={movie.ctaLink}
                     className="group flex items-center gap-2.5 bg-white text-stone-900 font-black py-3.5 px-7 rounded-2xl text-[10px] uppercase tracking-[0.2em] hover:bg-orange-500 hover:text-white transition-all hover:-translate-y-0.5 shadow-2xl active:scale-95 whitespace-nowrap"
                   >
                     <Play size={12} fill="currentColor" className="group-hover:scale-110 transition-transform" />
@@ -105,8 +122,10 @@ const HeroSection = () => {
             {/* Film title watermark — bottom right */}
             <div className="absolute bottom-6 right-6 text-right hidden sm:block">
               <p className="text-[9px] font-black uppercase tracking-[0.25em] text-stone-600 mb-0.5">Now Showing</p>
-              <p className="text-xs font-black text-stone-500 tracking-tight">{movie.title}</p>
+              <p className="text-xs font-black text-stone-500 tracking-tight">{movie.movieName}</p>
             </div>
+
+
 
           </div>
         ))}
@@ -125,4 +144,4 @@ const HeroSection = () => {
   );
 };
 
-export default HeroSection;
+export default HeroSection;

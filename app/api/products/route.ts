@@ -21,6 +21,21 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
         }
 
+        // Ensure collections exist in the Collection model
+        const collectionList = collection.split(',').map((c: string) => c.trim()).filter(Boolean);
+        for (const colName of collectionList) {
+            const colSlug = colName.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+            await (prisma as any).collection.upsert({
+                where: { name: colName },
+                update: { updatedAt: new Date() },
+                create: { 
+                    name: colName, 
+                    slug: colSlug,
+                    updatedAt: new Date()
+                }
+            });
+        }
+
         const newProduct = await prisma.product.create({
             data: {
                 name,
@@ -32,13 +47,14 @@ export async function POST(req: Request) {
                 collection,
                 actorName: actorName || null,
                 movie: movie || null,
-                // @ts-ignore - Prisma client may need a restart to recognize this new field
+                // @ts-ignore
                 isFeatured: !!isFeatured,
             },
         });
 
         return NextResponse.json(newProduct, { status: 201 });
     } catch (error: any) {
+
         console.error("Archive Error:", error);
         if (error.code === 'P2002') {
             return NextResponse.json({ error: "A product with this slug already exists." }, { status: 400 });

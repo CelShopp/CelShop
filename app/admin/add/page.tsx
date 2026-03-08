@@ -41,11 +41,17 @@ function AddProductForm() {
             .then(res => res.json())
             .then(data => {
                 if (Array.isArray(data)) {
-                    setSuggestedCollections(prev => Array.from(new Set([...prev, ...data])));
+                    // Extract name from objects if necessary, and filter to strings only
+                    const names = data.map(item => typeof item === 'object' ? (item.name || item.slug) : item);
+                    setSuggestedCollections(prev => {
+                        const all = [...prev, ...names];
+                        return Array.from(new Set(all.map(s => s.toLowerCase()))).sort();
+                    });
                 }
             })
             .catch(err => console.error("Error fetching collections:", err));
     }, []);
+
 
     const [file, setFile] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);

@@ -74,7 +74,19 @@ function ManageProductsContent() {
                             Manage <span className="text-stone-300">Archives</span>
                         </h1>
                     </div>
-                    <div className="flex gap-4">
+                    <div className="flex flex-wrap gap-4">
+                        <Link
+                            href="/admin/hero"
+                            className="px-6 py-4 bg-white border border-stone-100 text-stone-900 font-bold rounded-2xl hover:bg-stone-50 transition-all shadow-sm flex items-center gap-2 text-xs uppercase tracking-widest"
+                        >
+                            Hero Section
+                        </Link>
+                        <Link
+                            href="/admin/collections"
+                            className="px-6 py-4 bg-white border border-stone-100 text-stone-900 font-bold rounded-2xl hover:bg-stone-50 transition-all shadow-sm flex items-center gap-2 text-xs uppercase tracking-widest"
+                        >
+                            Collections
+                        </Link>
                         <button
                             onClick={fetchProducts}
                             className="p-4 bg-white border border-stone-100 rounded-2xl text-stone-600 hover:bg-stone-100 transition-all"
@@ -89,6 +101,7 @@ function ManageProductsContent() {
                             Add Item
                         </Link>
                     </div>
+
                 </header>
 
                 <div className="bg-white rounded-[3rem] shadow-2xl overflow-hidden border border-stone-100">

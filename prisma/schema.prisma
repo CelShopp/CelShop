@@ -28,3 +28,23 @@ model Request {
   email     String?
   createdAt DateTime @default(now())
 }
+
+model HeroItem {
+  id        String   @id @default(cuid())
+  title     String
+  movieName String
+  image     String
+  ctaLink   String
+  createdAt DateTime @default(now())
+}
+
+model Collection {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  image       String?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
