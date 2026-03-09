@@ -9,30 +9,35 @@ export const metadata: Metadata = {
 };
 
 export default async function CollectionsPage() {
-  // Aggregate distinct collections and count products in each
-  const products = await prisma.product.findMany();
-  const collectionMap = new Map<string, number>();
-
+  // Fetch collections from Database table
+  let collectionRecords = await (prisma as any).collection.findMany({
+    orderBy: { updatedAt: "desc" }
+  });
+  
+  const products = await prisma.product.findMany({ select: { collection: true } });
+  const countMap = new Map<string, number>();
   products.forEach(p => {
-    const collections = p.collection.split(',').map(c => c.trim()).filter(Boolean);
-    collections.forEach(slug => {
-      collectionMap.set(slug, (collectionMap.get(slug) || 0) + 1);
+    p.collection.split(',').forEach(c => {
+      const slug = c.trim().toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+      if (slug) countMap.set(slug, (countMap.get(slug) || 0) + 1);
     });
   });
 
-  const uniqueCollections = Array.from(collectionMap.entries()).map(([slug, count]) => ({
-    slug,
-    count,
-    name: slug.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
-  }));
+  if (collectionRecords.length === 0) {
+    const slugs = Array.from(countMap.keys());
+    collectionRecords = slugs.map(slug => ({
+      slug,
+      name: slug.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" "),
+      image: null,
+      description: null
+    }));
+  }
 
-  // Hand-picked imagery for popular collections
-  const collectionImages: Record<string, string> = {
-    "batman": "https://images.unsplash.com/photo-1531259683007-016a7b628fc3?q=80&w=1974&auto=format&fit=crop",
-    "spiderman": "https://images.unsplash.com/photo-1635805737707-575885ab0820?q=80&w=1974&auto=format&fit=crop",
-    "john-wick": "https://images.unsplash.com/photo-1590412200988-a436bb7050a8?q=80&w=1935&auto=format&fit=crop",
-    "top-gun": "https://images.unsplash.com/photo-1506190503913-909249826353?q=80&w=2072&auto=format&fit=crop",
-  };
+  const uniqueCollections = collectionRecords.map((col: any) => ({
+    ...col,
+    count: countMap.get(col.slug) || 0,
+    name: col.name || col.slug.split("-").map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
+  }));
 
   return (
     <div className="min-h-screen bg-stone-50 font-sans text-stone-900 pt-24 sm:pt-32 pb-16 sm:pb-24">
@@ -53,7 +58,7 @@ export default async function CollectionsPage() {
 
         {/* Collections Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
-          {uniqueCollections.map((col) => {
+          {uniqueCollections.map((col: any) => {
             const isBatman = col.slug === 'batman';
             const movieContext = isBatman ? "The Dark Knight" : col.name;
             const actorContext = isBatman ? "Christian Bale" : "Various Icons";
@@ -66,7 +71,7 @@ export default async function CollectionsPage() {
               >
                 {/* Image */}
                 <img
-                  src={collectionImages[col.slug] || "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=2059&auto=format&fit=crop"}
+                  src={col.image || "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=2059&auto=format&fit=crop"}
                   alt={col.name}
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                 />

@@ -44,6 +44,7 @@ model Collection {
   slug        String   @unique
   image       String?
   description String?
+  showInHome  Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

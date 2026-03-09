@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Package, Database, Sparkles, Check } from 'lucide-react';
+import { Plus, Package, Database, Sparkles, Check, Layout } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
@@ -22,7 +22,7 @@ function AddProductForm() {
         }
     }, []);
 
-    const [suggestedCollections, setSuggestedCollections] = useState(['batman', 'spiderman', 'john-wick', 'top-gun', 'matrix']);
+    const [suggestedCollections, setSuggestedCollections] = useState<any[]>([]);
     const [formData, setFormData] = useState({
         name: '',
         slug: '',
@@ -30,7 +30,7 @@ function AddProductForm() {
         price: '',
         image: '',
         buyLink: '',
-        collection: 'batman',
+        collection: '', // Start empty
         actorName: '',
         movie: '',
         isFeatured: false,
@@ -41,12 +41,7 @@ function AddProductForm() {
             .then(res => res.json())
             .then(data => {
                 if (Array.isArray(data)) {
-                    // Extract name from objects if necessary, and filter to strings only
-                    const names = data.map(item => typeof item === 'object' ? (item.name || item.slug) : item);
-                    setSuggestedCollections(prev => {
-                        const all = [...prev, ...names];
-                        return Array.from(new Set(all.map(s => s.toLowerCase()))).sort();
-                    });
+                    setSuggestedCollections(data);
                 }
             })
             .catch(err => console.error("Error fetching collections:", err));
@@ -178,13 +173,22 @@ function AddProductForm() {
                             Archive <span className="text-stone-300">New Item</span>
                         </h1>
                     </div>
-                    <Link
-                        href="/admin/manage"
-                        className="px-8 py-4 bg-white border border-stone-100 text-stone-900 font-black rounded-2xl hover:bg-stone-50 transition-all shadow-sm flex items-center gap-2"
-                    >
-                        <Database size={20} />
-                        Manage Archives
-                    </Link>
+                    <div className="flex gap-4">
+                        <Link
+                            href="/admin/collections"
+                            className="px-8 py-4 bg-white border border-stone-100 text-stone-900 font-black rounded-2xl hover:bg-stone-50 transition-all shadow-sm flex items-center gap-2"
+                        >
+                            <Layout size={20} />
+                            Manage Collections
+                        </Link>
+                        <Link
+                            href="/admin/manage"
+                            className="px-8 py-4 bg-white border border-stone-100 text-stone-900 font-black rounded-2xl hover:bg-stone-50 transition-all shadow-sm flex items-center gap-2"
+                        >
+                            <Database size={20} />
+                            Manage Archives
+                        </Link>
+                    </div>
                 </header>
 
                 <div className="bg-white rounded-[3rem] shadow-2xl overflow-hidden border border-stone-100">
@@ -309,9 +313,9 @@ function AddProductForm() {
                                         }}
                                         defaultValue=""
                                     >
-                                        <option value="" disabled>Select an existing collection...</option>
-                                        {suggestedCollections.map((collection) => (
-                                            <option key={collection} value={collection}>{collection}</option>
+                                        <option value="" disabled>Select from vault...</option>
+                                        {suggestedCollections.map((col) => (
+                                            <option key={col.id} value={col.slug}>{col.name}</option>
                                         ))}
                                     </select>
                                     <div className="flex gap-2">

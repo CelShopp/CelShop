@@ -1,20 +1,26 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Folder, Image as ImageIcon, Save, Sparkles, Database } from 'lucide-react';
+import { Plus, Database, Sparkles, Trash2, Edit2, Check, X, Layout, ImageIcon, Upload } from 'lucide-react';
 import Link from 'next/link';
 
-export default function AdminCollectionsPage() {
+export default function ManageCollectionsPage() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [collections, setCollections] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [message, setMessage] = useState('');
-    
+
+    // Modal/Form states
     const [editingId, setEditingId] = useState<string | null>(null);
-    const [editData, setEditData] = useState({
+    const [isCreating, setIsCreating] = useState(false);
+    const [formData, setFormData] = useState({
+        name: '',
         image: '',
-        description: ''
+        description: '',
+        showInHome: false
     });
+
     const [file, setFile] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
 
@@ -29,25 +35,47 @@ export default function AdminCollectionsPage() {
     }, []);
 
     const fetchCollections = async () => {
+        setLoading(true);
         try {
             const res = await fetch('/api/collections');
-            if (res.ok) {
-                const data = await res.json();
-                setCollections(data);
-            }
-        } catch (error) {
-            console.error("Failed to fetch collections", error);
+            const data = await res.json();
+            if (Array.isArray(data)) setCollections(data);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
         }
     };
 
-    const handleEdit = (collection: any) => {
-        setEditingId(collection.id);
-        setEditData({
-            image: collection.image || '',
-            description: collection.description || ''
+    const handleEdit = (col: any) => {
+        setEditingId(col.id);
+        setIsCreating(false);
+        setFormData({
+            name: col.name,
+            image: col.image || '',
+            description: col.description || '',
+            showInHome: !!col.showInHome
         });
-        setPreview(collection.image || null);
+        setPreview(col.image || null);
         setFile(null);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleDelete = async (id: string) => {
+        if (!confirm("Are you sure? This won't delete products, but will detach them from this collection record.")) return;
+        
+        try {
+            const res = await fetch(`/api/collections?id=${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                setCollections(prev => prev.filter(c => c.id !== id));
+                setStatus('success');
+                setMessage('Collection deleted.');
+            }
+        } catch (err) {
+            console.error(err);
+            setStatus('error');
+            setMessage('Delete failed.');
+        }
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,14 +83,16 @@ export default function AdminCollectionsPage() {
             const selectedFile = e.target.files[0];
             setFile(selectedFile);
             setPreview(URL.createObjectURL(selectedFile));
-            setEditData(prev => ({ ...prev, image: '' }));
+            setFormData(prev => ({ ...prev, image: '' }));
         }
     };
 
-    const handleSave = async (id: string) => {
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
         setStatus('loading');
+
         try {
-            let imageUrl = editData.image;
+            let imageUrl = formData.image;
 
             if (file) {
                 const uploadData = new FormData();
@@ -76,27 +106,46 @@ export default function AdminCollectionsPage() {
                     const data = await uploadRes.json();
                     imageUrl = data.url;
                 } else {
-                    throw new Error('Image upload failed');
+                    const err = await uploadRes.json();
+                    throw new Error(err.error || 'Image upload failed');
                 }
             }
 
+            const method = editingId ? 'PATCH' : 'POST';
             const res = await fetch('/api/collections', {
-                method: 'PATCH',
+                method,
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id, image: imageUrl, description: editData.description }),
+                body: JSON.stringify(editingId ? { id: editingId, ...formData, image: imageUrl } : { ...formData, image: imageUrl })
             });
 
             if (res.ok) {
                 setStatus('success');
-                setMessage('Collection updated');
+                setMessage(editingId ? 'Archive updated successfully!' : 'New archive launched!');
+                
+                // Clear state
                 setEditingId(null);
-                fetchCollections();
+                setIsCreating(false);
+                setFormData({ name: '', image: '', description: '', showInHome: false });
+                setFile(null);
+                setPreview(null);
+                
+                // Refresh list
+                await fetchCollections();
+
+                // Auto hide message after 4 seconds
+                setTimeout(() => setMessage(''), 4000);
             } else {
-                throw new Error('Update failed');
+                const err = await res.json();
+                setStatus('error');
+                setMessage(err.error || 'Operation failed');
             }
         } catch (error: any) {
             setStatus('error');
-            setMessage(error.message);
+            setMessage(error.message || 'Network error');
+        } finally {
+            if (status === 'error') {
+                setTimeout(() => setMessage(''), 5000);
+            }
         }
     };
 
@@ -108,110 +157,166 @@ export default function AdminCollectionsPage() {
                 <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div>
                         <div className="flex items-center gap-2 text-orange-600 font-bold uppercase tracking-[0.3em] text-[10px] mb-4">
-                            <Folder size={14} />
-                            Library Management
+                            <Layout size={14} />
+                            Collection Management
                         </div>
                         <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-stone-900">
-                            Collections <span className="text-stone-300">Manager</span>
+                            Archive <span className="text-stone-300">Vaults</span>
                         </h1>
                     </div>
-                    <Link
-                        href="/admin/manage"
-                        className="px-8 py-4 bg-white border border-stone-100 text-stone-900 font-black rounded-2xl hover:bg-stone-50 transition-all shadow-sm flex items-center gap-2"
-                    >
-                        <Database size={20} />
-                        Manage Archives
-                    </Link>
+                    <div className="flex gap-4">
+                        <Link
+                            href="/admin/add"
+                            className="px-6 py-3 bg-white border border-stone-200 text-stone-900 font-black rounded-xl hover:bg-stone-50 transition-all shadow-sm flex items-center gap-2"
+                        >
+                            <Plus size={18} />
+                            Add Product
+                        </Link>
+                        <button
+                            onClick={() => {
+                                setIsCreating(true);
+                                setEditingId(null);
+                                setFormData({ name: '', image: '', description: '', showInHome: false });
+                                setFile(null);
+                                setPreview(null);
+                            }}
+                            className="px-6 py-3 bg-stone-900 text-white font-black rounded-xl hover:bg-stone-800 transition-all shadow-xl flex items-center gap-2"
+                        >
+                            <Plus size={18} />
+                            New Collection
+                        </button>
+                    </div>
                 </header>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {collections.map((collection) => (
-                        <div key={collection.id} className="bg-white rounded-[2.5rem] overflow-hidden shadow-xl border border-stone-100 flex flex-col">
-                            <div className="aspect-video relative bg-stone-100">
-                                {editingId === collection.id ? (
-                                    <div 
-                                        onClick={() => document.getElementById(`file-${collection.id}`)?.click()}
-                                        className="w-full h-full flex flex-col items-center justify-center cursor-pointer hover:bg-stone-200 transition-all"
-                                    >
-                                        {preview ? (
-                                            <img src={preview} alt="Preview" className="w-full h-full object-cover" />
-                                        ) : (
-                                            <>
-                                                <ImageIcon className="text-stone-300" size={32} />
-                                                <span className="text-[10px] font-bold text-stone-400 mt-2 uppercase">Update Image</span>
-                                            </>
-                                        )}
-                                        <input id={`file-${collection.id}`} type="file" className="hidden" onChange={handleFileChange} />
-                                    </div>
-                                ) : (
-                                    <>
-                                        {collection.image ? (
-                                            <img src={collection.image} alt={collection.name} className="w-full h-full object-cover" />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center">
-                                                <ImageIcon className="text-stone-200" size={48} />
-                                            </div>
-                                        )}
-                                    </>
-                                )}
-                            </div>
+                {message && (
+                    <div className={`mb-8 p-4 rounded-xl font-bold text-center animate-in fade-in slide-in-from-top-2 ${status === 'success' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+                        {message}
+                    </div>
+                )}
 
-                            <div className="p-8 flex-1 flex flex-col">
-                                <h3 className="text-xl font-black text-stone-900 uppercase tracking-tight mb-4">
-                                    {collection.name.replace(/-/g, ' ')}
-                                </h3>
-
-                                {editingId === collection.id ? (
-                                    <div className="space-y-4 mb-6">
-                                        <textarea
-                                            value={editData.description}
-                                            onChange={(e) => setEditData(prev => ({ ...prev, description: e.target.value }))}
-                                            placeholder="Collection description..."
-                                            className="w-full px-4 py-3 bg-stone-50 border border-stone-100 rounded-xl outline-none focus:ring-2 focus:ring-orange-500/20 text-sm"
-                                            rows={3}
-                                        />
-                                        <input
-                                            value={editData.image}
-                                            onChange={(e) => {
-                                                setEditData(prev => ({ ...prev, image: e.target.value }));
-                                                setPreview(e.target.value);
-                                            }}
-                                            placeholder="Or paste image URL"
-                                            className="w-full px-4 py-3 bg-stone-50 border border-stone-100 rounded-xl outline-none focus:ring-2 focus:ring-orange-500/20 text-sm"
-                                        />
+                {(isCreating || editingId) && (
+                    <div className="mb-12 bg-white rounded-[2.5rem] p-8 border border-stone-200 shadow-2xl animate-in fade-in slide-in-from-top-4">
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-2xl font-black">{editingId ? 'Edit' : 'Create'} Collection</h2>
+                            <button onClick={() => { setIsCreating(false); setEditingId(null); }} className="p-2 hover:bg-stone-100 rounded-full">
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="space-y-6">
+                                <div>
+                                    <label className="text-[10px] font-black uppercase text-stone-400 mb-1 ml-1 block">Collection Name</label>
+                                    <input 
+                                        required
+                                        value={formData.name}
+                                        onChange={e => setFormData({...formData, name: e.target.value})}
+                                        className="w-full px-5 py-3 bg-stone-50 border border-stone-100 rounded-xl outline-none focus:border-orange-500 font-bold"
+                                        placeholder="e.g. Yeh Jawaani Hai Deewani"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-[10px] font-black uppercase text-stone-400 mb-1 ml-1 block">Description</label>
+                                    <textarea 
+                                        rows={4}
+                                        value={formData.description}
+                                        onChange={e => setFormData({...formData, description: e.target.value})}
+                                        className="w-full px-5 py-3 bg-stone-50 border border-stone-100 rounded-xl outline-none focus:border-orange-500 font-bold"
+                                        placeholder="Briefly describe what this archive contains..."
+                                    />
+                                </div>
+                                <div className="flex items-center gap-3 p-4 bg-orange-50 rounded-xl border border-orange-100 cursor-pointer" onClick={() => setFormData({...formData, showInHome: !formData.showInHome})}>
+                                    <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${formData.showInHome ? 'bg-orange-500 border-orange-500' : 'border-orange-200 bg-white'}`}>
+                                        {formData.showInHome && <Check size={14} className="text-white" />}
                                     </div>
-                                ) : (
-                                    <p className="text-stone-500 text-sm line-clamp-2 mb-6 flex-1">
-                                        {collection.description || 'No description provided yet.'}
-                                    </p>
-                                )}
-
-                                <div className="pt-6 border-t border-stone-50 flex items-center justify-between">
-                                    <div className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">
-                                        Slug: {collection.slug}
-                                    </div>
-                                    
-                                    {editingId === collection.id ? (
-                                        <button
-                                            onClick={() => handleSave(collection.id)}
-                                            disabled={status === 'loading'}
-                                            className="px-6 py-3 bg-orange-600 text-white font-black rounded-xl hover:bg-orange-700 transition-all flex items-center gap-2 text-xs"
-                                        >
-                                            <Save size={14} />
-                                            {status === 'loading' ? 'Saving...' : 'Save Changes'}
-                                        </button>
-                                    ) : (
-                                        <button
-                                            onClick={() => handleEdit(collection)}
-                                            className="px-6 py-3 bg-stone-900 text-white font-black rounded-xl hover:bg-stone-800 transition-all text-xs"
-                                        >
-                                            Edit Collection
-                                        </button>
-                                    )}
+                                    <span className="text-xs font-black text-orange-900 uppercase tracking-widest leading-none">Show in Home Page</span>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+
+                            <div className="space-y-6">
+                                <label className="text-[10px] font-black uppercase text-stone-400 mb-1 ml-1 block">Collection Media</label>
+                                <div className="grid grid-cols-1 gap-4">
+                                    <div 
+                                        onClick={() => document.getElementById('collection-upload')?.click()}
+                                        className="w-full aspect-[4/3] bg-stone-50 border-2 border-dashed border-stone-200 rounded-[2rem] flex flex-col items-center justify-center gap-4 cursor-pointer hover:bg-stone-100 transition-all overflow-hidden"
+                                    >
+                                        {preview ? (
+                                            <img src={preview} className="w-full h-full object-cover" alt="Preview" />
+                                        ) : (
+                                            <>
+                                                <Upload className="text-stone-300" size={32} />
+                                                <div className="text-center">
+                                                    <div className="text-[10px] font-black text-stone-900 uppercase tracking-widest">Upload Local Pic</div>
+                                                </div>
+                                            </>
+                                        )}
+                                    </div>
+                                    <input id="collection-upload" type="file" className="hidden" onChange={handleFileChange} accept="image/*" />
+                                    
+                                    <div className="relative">
+                                        <label className="text-[10px] font-black uppercase text-stone-300 mb-1 text-center block">— OR —</label>
+                                        <input 
+                                            value={formData.image}
+                                            onChange={e => {
+                                                setFormData({...formData, image: e.target.value});
+                                                setPreview(e.target.value || null);
+                                                setFile(null);
+                                            }}
+                                            className="w-full px-5 py-3 bg-stone-50 border border-stone-100 rounded-xl outline-none focus:border-orange-500 font-bold text-sm"
+                                            placeholder="Paste Image URL"
+                                        />
+                                    </div>
+                                </div>
+
+                                <button 
+                                    type="submit"
+                                    className="w-full py-5 bg-stone-900 text-white font-black rounded-xl hover:bg-orange-600 transition-all flex items-center justify-center gap-2 shadow-lg"
+                                >
+                                    {status === 'loading' ? <div className="animate-spin w-5 h-5 border-2 border-white/20 border-t-white rounded-full" /> : <><Sparkles size={18} /> {editingId ? 'Update' : 'Launch'} Archive</>}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {loading ? (
+                        [1,2,3].map(i => <div key={i} className="h-96 bg-stone-200 rounded-[2rem] animate-pulse" />)
+                    ) : (
+                        collections.map(col => (
+                            <div key={col.id} className="group bg-white rounded-[2rem] border border-stone-100 shadow-sm hover:shadow-xl transition-all overflow-hidden flex flex-col">
+                                <div className="aspect-[2/3] relative bg-stone-100 overflow-hidden">
+                                    {col.image ? (
+                                        <img src={col.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={col.name} />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-stone-300">
+                                            <ImageIcon size={48} strokeWidth={1} />
+                                        </div>
+                                    )}
+                                    <div className="absolute top-4 right-4 flex gap-2">
+                                        {col.showInHome && (
+                                            <div className="px-3 py-1 bg-orange-500 text-white text-[8px] font-black uppercase tracking-widest rounded-full shadow-lg">
+                                                Featured
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    <div className="absolute inset-x-0 bottom-0 p-6 flex justify-between items-end translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+                                        <button onClick={() => handleEdit(col)} className="p-3 bg-white rounded-xl shadow-lg hover:bg-stone-50 text-stone-900 transition-all">
+                                            <Edit2 size={18} />
+                                        </button>
+                                        <button onClick={() => handleDelete(col.id)} className="p-3 bg-red-500 rounded-xl shadow-lg hover:bg-red-600 text-white transition-all">
+                                            <Trash2 size={18} />
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="p-6">
+                                    <h3 className="text-xl font-black mb-1">{col.name}</h3>
+                                    <div className="text-[10px] text-stone-400 font-bold uppercase tracking-widest leading-none mb-3">{col.slug}</div>
+                                    {col.description && <p className="text-xs text-stone-500 font-medium line-clamp-2">{col.description}</p>}
+                                </div>
+                            </div>
+                        ))
+                    )}
                 </div>
             </main>
         </div>
