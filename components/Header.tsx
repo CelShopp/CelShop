@@ -102,8 +102,13 @@ export default function Header() {
         }}
       >
         <nav className="glass-nav">
-          <Link href="/" className="logo-text">
-            FilmyFits
+          <Link href="/" className="flex items-center gap-2 group">
+            <img 
+              src="/logo.png" 
+              alt="FilmyFits Logo" 
+              className="h-8 w-auto md:h-10 transition-transform duration-500 group-hover:scale-105" 
+            />
+            <span className="logo-text hidden sm:block">FilmyFits</span>
           </Link>
 
           <ul className="hidden md:flex gap-8 list-none m-0 p-0">

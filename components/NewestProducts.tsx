@@ -83,7 +83,7 @@ export default async function NewestProducts() {
               href={`/collections/${collection.slug}`}
               className="group flex flex-col"
             >
-              <div className="relative aspect-[16/10] rounded-[2rem] overflow-hidden bg-stone-200 mb-4 shadow-sm group-hover:shadow-xl transition-all duration-500">
+              <div className="relative aspect-[9/16] rounded-[2rem] overflow-hidden bg-stone-200 mb-4 shadow-sm group-hover:shadow-xl transition-all duration-500">
                 {collection.image ? (
                   <img
                     src={collection.image}

@@ -51,7 +51,12 @@ export const metadata: Metadata = {
     follow: true,
   },
   verification: {
-    google: "POHSrNwaNDYHk6krd0lOC5jY7qj5k5NVJHZQUwAzu4w",
+    google: "Sf18UrkfykcZtCSo8NBYZmRea1mQqjFJmzehmzUn9Yc",
+  },
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
   },
 };
 
@@ -62,6 +67,25 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "url": "https://filmyfits.vercel.app",
+              "logo": "https://filmyfits.vercel.app/logo.png",
+              "name": "FilmyFits",
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+91-XXXXXXXXXX",
+                "contactType": "Customer Service"
+              }
+            }),
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-stone-50 text-stone-900 flex flex-col min-h-screen`}
       >
