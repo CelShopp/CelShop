@@ -57,7 +57,7 @@ const HeroSection = () => {
                 className="w-full h-full object-cover opacity-[1] scale-100 animate-fast-zoom"
               />
 
-              {/* Gradients */}
+              {/* Gradients tahy*/}
               <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/60 to-stone-950/30" />
               <div className="absolute inset-0 bg-gradient-to-r from-stone-950/90 via-stone-950/30 to-transparent" />
             </div>
