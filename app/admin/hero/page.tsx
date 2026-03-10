@@ -9,7 +9,7 @@ export default function AdminHeroPage() {
     const [heroItems, setHeroItems] = useState<any[]>([]);
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [message, setMessage] = useState('');
-    
+
     // Form state
     const [formData, setFormData] = useState({
         title: '',
@@ -19,6 +19,7 @@ export default function AdminHeroPage() {
     });
     const [file, setFile] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
+    const [editingId, setEditingId] = useState<string | null>(null);
 
     useEffect(() => {
         const authCookie = typeof document !== 'undefined' ? document.cookie.split('; ').find(row => row.startsWith('admin_auth=')) : null;
@@ -55,6 +56,25 @@ export default function AdminHeroPage() {
         setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
+    const handleEdit = (item: any) => {
+        setEditingId(item.id);
+        setFormData({
+            title: item.title,
+            movieName: item.movieName,
+            image: item.image,
+            ctaLink: item.ctaLink
+        });
+        setPreview(item.image);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const cancelEdit = () => {
+        setEditingId(null);
+        setFormData({ title: '', movieName: '', image: '', ctaLink: '/collections' });
+        setFile(null);
+        setPreview(null);
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setStatus('loading');
@@ -82,21 +102,22 @@ export default function AdminHeroPage() {
                 throw new Error('Please provide an image or upload a file');
             }
 
-            const res = await fetch('/api/hero', {
-                method: 'POST',
+            const url = editingId ? `/api/hero/${editingId}` : '/api/hero';
+            const method = editingId ? 'PATCH' : 'POST';
+
+            const res = await fetch(url, {
+                method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ...formData, image: imageUrl }),
             });
 
             if (res.ok) {
                 setStatus('success');
-                setMessage('Hero item added successfully');
-                setFormData({ title: '', movieName: '', image: '', ctaLink: '/collections' });
-                setFile(null);
-                setPreview(null);
+                setMessage(editingId ? 'Hero item updated successfully' : 'Hero item added successfully');
+                cancelEdit();
                 fetchHeroItems();
             } else {
-                throw new Error('Failed to add hero item');
+                throw new Error(editingId ? 'Failed to update hero item' : 'Failed to add hero item');
             }
         } catch (error: any) {
             setStatus('error');
@@ -106,10 +127,11 @@ export default function AdminHeroPage() {
 
     const handleDelete = async (id: string) => {
         if (!confirm('Are you sure you want to remove this from the hero section?')) return;
-        
+
         try {
             const res = await fetch(`/api/hero?id=${id}`, { method: 'DELETE' });
             if (res.ok) {
+                if (editingId === id) cancelEdit();
                 fetchHeroItems();
             }
         } catch (error) {
@@ -150,14 +172,24 @@ export default function AdminHeroPage() {
                 </header>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Add Form */}
+                    {/* Add/Edit Form */}
                     <div className="lg:col-span-1">
-                        <div className="bg-white rounded-[2.5rem] shadow-xl border border-stone-100 overflow-hidden">
-                            <div className="p-8 border-b border-stone-50 bg-stone-50/50">
-                                <h2 className="text-xl font-black text-stone-900">Add New Slide</h2>
-                                <p className="text-[10px] text-stone-400 font-bold uppercase tracking-widest mt-1">Configure hero content</p>
+                        <div className="bg-white rounded-[2.5rem] shadow-xl border border-stone-100 overflow-hidden sticky top-32">
+                            <div className="p-8 border-b border-stone-50 bg-stone-50/50 flex justify-between items-center">
+                                <div>
+                                    <h2 className="text-xl font-black text-stone-900">{editingId ? 'Edit Slide' : 'Add New Slide'}</h2>
+                                    <p className="text-[10px] text-stone-400 font-bold uppercase tracking-widest mt-1">Configure hero content</p>
+                                </div>
+                                {editingId && (
+                                    <button
+                                        onClick={cancelEdit}
+                                        className="text-[10px] font-black text-stone-400 hover:text-red-500 uppercase tracking-widest transition-colors"
+                                    >
+                                        Cancel
+                                    </button>
+                                )}
                             </div>
-                            
+
                             <form onSubmit={handleSubmit} className="p-8 space-y-6">
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-1">Hero Title</label>
@@ -197,7 +229,7 @@ export default function AdminHeroPage() {
 
                                 <div className="space-y-4">
                                     <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-1">Background Image</label>
-                                    <div 
+                                    <div
                                         onClick={() => document.getElementById('hero-file')?.click()}
                                         className="w-full aspect-video bg-stone-50 border-2 border-dashed border-stone-200 rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-stone-100 transition-all overflow-hidden"
                                     >
@@ -211,7 +243,7 @@ export default function AdminHeroPage() {
                                         )}
                                     </div>
                                     <input id="hero-file" type="file" className="hidden" onChange={handleFileChange} accept="image/*" />
-                                    
+
                                     <div className="relative">
                                         <div className="absolute inset-x-0 top-0 flex justify-center -translate-y-1/2">
                                             <span className="bg-white px-2 text-[8px] font-black text-stone-300 uppercase">Or URL</span>
@@ -235,9 +267,9 @@ export default function AdminHeroPage() {
                                     disabled={status === 'loading'}
                                     className="w-full py-4 bg-stone-900 text-white font-black rounded-xl hover:bg-orange-600 transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-50"
                                 >
-                                    {status === 'loading' ? 'Saving...' : 'Add to Hero'}
+                                    {status === 'loading' ? 'Saving...' : (editingId ? 'Update Slide' : 'Add to Hero')}
                                 </button>
-                                
+
                                 {message && (
                                     <p className={`text-[10px] font-bold text-center uppercase tracking-widest ${status === 'success' ? 'text-emerald-600' : 'text-red-500'}`}>
                                         {message}
@@ -257,12 +289,18 @@ export default function AdminHeroPage() {
                                 </div>
                             ) : (
                                 heroItems.map((item) => (
-                                    <div key={item.id} className="group relative bg-white rounded-[2rem] overflow-hidden shadow-md border border-stone-100">
+                                    <div key={item.id} className={`group relative bg-white rounded-[2rem] overflow-hidden shadow-md border ${editingId === item.id ? 'border-orange-500 ring-2 ring-orange-100' : 'border-stone-100'}`}>
                                         <div className="aspect-video relative">
                                             <img src={item.image} alt={item.title} className="w-full h-full object-cover opacity-75" />
 
                                             <div className="absolute inset-0 bg-stone-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
-                                                <button 
+                                                <button
+                                                    onClick={() => handleEdit(item)}
+                                                    className="w-12 h-12 bg-white text-stone-900 rounded-full flex items-center justify-center hover:bg-stone-50 transition-colors shadow-xl"
+                                                >
+                                                    <Plus className="rotate-45" size={24} />
+                                                </button>
+                                                <button
                                                     onClick={() => handleDelete(item.id)}
                                                     className="w-12 h-12 bg-red-600 text-white rounded-full flex items-center justify-center hover:bg-red-700 transition-colors shadow-xl"
                                                 >
@@ -273,7 +311,7 @@ export default function AdminHeroPage() {
                                         <div className="p-6">
                                             <p className="text-[10px] font-black text-orange-600 uppercase tracking-widest mb-1">Slide Title</p>
                                             <h3 className="text-lg font-black text-stone-900 leading-tight mb-4">{item.title}</h3>
-                                            
+
                                             <div className="flex justify-between items-center pt-4 border-t border-stone-50">
                                                 <div>
                                                     <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Movie</p>
@@ -281,7 +319,7 @@ export default function AdminHeroPage() {
                                                 </div>
                                                 <div className="text-right">
                                                     <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Link</p>
-                                                    <p className="text-xs font-black text-stone-600">{item.ctaLink}</p>
+                                                    <p className="text-xs font-black text-stone-600 line-clamp-1 max-w-[100px]">{item.ctaLink}</p>
                                                 </div>
                                             </div>
                                         </div>

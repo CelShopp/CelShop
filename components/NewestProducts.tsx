@@ -16,14 +16,14 @@ export default async function NewestProducts() {
     // Enhance collections with fallback images from products if needed
     latestCollections = await Promise.all(collections.map(async (col: any) => {
       if (col.image) return col;
-      
+
       // Fallback: use image from the latest product in this collection
       const latestProduct = await prisma.product.findFirst({
         where: { collection: { contains: col.name } },
         orderBy: { createdAt: "desc" },
         select: { image: true }
       });
-      
+
       return {
         ...col,
         image: latestProduct?.image || null
@@ -37,12 +37,12 @@ export default async function NewestProducts() {
         distinct: ['collection'],
         take: 4,
       });
-      
+
       latestCollections = recentProducts.map(p => ({
         id: p.id,
         name: p.collection.split(',')[0].trim(),
         slug: p.collection.split(',')[0].trim().toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, ''),
-        image: p.image 
+        image: p.image
       }));
     }
   } catch (e) {
@@ -77,14 +77,14 @@ export default async function NewestProducts() {
         </div>
 
         {/* Collections grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {latestCollections.map((collection) => (
             <Link
               key={collection.id}
               href={`/collections/${collection.slug}`}
               className="group flex flex-col"
             >
-              <div className="relative aspect-[2/3] rounded-[2rem] overflow-hidden bg-stone-200 mb-4 shadow-sm group-hover:shadow-xl transition-all duration-500">
+              <div className="relative aspect-[2/3] rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden bg-stone-200 mb-4 shadow-sm group-hover:shadow-xl transition-all duration-500">
                 {collection.image ? (
                   <img
                     src={collection.image}
@@ -96,15 +96,15 @@ export default async function NewestProducts() {
                     <FolderOpen size={48} strokeWidth={1} />
                   </div>
                 )}
-                
+
                 {/* Overlay with glassmorphism */}
                 <div className="absolute inset-0 bg-gradient-to-t from-stone-900/80 via-transparent to-transparent opacity-60 group-hover:opacity-90 transition-opacity" />
-                
-                <div className="absolute bottom-6 left-6 right-6">
-                   <h3 className="text-xl font-black text-white tracking-tight leading-tight group-hover:text-orange-400 transition-colors">
+
+                <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6">
+                  <h3 className="text-sm sm:text-lg md:text-xl font-black text-white tracking-tight leading-tight group-hover:text-orange-400 transition-colors">
                     {collection.name.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
                   </h3>
-                  <div className="flex items-center gap-2 text-[9px] font-black text-stone-300 uppercase tracking-widest mt-1">
+                  <div className="flex items-center gap-2 text-[8px] sm:text-[9px] font-black text-stone-300 uppercase tracking-widest mt-1">
                     See Items <ArrowRight size={10} className="text-orange-500" />
                   </div>
                 </div>

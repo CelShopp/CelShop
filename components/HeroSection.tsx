@@ -34,11 +34,11 @@ const HeroSection = () => {
   const settings = {
     dots: false,
     infinite: movies.length > 1,
-    speed: 1200,
+    speed: 600,
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 4000,
+    autoplaySpeed: 2500,
     arrows: false,
     fade: true,
   };
@@ -54,7 +54,7 @@ const HeroSection = () => {
               <img
                 src={movie.image}
                 alt={movie.movieName}
-                className="w-full h-full object-cover opacity-[0.75] scale-100 animate-slow-zoom"
+                className="w-full h-full object-cover opacity-[1] scale-100 animate-fast-zoom"
               />
 
               {/* Gradients */}
