@@ -127,4 +127,4 @@ export default async function NewestProducts() {
       </div>
     </section>
   );
-}
+}

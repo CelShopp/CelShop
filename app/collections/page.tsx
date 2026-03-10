@@ -82,10 +82,6 @@ export default async function CollectionsPage() {
 
                 {/* Content */}
                 <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 lg:p-12 flex flex-col items-start translate-y-2 sm:translate-y-6 group-hover:translate-y-0 transition-transform duration-700">
-                  <div className="flex items-center gap-3 text-orange-500 text-[10px] font-black uppercase tracking-[0.3em] mb-4">
-                    <Sparkles size={14} />
-                    {col.count} Master Files
-                  </div>
 
                   <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4 sm:mb-6 tracking-tighter leading-[0.9]">
                     {col.name} <br />

@@ -108,17 +108,16 @@ export default async function CollectionPage({ params }: { params: Promise<{ slu
                   <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
                     <div className="bg-stone-900 text-white py-4 rounded-2xl flex items-center justify-center gap-2 font-bold text-sm shadow-2xl">
                       <ShoppingCart size={16} />
-                      View Masterpiece
+                      View Product
                     </div>
                   </div>
                 </div>
 
                 <div className="px-2">
-                  <div className="text-[10px] font-black text-orange-600 uppercase tracking-widest mb-2 opacity-0 group-hover:opacity-100 transition-opacity">Premium Replica</div>
+                  <div className="text-[10px] font-black text-orange-600 uppercase tracking-widest mb-2 opacity-0 group-hover:opacity-100 transition-opacity">Close Alternative</div>
                   <h3 className="text-sm sm:text-lg font-black text-stone-900 mb-1 line-clamp-1 leading-tight">{product.name}</h3>
                   <div className="flex items-center justify-between mt-4">
                     <span className="text-sm sm:text-xl font-black text-stone-900">₹{product.price.toLocaleString()}</span>
-                    <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Master File No. {(index + 1).toString().padStart(4, "0")}</span>
                   </div>
                 </div>
               </Link>
