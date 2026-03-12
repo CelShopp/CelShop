@@ -223,23 +223,7 @@ export default async function ProductPage({
         </div>
       </div>
 
-      {/* Sticky Bottom CTA */}
-      <div className="fixed bottom-0 inset-x-0 p-4 md:p-6 z-50 pointer-events-none flex justify-center">
-        <div className="bg-white/80 backdrop-blur-xl border border-stone-100 shadow-2xl p-3 md:p-4 rounded-[2rem] w-full max-w-lg pointer-events-auto flex items-center justify-between gap-4">
-          <div className="hidden sm:block ml-4">
-            <div className="text-[10px] text-stone-400 font-black uppercase tracking-widest leading-none mb-1">Buy Now</div>
-            <div className="text-xl font-black text-stone-900 leading-none">₹{product.price.toLocaleString()}</div>
-          </div>
-          <a
-            href={product.buyLink}
-            target="_blank"
-            className="flex-1 flex items-center justify-center gap-2 bg-stone-900 text-white py-4 px-6 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-600 transition-all shadow-xl shadow-stone-900/10"
-          >
-            <ShoppingCart size={16} />
-            Claim Piece
-          </a>
-        </div>
-      </div>
+      
     </main>
   );
 }

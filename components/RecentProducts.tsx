@@ -10,6 +10,7 @@ interface Product {
     slug: string;
     image: string;
     price: number;
+    buyLink: string;
 }
 
 export default function RecentProducts() {
@@ -112,7 +113,16 @@ export default function RecentProducts() {
                                     </h3>
                                     <p className="text-stone-500 font-bold text-xs mt-1">
                                         ₹{product.price.toLocaleString()}
+                                        <a
+                                          href={product.buyLink}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="mt-2 block text-center text-xs font-black bg-black text-white py-2 rounded-xl hover:bg-stone-800 transition"
+                                        >
+                                          Check Price
+                                        </a>
                                     </p>
+                                    
                                 </div>
                             </Link>
                         ))}
