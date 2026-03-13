@@ -5,14 +5,50 @@ import { ArrowLeft, Film, Sparkles, ShoppingCart } from "lucide-react";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const formattedTitle = slug
-    .split("-")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
+  let collection: { name: string; description: string | null; image: string | null } | null = null;
+  try {
+    collection = await prisma.collection.findUnique({
+      where: { slug },
+      select: { name: true, description: true, image: true },
+    });
+  } catch {
+    collection = null;
+  }
+
+  const name =
+    collection?.name ||
+    slug
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+
+  const url = `https://filmyfits.vercel.app/collections/${slug}`;
+  const title = `${name} Collection | FilmyFits`;
+  const description =
+    collection?.description ||
+    `Shop iconic looks from ${name}. Screen-accurate archives curated for true film lovers.`;
+  const image = collection?.image || "/logo.png";
 
   return {
-    title: `${formattedTitle} | Cinematic Collection`,
-    description: `Shop iconic looks from ${formattedTitle}. Screen-accurate archives curated for true film lovers.`,
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: "FilmyFits",
+      type: "website",
+      images: [{ url: image }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      site: "@FilmyFits",
+      creator: "@FilmyFits",
+      images: [image],
+    },
   };
 }
 

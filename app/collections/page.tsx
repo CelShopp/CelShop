@@ -6,6 +6,23 @@ import { Film, ArrowRight } from "lucide-react";
 export const metadata: Metadata = {
   title: "Movie Collections | FilmyFits",
   description: "Explore our curated collections of movie-inspired outfits.",
+  alternates: { canonical: "https://filmyfits.vercel.app/collections" },
+  openGraph: {
+    title: "Movie Collections | FilmyFits",
+    description: "Explore our curated collections of movie-inspired outfits.",
+    url: "https://filmyfits.vercel.app/collections",
+    siteName: "FilmyFits",
+    type: "website",
+    images: [{ url: "/logo.png" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Movie Collections | FilmyFits",
+    description: "Explore our curated collections of movie-inspired outfits.",
+    site: "@FilmyFits",
+    creator: "@FilmyFits",
+    images: ["/logo.png"],
+  },
 };
 
 export default async function CollectionsPage() {

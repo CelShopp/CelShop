@@ -1,28 +1,56 @@
-import { MetadataRoute } from "next";
+import type { MetadataRoute } from "next";
+import { prisma } from "@/lib/prisma";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://filmyfits.vercel.app";
+const baseUrl = "https://filmyfits.vercel.app";
 
-  const pages = [
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const staticRoutes = [
     "",
     "/collections",
     "/actors",
     "/products",
-
-    "/collections/yeh-jawaani-hai-deewani",
-    "/collections/pants",
-    "/collections/ranbir-kapoor",
-    "/collections/shirts",
-    "/collections/jackets",
-
-    "/products/ranbir-kapoor-cargo-pants",
-    "/products/ranbir-kapoor-checked-shirt",
-    "/products/ranbir-kapoor-jacket",
-    "/products/ranbir-kapoor-brown-jacket",
+    "/lookbook",
+    "/affiliate-disclosure",
+    "/privacy",
+    "/refund-policy",
+    "/terms",
   ];
 
-  return pages.map((route) => ({
+  const staticEntries: MetadataRoute.Sitemap = staticRoutes.map((route) => ({
     url: `${baseUrl}${route}`,
-    lastModified: new Date(),
   }));
+
+  try {
+    const [products, actors, collections] = await Promise.all([
+      prisma.product.findMany({
+        select: { slug: true, createdAt: true },
+      }),
+      prisma.actor.findMany({
+        select: { slug: true, updatedAt: true },
+      }),
+      prisma.collection.findMany({
+        select: { slug: true, updatedAt: true },
+      }),
+    ]);
+
+    const productEntries: MetadataRoute.Sitemap = products.map((p) => ({
+      url: `${baseUrl}/products/${p.slug}`,
+      lastModified: p.createdAt,
+    }));
+
+    const actorEntries: MetadataRoute.Sitemap = actors.map((a) => ({
+      url: `${baseUrl}/actors/${a.slug}`,
+      lastModified: a.updatedAt,
+    }));
+
+    const collectionEntries: MetadataRoute.Sitemap = collections.map((c) => ({
+      url: `${baseUrl}/collections/${c.slug}`,
+      lastModified: c.updatedAt,
+    }));
+
+    return [...staticEntries, ...collectionEntries, ...actorEntries, ...productEntries];
+  } catch {
+    return staticEntries;
+  }
+
 }

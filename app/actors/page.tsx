@@ -6,6 +6,23 @@ import { User, ArrowRight } from "lucide-react";
 export const metadata: Metadata = {
   title: "Actors | FilmyFits",
   description: "Browse curated outfits by actor.",
+  alternates: { canonical: "https://filmyfits.vercel.app/actors" },
+  openGraph: {
+    title: "Actors | FilmyFits",
+    description: "Browse curated outfits by actor.",
+    url: "https://filmyfits.vercel.app/actors",
+    siteName: "FilmyFits",
+    type: "website",
+    images: [{ url: "/logo.png" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Actors | FilmyFits",
+    description: "Browse curated outfits by actor.",
+    site: "@FilmyFits",
+    creator: "@FilmyFits",
+    images: ["/logo.png"],
+  },
 };
 
 export default async function ActorsPage() {

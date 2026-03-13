@@ -1,6 +1,29 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import type { Product } from "@prisma/client";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Products | FilmyFits",
+  description: "Browse film-inspired outfits and accessories from the FilmyFits archive.",
+  alternates: { canonical: "https://filmyfits.vercel.app/products" },
+  openGraph: {
+    title: "Products | FilmyFits",
+    description: "Browse film-inspired outfits and accessories from the FilmyFits archive.",
+    url: "https://filmyfits.vercel.app/products",
+    siteName: "FilmyFits",
+    type: "website",
+    images: [{ url: "/logo.png" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Products | FilmyFits",
+    description: "Browse film-inspired outfits and accessories from the FilmyFits archive.",
+    site: "@FilmyFits",
+    creator: "@FilmyFits",
+    images: ["/logo.png"],
+  },
+};
 
 export default async function AllProducts() {
   // 1️⃣ Get total number of products

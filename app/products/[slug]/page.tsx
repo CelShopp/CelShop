@@ -18,14 +18,35 @@ export async function generateMetadata({
   if (!product) {
     return {
       title: "Product Not Found",
+      robots: { index: false, follow: false },
     };
   }
 
+  const url = `https://filmyfits.vercel.app/products/${slug}`;
+  const title = `${product.name} | FilmyFits`;
+  const description = `Iconic ${product.movie || "film"} style worn by ${product.actorName || "your favorite stars"}. Get the screen-accurate look of ${product.name}.`;
+
   return {
-    title: `${product.name} | FilmyFits`,
-    description: `Iconic ${product.movie || 'film'} style worn by ${product.actorName || 'your favorite stars'}. Get the screen-accurate look of ${product.name}.`,
+    title,
+    description,
     alternates: {
-      canonical: `https://filmyfits.vercel.app/products/${slug}`,
+      canonical: url,
+    },
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: "FilmyFits",
+      type: "website",
+      images: [{ url: product.image }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      site: "@FilmyFits",
+      creator: "@FilmyFits",
+      images: [product.image],
     },
   };
 }

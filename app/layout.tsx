@@ -2,20 +2,43 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CookieBanner from "@/components/CookieBanner";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const geistSans = Geist({
+const geistSans = localFont({
   variable: "--font-geist-sans",
-  subsets: ["latin"],
+  src: [
+    {
+      path: "../public/fonts/geist-latin.woff2",
+      weight: "100 900",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/geist-latin-ext.woff2",
+      weight: "100 900",
+      style: "normal",
+    },
+  ],
 });
 
-const geistMono = Geist_Mono({
+const geistMono = localFont({
   variable: "--font-geist-mono",
-  subsets: ["latin"],
+  src: [
+    {
+      path: "../public/fonts/geist-mono-latin.woff2",
+      weight: "100 900",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/geist-mono-latin-ext.woff2",
+      weight: "100 900",
+      style: "normal",
+    },
+  ],
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://filmyfits.vercel.app"),
   title: {
     default: "FilmyFits — Shop Iconic Bollywood & Hollywood Outfits",
     template: "%s | FilmyFits",
@@ -40,15 +63,22 @@ export const metadata: Metadata = {
     url: "https://filmyfits.vercel.app",
     siteName: "FilmyFits",
     type: "website",
+    images: [{ url: "/logo.png" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "FilmyFits — Dress Like the Screen",
     description: "Screen-accurate film outfits. Shop YJHD, John Wick, Batman & more.",
+    site: "@FilmyFits",
+    creator: "@FilmyFits",
+    images: ["/logo.png"],
   },
   robots: {
     index: true,
     follow: true,
+  },
+  alternates: {
+    canonical: "https://filmyfits.vercel.app",
   },
   verification: {
     google: "POHSrNwaNDYHk6krd0lOC5jY7qj5k5NVJHZQUwAzu4w",
@@ -77,11 +107,10 @@ export default function RootLayout({
               "url": "https://filmyfits.vercel.app",
               "logo": "https://filmyfits.vercel.app/logo.png",
               "name": "FilmyFits",
-              "contactPoint": {
-                "@type": "ContactPoint",
-                "telephone": "+91-XXXXXXXXXX",
-                "contactType": "Customer Service"
-              }
+              "sameAs": [
+                "https://in.pinterest.com/filmyfits/",
+                "https://x.com/FilmyFits"
+              ]
             }),
           }}
         />

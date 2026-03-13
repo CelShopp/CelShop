@@ -63,10 +63,11 @@ export default function HeroSectionClient({ initialMovies }: { initialMovies: He
                 {/* Headline */}
                 <h1
                   className="font-black text-white tracking-tighter leading-[0.93] mb-3 drop-shadow-2xl"
-                  style={{ fontSize: "clamp(2rem, 4vw, 5.5rem)" }}
+                  style={{ fontSize: "clamp(2rem, 4vw, 2.5rem)" }}
                 >
                   {movie.title === "Iconic outfits from iconic films" ? (
                     <>
+
                       Iconic outfits
                       <br />
                       from iconic films
@@ -75,6 +76,7 @@ export default function HeroSectionClient({ initialMovies }: { initialMovies: He
                     movie.title
                   )}
                 </h1>
+                      <br />
 
                 {/* Buttons */}
                 <div className="flex flex-col sm:flex-row gap-3 items-start">
@@ -95,21 +97,7 @@ export default function HeroSectionClient({ initialMovies }: { initialMovies: He
                   </Link>
                 </div>
 
-                {/* Stats */}
-                <div className="flex gap-8 mt-10 pt-6 border-t border-white/10 max-w-2xl">
-                  {[
-                    { num: "40+", label: "Collections" },
-                    { num: "1000+", label: "Products" },
-                    { num: "100%", label: "Affiliate" },
-                  ].map(({ num, label }) => (
-                    <div key={label}>
-                      <div className="text-xl font-black text-white leading-none">{num}</div>
-                      <div className="text-[9px] font-black uppercase tracking-[0.2em] text-stone-500 mt-1">
-                        {label}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                
               </div>
             </div>
 

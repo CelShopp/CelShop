@@ -5,7 +5,12 @@ import { ArrowLeft, ShoppingCart, User } from "lucide-react";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const actor = await prisma.actor.findUnique({ where: { slug }, select: { name: true } });
+  let actor: { name: string; image: string | null } | null = null;
+  try {
+    actor = await prisma.actor.findUnique({ where: { slug }, select: { name: true, image: true } });
+  } catch {
+    actor = null;
+  }
   const name =
     actor?.name ||
     slug
@@ -13,9 +18,31 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
       .join(" ");
 
+  const url = `https://filmyfits.vercel.app/actors/${slug}`;
+  const title = `${name} | FilmyFits`;
+  const description = `Curated picks for ${name}.`;
+  const image = actor?.image || "/logo.png";
+
   return {
-    title: `${name} | Actors`,
-    description: `Curated picks for ${name}.`,
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: "FilmyFits",
+      type: "profile",
+      images: [{ url: image }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      site: "@FilmyFits",
+      creator: "@FilmyFits",
+      images: [image],
+    },
   };
 }
 
