@@ -4,6 +4,6 @@ export default function robots() {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://yourdomain.com/sitemap.xml",
+    sitemap: "https://filmyfits.vercel.app/sitemap.xml",
   };
 }
