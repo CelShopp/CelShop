@@ -107,7 +107,6 @@ export default function Header() {
           </Link>
 
           <ul className="hidden md:flex gap-8 list-none m-0 p-0">
-            <li><Link href="/" className="nav-link">Home</Link></li>
             <li><Link href="/collections" className="nav-link">Collections</Link></li>
             <li><Link href="/actors" className="nav-link">Actors</Link></li>
             <li><Link href="/outfit-ideas" className="nav-link">Outfit Ideas</Link></li>
@@ -252,10 +251,7 @@ export default function Header() {
           style={{ top: scrolled ? "72px" : "84px" }}
         >
           <div className="flex flex-col gap-1">
-            <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 rounded-2xl font-bold text-stone-900 transition-colors">
-              <span className="w-1.5 h-1.5 bg-orange-500 rounded-full" />
-              Home
-            </Link>
+
             <Link href="/collections" onClick={() => setOpen(false)} className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 rounded-2xl font-bold text-stone-900 transition-colors">
               <span className="w-1.5 h-1.5 bg-stone-300 rounded-full" />
               Collections
