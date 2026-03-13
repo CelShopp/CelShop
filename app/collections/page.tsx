@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { Film, ArrowRight, Sparkles } from "lucide-react";
+import { Film, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Movie Collections | FilmyFits",
@@ -40,67 +40,63 @@ export default async function CollectionsPage() {
   }));
 
   return (
-    <div className="min-h-screen bg-stone-50 font-sans text-stone-900 pt-24 sm:pt-32 pb-16 sm:pb-24">
+    <div className="min-h-screen bg-stone-50 font-sans text-stone-900 pt-24 sm:pt-28 pb-16 sm:pb-24">
       <main className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Header */}
-        <header className="mb-12 sm:mb-20 text-center">
+        <header className="mb-10 sm:mb-16 text-center">
           <div className="flex items-center justify-center gap-2 text-orange-600 font-bold uppercase tracking-[0.3em] text-[10px] mb-4">
             <Film size={14} />
             Cinematic Archives
           </div>
-          <h1 className="text-4xl sm:text-5xl md:text-8xl font-black tracking-tighter mb-4 sm:mb-6">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tighter mb-3 sm:mb-5 leading-[0.95]">
             Explore <span className="text-transparent bg-clip-text bg-gradient-to-r from-stone-900 to-stone-500">Collections</span>
           </h1>
-          <p className="text-base sm:text-xl text-stone-500 max-w-2xl mx-auto font-medium">
+          <p className="text-sm sm:text-lg text-stone-500 max-w-2xl mx-auto font-medium">
             Browse our curated archives of screen-worn replicas and cinematic style inspirations.
           </p>
         </header>
 
         {/* Collections Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
-          {uniqueCollections.map((col: any) => {
-            const isBatman = col.slug === 'batman';
-            const movieContext = isBatman ? "The Dark Knight" : col.name;
-            const actorContext = isBatman ? "Christian Bale" : "Various Icons";
-
-            return (
-              <Link
-                key={col.slug}
-                href={`/collections/${col.slug}`}
-                className="group relative h-[420px] sm:h-[540px] lg:h-[600px] rounded-[2rem] sm:rounded-[3.5rem] overflow-hidden bg-stone-200 shadow-xl transition-all duration-700 hover:shadow-[0_40px_100px_-20px_rgba(0,0,0,0.3)] hover:-translate-y-2 sm:hover:-translate-y-3"
-              >
-                {/* Image */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-7">
+          {uniqueCollections.map((col: any) => (
+            <Link
+              key={col.slug}
+              href={`/collections/${col.slug}`}
+              className="group rounded-3xl bg-white border border-stone-200 shadow-sm hover:shadow-xl hover:-translate-y-0.5 transition-all overflow-hidden"
+            >
+              {/* Image */}
+              <div className="relative aspect-[4/5] bg-stone-100 overflow-hidden">
                 <img
                   src={col.image || "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=2059&auto=format&fit=crop"}
                   alt={col.name}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                  loading="lazy"
+                  decoding="async"
+                  className="absolute inset-x-0 top-0 h-[115%] w-full object-cover object-top"
                 />
-
-                {/* Dramatic Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/20 to-transparent" />
-                <div className="absolute inset-0 bg-stone-900/10 group-hover:bg-transparent transition-colors duration-700" />
-
-                {/* Content */}
-                <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 lg:p-12 flex flex-col items-start translate-y-2 sm:translate-y-6 group-hover:translate-y-0 transition-transform duration-700">
-
-                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4 sm:mb-6 tracking-tighter leading-[0.9]">
-                    {col.name} <br />
-                    <span className="text-white/40 italic">Archive</span>
-                  </h2>
-
-                  <div className="flex flex-col gap-1 mb-8 opacity-0 group-hover:opacity-100 transition-all duration-700 delay-100">
-                    <div className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Featured Inspiration</div>
-                    <div className="text-white font-bold text-sm">{movieContext} / {actorContext}</div>
-                  </div>
-
-                  <div className="flex items-center gap-4 py-4 px-8 bg-white text-stone-900 rounded-2xl font-black uppercase tracking-widest text-[10px] opacity-0 group-hover:opacity-100 transition-all duration-700 delay-200 shadow-2xl">
-                    View Dossier
-                    <ArrowRight size={16} className="text-orange-600" />
-                  </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
+                <div className="absolute top-3 left-3">
+                  <span className="inline-flex items-center rounded-full bg-white/90 backdrop-blur px-3 py-1 text-[10px] font-black uppercase tracking-widest text-stone-700 border border-stone-200 shadow-sm">
+                    {col.count} item{col.count === 1 ? "" : "s"}
+                  </span>
                 </div>
-              </Link>
-            );
-          })}
+              </div>
+
+              {/* Content */}
+              <div className="p-5 sm:p-6">
+                <h2 className="text-lg sm:text-xl font-black text-stone-900 tracking-tight leading-snug line-clamp-2">
+                  {col.name}
+                </h2>
+                <p className="mt-1 text-xs sm:text-sm text-stone-500 font-medium line-clamp-2">
+                  Curated looks and items from this archive.
+                </p>
+
+                <div className="mt-5 inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-stone-600 group-hover:text-stone-900 transition-colors">
+                  View Collection
+                  <ArrowRight size={14} className="text-orange-500 group-hover:translate-x-0.5 transition-transform" />
+                </div>
+              </div>
+            </Link>
+          ))}
         </div>
       </main>
     </div>
