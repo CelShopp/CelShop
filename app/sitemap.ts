@@ -6,6 +6,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const pages = [
     "",
     "/collections",
+    "/actors",
     "/products",
 
     "/collections/yeh-jawaani-hai-deewani",

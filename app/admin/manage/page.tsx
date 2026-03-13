@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from 'react';
-import { Trash2, Package, Database, ExternalLink, RefreshCw } from 'lucide-react';
+import { Trash2, Package, Database, ExternalLink, RefreshCw, User } from 'lucide-react';
 import Link from 'next/link';
 
 function ManageProductsContent() {
@@ -86,6 +86,13 @@ function ManageProductsContent() {
                             className="px-6 py-4 bg-white border border-stone-100 text-stone-900 font-bold rounded-2xl hover:bg-stone-50 transition-all shadow-sm flex items-center gap-2 text-xs uppercase tracking-widest"
                         >
                             Collections
+                        </Link>
+                        <Link
+                            href="/admin/actors"
+                            className="px-6 py-4 bg-white border border-stone-100 text-stone-900 font-bold rounded-2xl hover:bg-stone-50 transition-all shadow-sm flex items-center gap-2 text-xs uppercase tracking-widest"
+                        >
+                            <User size={16} />
+                            Actors
                         </Link>
                         <button
                             onClick={fetchProducts}

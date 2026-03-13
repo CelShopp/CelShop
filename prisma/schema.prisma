@@ -20,6 +20,7 @@ model Product {
   isFeatured  Boolean  @default(false)
   createdAt   DateTime @default(now())
 
+  actors      ActorProduct[]
 }
 
 model Request {
@@ -46,4 +47,27 @@ model Collection {
   showInHome  Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now()) @updatedAt
+}
+
+model Actor {
+  id        String         @id @default(cuid())
+  name      String         @unique
+  slug      String         @unique
+  image     String?
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @default(now()) @updatedAt
+
+  products  ActorProduct[]
+}
+
+model ActorProduct {
+  actorId   String
+  productId String
+  createdAt DateTime @default(now())
+
+  actor   Actor   @relation(fields: [actorId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([actorId, productId])
+  @@index([productId])
 }

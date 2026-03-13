@@ -109,6 +109,7 @@ export default function Header() {
           <ul className="hidden md:flex gap-8 list-none m-0 p-0">
             <li><Link href="/" className="nav-link">Home</Link></li>
             <li><Link href="/collections" className="nav-link">Collections</Link></li>
+            <li><Link href="/actors" className="nav-link">Actors</Link></li>
             <li><Link href="/products" className="nav-link">All Products</Link></li>
           </ul>
 
@@ -257,6 +258,10 @@ export default function Header() {
             <Link href="/collections" onClick={() => setOpen(false)} className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 rounded-2xl font-bold text-stone-900 transition-colors">
               <span className="w-1.5 h-1.5 bg-stone-300 rounded-full" />
               Collections
+            </Link>
+            <Link href="/actors" onClick={() => setOpen(false)} className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 rounded-2xl font-bold text-stone-900 transition-colors">
+              <span className="w-1.5 h-1.5 bg-stone-300 rounded-full" />
+              Actors
             </Link>
             <Link href="/products" onClick={() => setOpen(false)} className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 rounded-2xl font-bold text-stone-900 transition-colors">
               <span className="w-1.5 h-1.5 bg-stone-300 rounded-full" />

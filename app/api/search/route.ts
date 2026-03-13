@@ -37,6 +37,15 @@ export async function GET(req: Request) {
   }
 
   const queryTokens = tokenize(query);
+  const matchesQuery = (source: string) => {
+    const searchable = normalize(source);
+    const searchableTokens = tokenize(searchable);
+    const exactMatch = searchable.includes(query);
+    const tokenMatch = queryTokens.some((token) =>
+      searchableTokens.some((candidate) => candidate.includes(token) || token.includes(candidate))
+    );
+    return exactMatch || tokenMatch;
+  };
 
   const products = await prisma.product.findMany({
     orderBy: { createdAt: "desc" },
@@ -52,16 +61,7 @@ export async function GET(req: Request) {
       product.description,
       product.slug,
     ].join(" ");
-
-    const searchable = normalize(source);
-    const searchableTokens = tokenize(searchable);
-
-    const exactMatch = searchable.includes(query);
-    const tokenMatch = queryTokens.some((token) =>
-      searchableTokens.some((candidate) => candidate.includes(token) || token.includes(candidate))
-    );
-
-    return exactMatch || tokenMatch;
+    return matchesQuery(source);
   });
 
   const results: SearchResult[] = [];
@@ -121,21 +121,18 @@ export async function GET(req: Request) {
     });
   });
 
-  const matchedActors = unique(
-    matchedProducts.map((p) => p.actorName).filter((actor): actor is string => Boolean(actor))
-  );
+  const actors = await prisma.actor.findMany({ orderBy: { updatedAt: "desc" }, take: 40 });
+  const matchedActors = actors.filter((actor) => matchesQuery(`${actor.name} ${actor.slug}`));
   matchedActors.forEach((actor) => {
-    const linked = matchedProducts.find((p) => p.actorName === actor);
-    const actorSlug = actor.toLowerCase().replace(/\s+/g, "-");
     results.push({
-      id: `actor-${actorSlug}`,
+      id: actor.id,
       type: "actor",
-      title: actor,
-      subtitle: "Actor Tag",
-      href: linked ? `/collections/${linked.collection}` : "/collections",
-      image: linked?.image ?? null,
+      title: actor.name,
+      subtitle: "Actor Card",
+      href: `/actors/${actor.slug}`,
+      image: actor.image ?? null,
       price: null,
-      tags: tokenize(actor),
+      tags: unique(tokenize(`${actor.name} ${actor.slug}`)),
     });
   });
 
