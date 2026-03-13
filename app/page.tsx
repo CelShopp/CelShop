@@ -1,6 +1,7 @@
 import HeroSection from "@/components/HeroSection"
 import NewestCollections from "@/components/NewestProducts"
 import RecentProducts from "@/components/RecentProducts"
+import { Suspense } from "react"
 
 export default function Page() {
 
@@ -43,8 +44,12 @@ export default function Page() {
 
         </div>
       </section>
-      <NewestCollections />
-      <RecentProducts />
+      <Suspense fallback={null}>
+        <NewestCollections/>
+      </Suspense>
+      <Suspense fallback={null}>
+        <RecentProducts />
+      </Suspense>
 
     </main>
 

@@ -89,7 +89,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-stone-50 text-stone-900 flex flex-col min-h-screen`}
       >
-        <Header />
+        <Header/>
         <main className="flex-grow">{children}</main>
         <Footer />
         <CookieBanner />
