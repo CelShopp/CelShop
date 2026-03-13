@@ -125,7 +125,7 @@ export default function RecentProductsClient({ initialProducts }: { initialProdu
                     <h3 className="font-black text-stone-900 text-sm leading-tight group-hover:text-orange-600 transition-colors line-clamp-1">
                       {product.name}
                     </h3>
-                    <p className="text-stone-500 font-bold text-xs mt-1">â‚¹{product.price.toLocaleString()}</p>
+                    <p className="text-stone-500 font-bold text-xs mt-1">₹{product.price.toLocaleString()}</p>
                   </div>
                 </Link>
 
@@ -133,7 +133,7 @@ export default function RecentProductsClient({ initialProducts }: { initialProdu
                   href={product.buyLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-2 block text-center text-xs font-black bg-black text-white py-2 rounded-xl hover:bg-stone-800 transition"
+                  className="mt-2 block text-center text-xs font-black bg-black text-white py-2 rounded-xl hover:bg-stone-800 transition opacity-100"
                 >
                   Check Price
                 </a>
