@@ -110,13 +110,14 @@ export default function Header() {
             <li><Link href="/" className="nav-link">Home</Link></li>
             <li><Link href="/collections" className="nav-link">Collections</Link></li>
             <li><Link href="/actors" className="nav-link">Actors</Link></li>
+            <li><Link href="/outfit-ideas" className="nav-link">Outfit Ideas</Link></li>
             <li><Link href="/products" className="nav-link">All Products</Link></li>
           </ul>
 
           <div className="flex items-center gap-2 md:gap-4">
             <button
               onClick={() => setRequestOpen(true)}
-              className="hidden lg:flex items-center gap-2 px-4 py-2 bg-stone-900 text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-stone-800 transition-all active:scale-95"
+              className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-stone-900 text-white text-[10px] font-bold uppercase tracking-wider rounded-xl hover:bg-stone-800 transition-all active:scale-95"
             >
               <PlusCircle size={14} />
               Request Item
@@ -232,7 +233,7 @@ export default function Header() {
                     <div className="text-xs text-stone-500 truncate">{result.subtitle}</div>
                   </div>
                   <div className="text-[10px] font-black uppercase tracking-wider text-stone-400 text-right">
-                    {result.price !== null ? `₹${result.price.toLocaleString()}` : result.type}
+                    {result.price !== null ? `${"\u20B9"}${result.price.toLocaleString()}` : result.type}
                   </div>
                 </Link>
               ))
@@ -262,6 +263,10 @@ export default function Header() {
             <Link href="/actors" onClick={() => setOpen(false)} className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 rounded-2xl font-bold text-stone-900 transition-colors">
               <span className="w-1.5 h-1.5 bg-stone-300 rounded-full" />
               Actors
+            </Link>
+            <Link href="/outfit-ideas" onClick={() => setOpen(false)} className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 rounded-2xl font-bold text-stone-900 transition-colors">
+              <span className="w-1.5 h-1.5 bg-stone-300 rounded-full" />
+              Outfit Ideas
             </Link>
             <Link href="/products" onClick={() => setOpen(false)} className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 rounded-2xl font-bold text-stone-900 transition-colors">
               <span className="w-1.5 h-1.5 bg-stone-300 rounded-full" />

@@ -9,6 +9,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/collections",
     "/actors",
     "/products",
+    "/outfit-ideas",
     "/lookbook",
     "/affiliate-disclosure",
     "/privacy",
@@ -21,7 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   try {
-    const [products, actors, collections] = await Promise.all([
+    const [products, actors, collections, outfits] = await Promise.all([
       prisma.product.findMany({
         select: { slug: true, createdAt: true },
       }),
@@ -29,6 +30,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         select: { slug: true, updatedAt: true },
       }),
       prisma.collection.findMany({
+        select: { slug: true, updatedAt: true },
+      }),
+      prisma.outfitIdea.findMany({
         select: { slug: true, updatedAt: true },
       }),
     ]);
@@ -48,7 +52,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: c.updatedAt,
     }));
 
-    return [...staticEntries, ...collectionEntries, ...actorEntries, ...productEntries];
+    const outfitEntries: MetadataRoute.Sitemap = outfits.map((o) => ({
+      url: `${baseUrl}/outfit-ideas/${o.slug}`,
+      lastModified: o.updatedAt,
+    }));
+
+    return [...staticEntries, ...collectionEntries, ...actorEntries, ...outfitEntries, ...productEntries];
   } catch {
     return staticEntries;
   }
