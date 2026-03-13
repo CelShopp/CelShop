@@ -1,5 +1,7 @@
 import Link from "next/link";
 import React from "react";
+import { FaPinterestP } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
 
 export default function Footer() {
   return (
@@ -20,6 +22,27 @@ export default function Footer() {
             </p>
             <div className="mt-5 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-stone-600 bg-stone-900 px-3 py-1.5 rounded-lg">
               <span className="text-orange-500"></span> Affiliate links — we earn commissions
+            </div>
+
+            <div className="mt-6 flex items-center gap-3">
+              <a
+                href="https://in.pinterest.com/filmyfits/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="FilmyFits on Pinterest"
+                className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 text-stone-200 hover:text-white transition-colors"
+              >
+                <FaPinterestP className="w-4 h-4" aria-hidden="true" />
+              </a>
+              <a
+                href="https://x.com/FilmyFits"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="FilmyFits on X"
+                className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 text-stone-200 hover:text-white transition-colors"
+              >
+                <FaXTwitter className="w-4 h-4" aria-hidden="true" />
+              </a>
             </div>
           </div>
 
@@ -85,7 +108,6 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="border-t border-white/5 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] font-bold uppercase tracking-[0.18em] opacity-40">
-          <span>© 2025 FilmyFits Archive. All rights reserved.</span>
           <div className="flex gap-6">
             <Link href="/privacy" className="hover:opacity-100 transition-opacity">Privacy</Link>
             <Link href="/terms" className="hover:opacity-100 transition-opacity">Terms</Link>
