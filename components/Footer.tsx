@@ -112,6 +112,7 @@ export default function Footer() {
             <Link href="/privacy" className="hover:opacity-100 transition-opacity">Privacy</Link>
             <Link href="/terms" className="hover:opacity-100 transition-opacity">Terms</Link>
             <Link href="/affiliate-disclosure" className="hover:opacity-100 transition-opacity">Disclosure</Link>
+            <Link href="/sitemap.xml" className="hover:opacity-100 transition-opacity">Sitemap</Link>
           </div>
         </div>
 
