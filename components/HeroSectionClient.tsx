@@ -31,6 +31,22 @@ export default function HeroSectionClient({ initialMovies }: { initialMovies: He
 
   return (
     <section className="relative bg-stone-950 overflow-hidden w-full lg:w-[75%] mx-auto rounded-none md:rounded-[30px] mt-[110px] md:mt-[120px]">
+      {/* Quick links (below header, not part of header) */}
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 flex flex-wrap justify-center items-center gap-3 px-4">
+        <Link
+          href="/actors"
+          className="inline-flex items-center justify-center rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-white/90 border border-white/25 bg-transparent backdrop-blur hover:bg-white/10 hover:border-white/40 transition-all active:scale-95"
+        >
+          Bollywood
+        </Link>
+        <Link
+          href="/outfit-ideas"
+          className="inline-flex items-center justify-center rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-white/90 border border-white/25 bg-transparent backdrop-blur hover:bg-white/10 hover:border-white/40 transition-all active:scale-95"
+        >
+          Pinterest
+        </Link>
+      </div>
+
       <Slider {...settings}>
         {movies.map((movie, index) => (
           <div key={movie.id} className="relative w-full h-[60vh] md:h-[82vh] outline-none">
@@ -127,4 +143,3 @@ export default function HeroSectionClient({ initialMovies }: { initialMovies: He
     </section>
   );
 }
-
