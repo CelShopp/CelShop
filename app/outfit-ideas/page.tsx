@@ -52,38 +52,40 @@ export default async function OutfitIdeasPage() {
             <p className="text-stone-500 font-medium">No outfit ideas yet. Create some in Admin → Outfits.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-7">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3 sm:gap-4 lg:gap-5">
             {outfits.map((o) => (
               <Link
                 key={o.id}
                 href={`/outfit-ideas/${o.slug}`}
-                className="group rounded-3xl bg-white border border-stone-200 shadow-sm hover:shadow-xl hover:-translate-y-0.5 transition-all overflow-hidden"
+                className="group rounded-2xl bg-white border border-stone-200 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all overflow-hidden"
               >
                 <div className="relative aspect-[4/5] bg-stone-100 overflow-hidden">
-                  <img
-                    src={o.image}
-                    alt={o.title}
-                    loading="lazy"
-                    decoding="async"
-                    className="absolute inset-x-0 top-0 h-[120%] w-full object-cover object-top"
-                  />
+                  <div className="absolute inset-0 p-1 sm:p-2">
+                    <img
+                      src={o.image}
+                      alt={o.title}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
-                  <div className="absolute top-3 left-3">
-                    <span className="inline-flex items-center rounded-full bg-white/90 backdrop-blur px-3 py-1 text-[10px] font-black uppercase tracking-widest text-stone-700 border border-stone-200 shadow-sm">
+                  <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
+                    <span className="inline-flex items-center rounded-full bg-white/90 backdrop-blur px-2 sm:px-3 py-1 text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-stone-700 border border-stone-200 shadow-sm">
                       {o.products.length} item{o.products.length === 1 ? "" : "s"}
                     </span>
                   </div>
                 </div>
 
-                <div className="p-5 sm:p-6">
-                  <h2 className="text-lg sm:text-xl font-black text-stone-900 tracking-tight leading-snug line-clamp-2">
+                <div className="p-3 sm:p-4">
+                  <h2 className="text-sm sm:text-base font-black text-stone-900 tracking-tight leading-snug line-clamp-2">
                     {o.title}
                   </h2>
-                  <p className="mt-1 text-xs sm:text-sm text-stone-500 font-medium line-clamp-2">
+                  <p className="mt-1 text-[11px] sm:text-xs text-stone-500 font-medium line-clamp-2">
                     {o.description || "Tap to see the full outfit and all curated products."}
                   </p>
 
-                  <div className="mt-5 inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-stone-600 group-hover:text-stone-900 transition-colors">
+                  <div className="mt-3 inline-flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-stone-600 group-hover:text-stone-900 transition-colors">
                     View Outfit
                   </div>
                 </div>
@@ -95,4 +97,3 @@ export default async function OutfitIdeasPage() {
     </main>
   );
 }
-
