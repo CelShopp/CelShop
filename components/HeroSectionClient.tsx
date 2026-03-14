@@ -30,23 +30,7 @@ export default function HeroSectionClient({ initialMovies }: { initialMovies: He
   };
 
   return (
-    <section className="relative bg-stone-950 overflow-hidden w-full lg:w-[75%] mx-auto rounded-none md:rounded-[30px] mt-[110px] md:mt-[120px]">
-      {/* Quick links (below header, not part of header) */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 flex flex-nowrap items-center justify-center px-4 gap-[clamp(6px,2.5vw,12px)] w-[min(100%,420px)]">
-        <Link
-          href="/actors"
-          className="inline-flex items-center justify-center rounded-full whitespace-nowrap font-black uppercase text-white/90 border border-white/25 bg-transparent backdrop-blur hover:bg-white/10 hover:border-white/40 transition-all active:scale-95 text-[clamp(8px,2.2vw,10px)] tracking-[0.2em] px-[clamp(10px,3.4vw,16px)] py-[clamp(6px,1.8vw,8px)]"
-        >
-          Bollywood
-        </Link>
-        <Link
-          href="/outfit-ideas"
-          className="inline-flex items-center justify-center rounded-full whitespace-nowrap font-black uppercase text-[#E60023] border border-[#E60023]/45 bg-transparent backdrop-blur hover:bg-[#E60023]/10 hover:border-[#E60023]/70 transition-all active:scale-95 text-[clamp(8px,2.2vw,10px)] tracking-[0.2em] px-[clamp(10px,3.4vw,16px)] py-[clamp(6px,1.8vw,8px)]"
-        >
-          Pinterest
-        </Link>
-      </div>
-
+    <section className="relative bg-stone-950 overflow-hidden w-full lg:w-[75%] mx-auto rounded-none md:rounded-[30px]">
       <Slider {...settings}>
         {movies.map((movie, index) => (
           <div key={movie.id} className="relative w-full h-[60vh] md:h-[82vh] outline-none">

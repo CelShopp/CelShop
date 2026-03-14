@@ -1,4 +1,5 @@
 import HeroSection from "@/components/HeroSection"
+import HomeQuickLinks from "@/components/HomeQuickLinks"
 import NewestCollections from "@/components/NewestProducts"
 import RecentProducts from "@/components/RecentProducts"
 import { Suspense } from "react"
@@ -8,8 +9,16 @@ export default function Page() {
   return (
 
     <main className="bg-white">
+      {/* space for fixed header, then quick links, then hero */}
+      <div className="pt-[110px] md:pt-[120px]">
+        <div className="w-full lg:w-[75%] mx-auto px-6 sm:px-10 flex justify-center">
+          <HomeQuickLinks />
+        </div>
 
-      <HeroSection />
+        <div className="mt-3 md:mt-4">
+          <HeroSection />
+        </div>
+      </div>
 
       {/* trust strip */}
 
