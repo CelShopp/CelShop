@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
-import { Sparkles } from "lucide-react";
+import { ArrowUpRight, Sparkles } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Outfit Ideas | FilmyFits",
@@ -45,6 +45,18 @@ export default async function OutfitIdeasPage() {
           <p className="text-sm sm:text-lg text-stone-500 max-w-2xl mx-auto font-medium">
             Complete looks you can build with the exact products we curated.
           </p>
+
+          <div className="mt-6 flex justify-center">
+            <a
+              href="https://in.pinterest.com/filmyfits/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-3 rounded-2xl bg-stone-900 text-white text-[10px] font-black uppercase tracking-widest hover:bg-orange-600 transition-colors shadow-sm"
+            >
+              Visit Pinterest
+              <ArrowUpRight size={14} />
+            </a>
+          </div>
         </header>
 
         {outfits.length === 0 ? (
