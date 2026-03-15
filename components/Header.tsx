@@ -110,7 +110,7 @@ export default function Header() {
             <li><Link href="/collections" className="nav-link">Collections</Link></li>
             <li><Link href="/actors" className="nav-link">Actors</Link></li>
             <li><Link href="/outfit-ideas" className="nav-link">Outfit Ideas</Link></li>
-            <li><Link href="/products" className="nav-link">All Products</Link></li>
+            <li><Link href="/#recent-arrivals" className="nav-link">Recent Arrivals</Link></li>
           </ul>
 
           <div className="flex items-center gap-2 md:gap-4">
@@ -264,9 +264,9 @@ export default function Header() {
               <span className="w-1.5 h-1.5 bg-stone-300 rounded-full" />
               Outfit Ideas
             </Link>
-            <Link href="/products" onClick={() => setOpen(false)} className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 rounded-2xl font-bold text-stone-900 transition-colors">
+            <Link href="/#recent-arrivals" onClick={() => setOpen(false)} className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 rounded-2xl font-bold text-stone-900 transition-colors">
               <span className="w-1.5 h-1.5 bg-stone-300 rounded-full" />
-              All Products
+              Recent Arrivals
             </Link>
             <div className="h-px bg-stone-100 my-2 mx-6" />
             <button

@@ -56,6 +56,7 @@ export default function Page() {
       <Suspense fallback={null}>
         <NewestCollections/>
       </Suspense>
+      <div id="recent-arrivals" className="scroll-mt-[140px]" />
       <Suspense fallback={null}>
         <RecentProducts />
       </Suspense>
