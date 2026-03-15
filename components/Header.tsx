@@ -58,6 +58,35 @@ export default function Header() {
     setRequestOpen(false);
   };
 
+  const handleRecentArrivalsClick = (e: React.MouseEvent) => {
+    if (typeof window === "undefined") return;
+    if (window.location.pathname !== "/") return;
+
+    e.preventDefault();
+
+    if (window.location.hash !== "#recent-arrivals") {
+      window.history.pushState(null, "", "/#recent-arrivals");
+    }
+
+    let attempts = 0;
+    const maxAttempts = 30;
+
+    const tryScroll = () => {
+      attempts += 1;
+      const el = document.getElementById("recent-arrivals");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+
+      if (attempts < maxAttempts) {
+        window.setTimeout(tryScroll, 100);
+      }
+    };
+
+    tryScroll();
+  };
+
   const handleRequestSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -110,7 +139,7 @@ export default function Header() {
             <li><Link href="/collections" className="nav-link">Collections</Link></li>
             <li><Link href="/actors" className="nav-link">Actors</Link></li>
             <li><Link href="/outfit-ideas" className="nav-link">Outfit Ideas</Link></li>
-            <li><Link href="/#recent-arrivals" className="nav-link">Recent Arrivals</Link></li>
+            <li><Link href="/#recent-arrivals" onClick={handleRecentArrivalsClick} className="nav-link">Recent Arrivals</Link></li>
           </ul>
 
           <div className="flex items-center gap-2 md:gap-4">
@@ -264,7 +293,14 @@ export default function Header() {
               <span className="w-1.5 h-1.5 bg-stone-300 rounded-full" />
               Outfit Ideas
             </Link>
-            <Link href="/#recent-arrivals" onClick={() => setOpen(false)} className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 rounded-2xl font-bold text-stone-900 transition-colors">
+            <Link
+              href="/#recent-arrivals"
+              onClick={(e) => {
+                handleRecentArrivalsClick(e);
+                setOpen(false);
+              }}
+              className="flex items-center gap-4 px-6 py-4 hover:bg-stone-50 rounded-2xl font-bold text-stone-900 transition-colors"
+            >
               <span className="w-1.5 h-1.5 bg-stone-300 rounded-full" />
               Recent Arrivals
             </Link>
