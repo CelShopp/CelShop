@@ -59,7 +59,7 @@ export default function RecentProductsClient({ initialProducts }: { initialProdu
   };
 
   return (
-    <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-10 bg-white border-t border-stone-100">
+    <section id="recent-arrivals" className="scroll-mt-[140px] py-16 sm:py-24 px-4 sm:px-6 lg:px-10 bg-white border-t border-stone-100">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 gap-4">
