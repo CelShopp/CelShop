@@ -5,7 +5,7 @@ import CookieBanner from "@/components/CookieBanner";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-
+import { Analytics } from "@vercel/analytics/next"
 const geistSans = localFont({
   variable: "--font-geist-sans",
   src: [
@@ -124,6 +124,7 @@ export default function RootLayout({
         <Footer />
         <CookieBanner />
         <SpeedInsights />
+        <Analytics/>
       </body>
     </html>
   );
