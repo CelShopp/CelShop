@@ -1,3 +1,4 @@
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CookieBanner from "@/components/CookieBanner";
@@ -122,6 +123,7 @@ export default function RootLayout({
         <main className="flex-grow">{children}</main>
         <Footer />
         <CookieBanner />
+        <SpeedInsights />
       </body>
     </html>
   );
